@@ -9,47 +9,98 @@ use Illuminate\Http\Request;
 
 class SourceQueryController extends Controller
 {
-    protected $server_ip = '46.251.238.65';
-    protected $server_port = 57555;
     protected $server_timeout = 1;
     protected $server_engine = SourceQuery::SOURCE;
 
-    public function test(Request $request)
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $server
+     *
+     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
+     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
+     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     */
+    public function serverGetPlayers(Request $request, $server = 'A1')
     {
-        $Query    = new SourceQuery();
-        $input_ip = config('atlas.test.eu');
-
-        $servers = array();
-        for ($i = 1; $i <= 255; $i++) {
-            array_push($servers, $input_ip[0] . '.' . $i);
+        if ($request->has('server')) {
+            $server = strtoupper($request->get('server'));
         }
 
-        $server_info = array();
-        foreach ($servers as $ip) {
-            try {
-                $Query->Connect($ip, $this->server_port, $this->server_timeout, $this->server_engine);
-                $server_info[$ip] = $Query->GetRules();
-            } catch (Exception $e) {
-                dump($e->getMessage());
+        $server_y = substr($server, 0, 1); // A
+        $server_x = substr($server, 1, strlen($server) - 1); // 15
+
+        $server_connection = $this->buildIps()[$server_y][$server_x];
+
+        dd($this->getPlayers($server_connection['ip'], $server_connection['port']));
+    }
+
+    /**
+     * @param string $region
+     * @param string $mode
+     *
+     * @return array
+     */
+    public function buildIps($region = 'eu', $mode = 'pvp')
+    {
+        $servers = config('atlas.servers.' . $region . '.' . $mode);
+
+        $servers_list = array();
+        foreach ($servers['ip'] as $ip) {
+            foreach ($servers['port'] as $port) {
+                array_push($servers_list, [
+                    'ip'   => $ip,
+                    'port' => $port,
+                ]);
             }
-            finally {
-                $Query->Disconnect();
+        }
+
+        $return     = array();
+        $itteration = 0;
+        for ($x = 1; $x <= 15; $x++) {
+            $character          = chr($x + 64);
+            $return[$character] = array();
+            for ($y = 1; $y <= 15; $y++) {
+                $return[$character][$y] = $servers_list[$itteration];
+                $itteration++;
             }
         }
-        //
-        $server_info_filtered = array_filter($server_info, function ($v, $k) {
-            return $v['ATLASFRIENDLYNAME_s'] === '[EU PVP] The Whale\'s Wrath';
-        }, ARRAY_FILTER_USE_BOTH);
 
-        $new_array = array();
-        foreach ($server_info_filtered as $ip => $info) {
-            $new_array[$ip] = $info['CUSTOMSERVERNAME_s'];
+        return $return;
+
+    }
+
+    /**
+     * @param string $ip
+     * @param string $port
+     *
+     * @return array|bool|string
+     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
+     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
+     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     */
+    public function getPlayers($ip = '46.251.238.59', $port = '57555')
+    {
+        $Query  = new SourceQuery();
+        $return = '';
+        try {
+            $Query->Connect($ip, $port, $this->server_timeout, $this->server_engine);
+            $return = $Query->GetPlayers();
+        } catch (Exception $e) {
+            dump($e->getMessage());
+        }
+        finally {
+            $Query->Disconnect();
         }
 
+        return $return;
+    }
 
-        file_put_contents(storage_path('logs/atlas/debug-' . Carbon::now()->timestamp), print_r($server_info, true));
-        file_put_contents(storage_path('logs/atlas/debug-' . Carbon::now()->timestamp . '-filtered'), print_r($server_info_filtered, true));
-        file_put_contents(storage_path('logs/atlas/debug-' . Carbon::now()->timestamp . '-newarray'), print_r($new_array, true));
-        dd($new_array);
+    public function getSurroundingServers($center = 'A1', $region = 'eu', $mode = 'pvp')
+    {
+        $size   = explode('x', config('atlas.servers.' . $region . '.' . $mode . '.size'));
+        $size_x = $size[0];
+        $size_y = $size[1];
+
+        
     }
 }
