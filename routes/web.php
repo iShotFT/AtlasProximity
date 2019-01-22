@@ -18,6 +18,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-//Route::get('/test', 'SourceQueryController@test')->name('test');
+Route::get('/test', 'SourceQueryController@test')->name('test');
 Route::get('/poll', 'SourceQueryController@serverGetPlayers')->name('poll');
 Route::get('/surround', 'SourceQueryController@getSurroundingServers')->name('surround');

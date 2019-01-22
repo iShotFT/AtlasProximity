@@ -2,20 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Http\Client\Exception;
-use xPaw\SourceQuery\SourceQuery;
 use Illuminate\Http\Request;
+use xPaw\SourceQuery\SourceQuery;
 
 class SourceQueryController extends Controller
 {
     protected $server_timeout = 1;
     protected $server_engine = SourceQuery::SOURCE;
 
+    public function test(Request $request)
+    {
+        $coord = new CoordinateController();
+        dd($coord->getSurrounding(), $this->buildIps());
+    }
+
     /**
      * @param \Illuminate\Http\Request $request
      * @param string                   $server
      *
+     * @return array|bool|string
      * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
      * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
      * @throws \xPaw\SourceQuery\Exception\TimeoutException
@@ -31,7 +37,7 @@ class SourceQueryController extends Controller
 
         $server_connection = $this->buildIps()[$server_y][$server_x];
 
-        dd($this->getPlayers($server_connection['ip'], $server_connection['port']));
+        return $this->getPlayers($server_connection['ip'], $server_connection['port']);
     }
 
     /**
@@ -43,6 +49,8 @@ class SourceQueryController extends Controller
     public function buildIps($region = 'eu', $mode = 'pvp')
     {
         $servers = config('atlas.servers.' . $region . '.' . $mode);
+        $max_x   = explode('x', $servers['size'])[0];
+        $max_y   = explode('x', $servers['size'])[1];
 
         $servers_list = array();
         foreach ($servers['ip'] as $ip) {
@@ -56,17 +64,16 @@ class SourceQueryController extends Controller
 
         $return     = array();
         $itteration = 0;
-        for ($x = 1; $x <= 15; $x++) {
+        for ($x = 1; $x <= $max_x; $x++) {
             $character          = chr($x + 64);
             $return[$character] = array();
-            for ($y = 1; $y <= 15; $y++) {
+            for ($y = 1; $y <= $max_y; $y++) {
                 $return[$character][$y] = $servers_list[$itteration];
                 $itteration++;
             }
         }
 
         return $return;
-
     }
 
     /**
@@ -93,14 +100,5 @@ class SourceQueryController extends Controller
         }
 
         return $return;
-    }
-
-    public function getSurroundingServers($center = 'A1', $region = 'eu', $mode = 'pvp')
-    {
-        $size   = explode('x', config('atlas.servers.' . $region . '.' . $mode . '.size'));
-        $size_x = $size[0];
-        $size_y = $size[1];
-
-        
     }
 }
