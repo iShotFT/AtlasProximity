@@ -13,7 +13,15 @@ class SourceQueryController extends Controller
 
     public function test(Request $request)
     {
-        $coord = new CoordinateController();
+        $server = 'B4';
+        if ($request->has('server')) {
+            $server = strtoupper($request->get('server'));
+        }
+
+        $coord = new CoordinateController([
+            1,
+            15,
+        ]);
         dd($coord->getSurrounding(), $this->buildIps());
     }
 

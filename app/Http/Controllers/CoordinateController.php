@@ -54,10 +54,14 @@ class CoordinateController extends Controller
         ],
     ];
 
-    public function __construct($x = 1, $y = 1, $size = '15x15')
+    public function __construct($input = 'A1', $size = '15x15')
     {
-        $this->x     = $x;
-        $this->y     = $y;
+        if (is_array($input)) {
+            list($this->x, $this->y) = $input;
+        } else {
+            list($this->x, $this->y) = self::textToXY($input);
+        }
+
         $this->x_max = explode('x', $size)[0];
         $this->y_max = explode('x', $size)[1];
     }
@@ -71,7 +75,7 @@ class CoordinateController extends Controller
             return [
                 'x'         => $x,
                 'y'         => $y,
-                'text'      => chr(($x) + 64) . ($y),
+                'text'      => self::xyToText($x, $y),
                 'direction' => $movement[2],
             ];
         }, $this->surroundings);
@@ -85,10 +89,29 @@ class CoordinateController extends Controller
             [
                 'x'         => $this->x,
                 'y'         => $this->y,
-                'text'      => chr($this->x + 64) . ($this->y),
+                'text'      => self::xyToText($this->x, $this->y),
                 'direction' => 'center',
             ],
         ];
+    }
+
+    static function textToXY($input = 'A1')
+    {
+        $server_x = substr($input, 0, 1); // A
+        $server_y = substr($input, 1, strlen($input) - 1); // 15
+
+        $server_x = ord($server_x) - 64;
+
+        return [
+            $server_x,
+            (int)$server_y,
+        ];
+    }
+
+    static function xyToText($x = 1, $y = 1)
+    {
+
+        return chr(($x) + 64) . ($y);
     }
 
 }
