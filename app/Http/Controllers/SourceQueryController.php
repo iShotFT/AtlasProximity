@@ -16,18 +16,16 @@ class SourceQueryController extends Controller
     protected static $server_timeout = 1;
     protected static $server_engine = SourceQuery::SOURCE;
 
-    public function test(Request $request)
-    {
-        $server = 'A1';
-        if ($request->has('server')) {
-            $server = strtoupper($request->get('server'));
-        }
-
-        dd($this->getCoordinatePlayersWithSurrounding($server));
-
-        $coord = new Coordinate($server);
-    }
-
+    /**
+     * @param string $coordinate
+     * @param string $region
+     * @param string $gamemode
+     *
+     * @return array
+     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
+     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
+     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     */
     public static function getCoordinatePlayersWithSurrounding($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
         $players = array();
@@ -152,33 +150,7 @@ class SourceQueryController extends Controller
 
         if ($servers) {
             // Only build the server list once every hour.
-            $return = Cache::remember('servers_list', 60, function () use ($servers) {
-                $max_x = explode('x', $servers['size'])[0];
-                $max_y = explode('x', $servers['size'])[1];
-
-                $servers_list = array();
-                foreach ($servers['ip'] as $ip) {
-                    foreach ($servers['port'] as $port) {
-                        array_push($servers_list, [
-                            'ip'   => $ip,
-                            'port' => $port,
-                        ]);
-                    }
-                }
-
-                $return    = array();
-                $iteration = 0;
-                for ($x = 1; $x <= $max_x; $x++) {
-                    $character          = chr($x + 64);
-                    $return[$character] = array();
-                    for ($y = 1; $y <= $max_y; $y++) {
-                        $return[$character][$y] = $servers_list[$iteration];
-                        $iteration++;
-                    }
-                }
-
-                return $return;
-            });
+            $return = self::getAllServers($region, $gamemode);
 
             // Calculate what entry of the server matrix we need
             list($coord_x, $coord_y) = Coordinate::textToSplit($coordinate); // ['B', '4']
@@ -187,5 +159,56 @@ class SourceQueryController extends Controller
         } else {
             abort(401, 'Configuration for this region (' . $region . ') / gamemode (' . $gamemode . ') missing!');
         }
+    }
+
+    public static function getAllServers($region = 'eu', $gamemode = 'pvp')
+    {
+        $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
+
+        $return = Cache::remember('servers_list', 60, function () use ($servers) {
+            $max_x = explode('x', $servers['size'])[0];
+            $max_y = explode('x', $servers['size'])[1];
+
+            $servers_list = array();
+            foreach ($servers['ip'] as $ip) {
+                foreach ($servers['port'] as $port) {
+                    array_push($servers_list, [
+                        'ip'   => $ip,
+                        'port' => $port,
+                    ]);
+                }
+            }
+
+            $return    = array();
+            $iteration = 0;
+            for ($x = 1; $x <= $max_x; $x++) {
+                $character          = chr($x + 64);
+                $return[$character] = array();
+                for ($y = 1; $y <= $max_y; $y++) {
+                    $return[$character][$y] = $servers_list[$iteration];
+                    $iteration++;
+                }
+            }
+
+            return $return;
+        });
+
+        return $return;
+    }
+
+    public function test(Request $request)
+    {
+        $start = Carbon::now()->timestamp;
+        self::getAllPlayersAllServers();
+        dd('end', Carbon::now()->timestamp - $start);
+    }
+
+    public static function getAllPlayersAllServers($region = 'eu', $gamemode = 'pvp')
+    {
+        foreach (self::getAllServers($region, $gamemode) as $x => $servers) {
+            foreach ($servers as $y => $server) {
+                self::getCoordinatePlayers($x . $y, $region, $gamemode);
+            }
+        };
     }
 }

@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="008ae525-1051-4256-ace4-92125ae72d8e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/83f23993-7981-4756-8c05-5c98e103d1e5.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/83f23993-7981-4756-8c05-5c98e103d1e5.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ApiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ApiController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SourceQueryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SourceQueryController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/js/bot/bot.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/bot/bot.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -52,11 +47,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SourceQueryController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="33" column="46" selection-start-line="33" selection-start-column="46" selection-end-line="33" selection-end-column="46" />
+            <state relative-caret-position="300">
+              <caret line="202" column="53" lean-forward="true" selection-start-line="202" selection-start-column="53" selection-end-line="202" selection-end-column="53" />
               <folding>
                 <element signature="e#40#67#0#PHP" expanded="true" />
               </folding>
@@ -65,19 +60,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="das://83f23993-7981-4756-8c05-5c98e103d1e5/schema/homestead/table/player_pings">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ApiController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="286">
-              <caret line="26" column="119" lean-forward="true" selection-start-line="26" selection-start-column="119" selection-end-line="26" selection-end-column="119" />
+              <caret line="26" column="119" selection-start-line="26" selection-start-column="119" selection-end-line="26" selection-end-column="119" />
               <folding>
                 <element signature="e#40#59#0#PHP" expanded="true" />
               </folding>
@@ -89,16 +75,7 @@
         <entry file="file://$PROJECT_DIR$/_ide_helper.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="227">
-              <caret line="15674" column="63" lean-forward="true" selection-start-line="15674" selection-start-column="63" selection-end-line="15674" selection-end-column="63" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="1675" column="5" lean-forward="true" selection-start-line="1675" selection-start-column="5" selection-end-line="1675" selection-end-column="5" />
+              <caret line="15674" column="63" selection-start-line="15674" selection-start-column="63" selection-end-line="15674" selection-end-column="63" />
             </state>
           </provider>
         </entry>
@@ -142,8 +119,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/js/bot/bot.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="460">
-              <caret line="122" column="17" lean-forward="true" selection-start-line="122" selection-start-column="17" selection-end-line="122" selection-end-column="17" />
+            <state relative-caret-position="360">
+              <caret line="128" column="71" selection-start-line="128" selection-start-column="71" selection-end-line="128" selection-end-column="71" />
             </state>
           </provider>
         </entry>
@@ -183,11 +160,11 @@
         <option value="$PROJECT_DIR$/deploy.php" />
         <option value="$PROJECT_DIR$/app/PlayerPing.php" />
         <option value="$PROJECT_DIR$/database/migrations/2019_01_23_191958_create_player_pings_table.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/SourceQueryController.php" />
         <option value="$PROJECT_DIR$/routes/api.php" />
         <option value="$PROJECT_DIR$/resources/js/bot/config.json" />
-        <option value="$PROJECT_DIR$/resources/js/bot/bot.js" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/ApiController.php" />
+        <option value="$PROJECT_DIR$/resources/js/bot/bot.js" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/SourceQueryController.php" />
       </list>
     </option>
   </component>
@@ -352,12 +329,6 @@
               <item name="AtlasProximity" type="b2602c69:ProjectViewProjectNode" />
               <item name="AtlasProximity" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="Classes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="AtlasProximity" type="b2602c69:ProjectViewProjectNode" />
-              <item name="AtlasProximity" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="Http" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -442,7 +413,7 @@
       <workItem from="1547998283540" duration="8355000" />
       <workItem from="1548092114610" duration="9000" />
       <workItem from="1548092141095" duration="40235000" />
-      <workItem from="1548271046196" duration="2078000" />
+      <workItem from="1548271046196" duration="3636000" />
     </task>
     <task id="LOCAL-00001" summary="5">
       <created>1548136888662</created>
@@ -507,11 +478,18 @@
       <option name="project" value="LOCAL" />
       <updated>1548271155255</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="PlayerPing + !find">
+      <created>1548273180751</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1548273180751</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="50677000" />
+    <option name="totallyTimeSpent" value="52235000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -554,7 +532,8 @@
     <MESSAGE value="gitignore" />
     <MESSAGE value="test" />
     <MESSAGE value="Bot changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bot changes" />
+    <MESSAGE value="PlayerPing + !find" />
+    <option name="LAST_COMMIT_MESSAGE" value="PlayerPing + !find" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.phpstorm.meta.php">
@@ -819,17 +798,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/bot/bot.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
-          <caret line="122" column="17" lean-forward="true" selection-start-line="122" selection-start-column="17" selection-end-line="122" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/_ide_helper.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
-          <caret line="15674" column="63" lean-forward="true" selection-start-line="15674" selection-start-column="63" selection-end-line="15674" selection-end-column="63" />
+          <caret line="15674" column="63" selection-start-line="15674" selection-start-column="63" selection-end-line="15674" selection-end-column="63" />
         </state>
       </provider>
     </entry>
@@ -837,16 +809,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="207">
           <caret line="1675" column="5" lean-forward="true" selection-start-line="1675" selection-start-column="5" selection-end-line="1675" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SourceQueryController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="33" column="46" selection-start-line="33" selection-start-column="46" selection-end-line="33" selection-end-column="46" />
-          <folding>
-            <element signature="e#40#67#0#PHP" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -860,9 +822,26 @@
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ApiController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="286">
-          <caret line="26" column="119" lean-forward="true" selection-start-line="26" selection-start-column="119" selection-end-line="26" selection-end-column="119" />
+          <caret line="26" column="119" selection-start-line="26" selection-start-column="119" selection-end-line="26" selection-end-column="119" />
           <folding>
             <element signature="e#40#59#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/bot/bot.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="128" column="71" selection-start-line="128" selection-start-column="71" selection-end-line="128" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SourceQueryController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="202" column="53" lean-forward="true" selection-start-line="202" selection-start-column="53" selection-end-line="202" selection-end-column="53" />
+          <folding>
+            <element signature="e#40#67#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>

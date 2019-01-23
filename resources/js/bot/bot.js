@@ -29,6 +29,14 @@ client.on('message', msg => {
     const args = msg.content.slice(config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
 
+    if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
+        msg.channel.send('Processing... beep boop...').then((msg) => {
+            msg.edit(config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp] --- Show the population of the given server and all servers around it\n' + config.prefix + 'find <NAME:iShot> --- Show the latest information of this player (STEAM NAME ONLY)');
+        });
+
+        return false;
+    }
+
     if (command === 'pop' || command === 'population') {
         msg.channel.send('Processing... beep boop...').then((msg) => {
             // If no arguments, send back the usage of the command
@@ -105,7 +113,7 @@ client.on('message', msg => {
 
                 console.log(response.data);
                 if (response.data.length) {
-                    array.push(['Server', 'Username', '']);
+                    array.push(['Server', 'Username', 'Last detected']);
                     for (var player in response.data) {
                         if (!response.data.hasOwnProperty(player)) {
                             continue;
