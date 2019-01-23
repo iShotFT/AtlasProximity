@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'bot'     => [
+        'token'      => env('DISCORD_BOT_TOKEN', null),
+        'permission' => [
+            'integer' => env('DISCORD_BOT_PERMISSION_INTEGER', null),
+        ],
+    ],
     'servers' => [
         'eu' => [
             'pvp' => [

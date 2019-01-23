@@ -16,41 +16,49 @@ class Coordinate
             -1,
             0,
             'west',
+            '2B05',
         ],
         [
             -1,
             -1,
             'northwest',
+            '2196',
         ],
         [
             0,
             -1,
             'north',
+            '2B06',
         ],
         [
             1,
             -1,
             'northeast',
+            '2197',
         ],
         [
             1,
             0,
             'east',
+            '27A1',
         ],
         [
             1,
             1,
             'southeast',
+            '2198',
         ],
         [
             0,
             1,
             'south',
+            '2B07',
         ],
         [
             -1,
             1,
             'southwest',
+            '2199',
         ],
     ];
 
@@ -118,6 +126,7 @@ class Coordinate
                 'y'         => $y,
                 'text'      => self::xyToText($x, $y),
                 'direction' => $movement[2],
+                'unicode'   => $movement[3],
             ];
         }, $this->surroundings);
 
@@ -145,6 +154,7 @@ class Coordinate
             'y'         => $this->y,
             'text'      => self::xyToText($this->x, $this->y),
             'direction' => 'center',
+            'unicode'   => '2022',
         ];
     }
 }

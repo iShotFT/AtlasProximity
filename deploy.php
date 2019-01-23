@@ -8,7 +8,7 @@ require 'recipe/laravel.php';
 set('application', 'AtlasProximity');
 
 // Project repository
-set('repository', 'https://github.com/iShotFT/AtlasProximity.git');
+set('repository', 'git@github.com:iShotFT/AtlasProximity.git');
 
 // [Optional] Allocate tty for git clone. Default value is false.
 set('git_tty', true);

@@ -12,8 +12,8 @@ use xPaw\SourceQuery\SourceQuery;
 
 class SourceQueryController extends Controller
 {
-    protected $server_timeout = 1;
-    protected $server_engine = SourceQuery::SOURCE;
+    protected static $server_timeout = 1;
+    protected static $server_engine = SourceQuery::SOURCE;
 
     public function test(Request $request)
     {
@@ -27,12 +27,14 @@ class SourceQueryController extends Controller
         $coord = new Coordinate($server);
     }
 
-    public function getCoordinatePlayersWithSurrounding($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
+    public static function getCoordinatePlayersWithSurrounding($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
         $players = array();
         // First get the center server players
-        $information          = $this->getCoordinatePlayers($coordinate, $region, $gamemode);
-        $players[$coordinate] = $information;
+        $information              = self::getCoordinatePlayers($coordinate, $region, $gamemode);
+        $information['direction'] = 'center';
+        $information['unicode']   = '00B7';
+        $players[$coordinate]     = $information;
 
         // Get players for all surrounding servers
         $center = new Coordinate($coordinate);
@@ -41,7 +43,9 @@ class SourceQueryController extends Controller
             // y
             // text
             // direction
-            $information                  = $this->getCoordinatePlayers($coordinate['text'], $region, $gamemode);
+            $information                  = self::getCoordinatePlayers($coordinate['text'], $region, $gamemode);
+            $information['direction']     = $coordinate['direction'];
+            $information['unicode']       = $coordinate['unicode'];
             $players[$coordinate['text']] = $information;
         }
 
@@ -57,29 +61,36 @@ class SourceQueryController extends Controller
      * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
      * @throws \xPaw\SourceQuery\Exception\TimeoutException
      */
-    public function getCoordinatePlayers($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
+    public static function getCoordinatePlayers($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
         $Query  = new SourceQuery();
         $return = '';
 
         // Get the IP for this server
-        list ($ip, $port) = array_values($this->getServerIp($coordinate, $region, $gamemode));
+        list ($ip, $port) = array_values(self::getServerIp($coordinate, $region, $gamemode));
 
         // First check if server wasn't polled already in the past minute
         if ($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinute())->first()) {
             $players = json_decode($ping->info, true);
             $data    = [
                 'type' => 'database',
-                'age'  => $ping->created_at->timestamp,
+                'age'  => [
+                    'timestamp' => $ping->created_at->timestamp,
+                    'seconds'   => Carbon::now()->timestamp - $ping->created_at->timestamp,
+                ],
             ];
         } else {
             // No database record found younger than a minute. Pull new information
             try {
-                $Query->Connect($ip, $port, $this->server_timeout, $this->server_engine);
+                $Query->Connect($ip, $port, self::$server_timeout, self::$server_engine);
                 $players = $Query->GetPlayers();
-                $data    = [
+
+                $data = [
                     'type' => 'live',
-                    'age'  => Carbon::now()->timestamp,
+                    'age'  => [
+                        'timestamp' => Carbon::now()->timestamp,
+                        'seconds'   => 0,
+                    ],
                 ];
 
                 // Store pulled information into the DB
@@ -115,12 +126,12 @@ class SourceQueryController extends Controller
 
         return [
             'players' => $players,
-            'count'   => (!is_null($players) ? count($players) : 0),
+            'count'   => (is_array($players) ? count($players) : 0),
             'data'    => $data,
         ];
     }
 
-    public function getServerIp($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
+    public static function getServerIp($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
         $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
 
