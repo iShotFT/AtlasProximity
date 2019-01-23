@@ -53,7 +53,7 @@ client.on('message', msg => {
             }
 
             // Poll the API for the information requested
-            axios.get('/api/population', {
+            axios.get(config.url + '/api/population', {
                 params: {
                     server: server,
                     region: region,
