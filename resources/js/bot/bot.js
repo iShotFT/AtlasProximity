@@ -8,7 +8,8 @@ const client = new Discord.Client();
 
 client.on('ready', () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
-    client.user.setActivity(`Serving ${client.guilds.size} servers`);
+    // setActivity like 'Playing servering 1 servers'
+    // client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
 
 client.on('message', msg => {
@@ -72,6 +73,7 @@ client.on('message', msg => {
                     array.push([server, response.data[server].count, response.data[server].direction, String.fromCodePoint('0x' + response.data[server].unicode)]);
                 }
 
+                console.log('Sent a message to ' + msg.guild.name);
                 msg.edit('\n```' + table(array) + '```');
             });
         });
