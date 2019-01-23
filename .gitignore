@@ -2,6 +2,7 @@
 /public/hot
 /public/storage
 /storage/*.key
+/resources/js/bot/config.json
 /vendor
 .env
 .phpunit.result.cache
