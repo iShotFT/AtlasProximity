@@ -16,6 +16,7 @@ set('git_tty', true);
 // Shared files/dirs between deploys 
 add('shared_files', [
     '.env',
+    'resources/js/bot/config.json',
 ]);
 
 add('shared_dirs', [
@@ -49,6 +50,10 @@ task('reload:php-fpm', function () {
     run('sudo /usr/sbin/service php7.2-fpm reload');
 });
 
+task('npm:install', function () {
+    run('cd {{release_path}} && npm install');
+});
+
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
 
@@ -57,5 +62,6 @@ after('deploy:failed', 'deploy:unlock');
 before('deploy:symlink', 'artisan:migrate');
 
 after('deploy', 'reload:php-fpm');
+after('deploy', 'npm:install');
 after('rollback', 'reload:php-fpm');
 
