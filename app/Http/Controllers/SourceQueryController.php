@@ -32,7 +32,7 @@ class SourceQueryController extends Controller
         $players = array();
         // First get the center server players
         $information              = self::getCoordinatePlayers($coordinate, $region, $gamemode);
-        $information['direction'] = 'center';
+        $information['direction'] = '';
         $information['unicode']   = '00B7';
         $players[$coordinate]     = $information;
 
