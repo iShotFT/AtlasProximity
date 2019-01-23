@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Http\Client\Exception;
+use App\Classes\Coordinate;
+use App\Ping;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use xPaw\SourceQuery\Exception\TimeoutException;
 use xPaw\SourceQuery\SourceQuery;
 
 class SourceQueryController extends Controller
@@ -13,75 +17,35 @@ class SourceQueryController extends Controller
 
     public function test(Request $request)
     {
-        $server = 'B4';
+        $server = 'A1';
         if ($request->has('server')) {
             $server = strtoupper($request->get('server'));
         }
 
-        $coord = new CoordinateController([
-            1,
-            15,
-        ]);
-        dd($coord->getSurrounding(), $this->buildIps());
+        dd($this->getCoordinatePlayersWithSurrounding($server));
+
+        $coord = new Coordinate($server);
     }
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @param string                   $server
-     *
-     * @return array|bool|string
-     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
-     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
-     * @throws \xPaw\SourceQuery\Exception\TimeoutException
-     */
-    public function serverGetPlayers(Request $request, $server = 'A1')
+    public function getCoordinatePlayersWithSurrounding($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
-        if ($request->has('server')) {
-            $server = strtoupper($request->get('server'));
+        $players = array();
+        // First get the center server players
+        $information          = $this->getCoordinatePlayers($coordinate, $region, $gamemode);
+        $players[$coordinate] = $information;
+
+        // Get players for all surrounding servers
+        $center = new Coordinate($coordinate);
+        foreach ($center->getSurrounding() as $coordinate) {
+            // x
+            // y
+            // text
+            // direction
+            $information                  = $this->getCoordinatePlayers($coordinate['text'], $region, $gamemode);
+            $players[$coordinate['text']] = $information;
         }
 
-        $server_y = substr($server, 0, 1); // A
-        $server_x = substr($server, 1, strlen($server) - 1); // 15
-
-        $server_connection = $this->buildIps()[$server_y][$server_x];
-
-        return $this->getPlayers($server_connection['ip'], $server_connection['port']);
-    }
-
-    /**
-     * @param string $region
-     * @param string $mode
-     *
-     * @return array
-     */
-    public function buildIps($region = 'eu', $mode = 'pvp')
-    {
-        $servers = config('atlas.servers.' . $region . '.' . $mode);
-        $max_x   = explode('x', $servers['size'])[0];
-        $max_y   = explode('x', $servers['size'])[1];
-
-        $servers_list = array();
-        foreach ($servers['ip'] as $ip) {
-            foreach ($servers['port'] as $port) {
-                array_push($servers_list, [
-                    'ip'   => $ip,
-                    'port' => $port,
-                ]);
-            }
-        }
-
-        $return     = array();
-        $itteration = 0;
-        for ($x = 1; $x <= $max_x; $x++) {
-            $character          = chr($x + 64);
-            $return[$character] = array();
-            for ($y = 1; $y <= $max_y; $y++) {
-                $return[$character][$y] = $servers_list[$itteration];
-                $itteration++;
-            }
-        }
-
-        return $return;
+        return $players;
     }
 
     /**
@@ -93,20 +57,109 @@ class SourceQueryController extends Controller
      * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
      * @throws \xPaw\SourceQuery\Exception\TimeoutException
      */
-    public function getPlayers($ip = '46.251.238.59', $port = '57555')
+    public function getCoordinatePlayers($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
         $Query  = new SourceQuery();
         $return = '';
-        try {
-            $Query->Connect($ip, $port, $this->server_timeout, $this->server_engine);
-            $return = $Query->GetPlayers();
-        } catch (Exception $e) {
-            dump($e->getMessage());
-        }
-        finally {
-            $Query->Disconnect();
+
+        // Get the IP for this server
+        list ($ip, $port) = array_values($this->getServerIp($coordinate, $region, $gamemode));
+
+        // First check if server wasn't polled already in the past minute
+        if ($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinute())->first()) {
+            $players = json_decode($ping->info, true);
+            $data    = [
+                'type' => 'database',
+                'age'  => $ping->created_at->timestamp,
+            ];
+        } else {
+            // No database record found younger than a minute. Pull new information
+            try {
+                $Query->Connect($ip, $port, $this->server_timeout, $this->server_engine);
+                $players = $Query->GetPlayers();
+                $data    = [
+                    'type' => 'live',
+                    'age'  => Carbon::now()->timestamp,
+                ];
+
+                // Store pulled information into the DB
+                Ping::create([
+                    'ip'          => $ip,
+                    'port'        => $port,
+                    'region'      => $region,
+                    'gamemode'    => $gamemode,
+                    'coordinates' => $coordinate,
+                    'online'      => 1,
+                    'players'     => (is_array($players) ? sizeof($players) : null),
+                    'info'        => json_encode($players, true),
+                ]);
+            } catch (TimeoutException $e) {
+                // Failed to poll the server. Offline?
+                Ping::create([
+                    'ip'          => $ip,
+                    'port'        => $port,
+                    'region'      => $region,
+                    'gamemode'    => $gamemode,
+                    'coordinates' => $coordinate,
+                    'online'      => 0,
+                    'players'     => null,
+                    'info'        => null,
+                ]);
+
+                $players = null;
+            }
+            finally {
+                $Query->Disconnect();
+            }
         }
 
-        return $return;
+        return [
+            'players' => $players,
+            'count'   => (!is_null($players) ? count($players) : 0),
+            'data'    => $data,
+        ];
+    }
+
+    public function getServerIp($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
+    {
+        $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
+
+        if ($servers) {
+            // Only build the server list once every hour.
+            $return = Cache::remember('servers_list', 60, function () use ($servers) {
+                $max_x = explode('x', $servers['size'])[0];
+                $max_y = explode('x', $servers['size'])[1];
+
+                $servers_list = array();
+                foreach ($servers['ip'] as $ip) {
+                    foreach ($servers['port'] as $port) {
+                        array_push($servers_list, [
+                            'ip'   => $ip,
+                            'port' => $port,
+                        ]);
+                    }
+                }
+
+                $return    = array();
+                $iteration = 0;
+                for ($x = 1; $x <= $max_x; $x++) {
+                    $character          = chr($x + 64);
+                    $return[$character] = array();
+                    for ($y = 1; $y <= $max_y; $y++) {
+                        $return[$character][$y] = $servers_list[$iteration];
+                        $iteration++;
+                    }
+                }
+
+                return $return;
+            });
+
+            // Calculate what entry of the server matrix we need
+            list($coord_x, $coord_y) = Coordinate::textToSplit($coordinate); // ['B', '4']
+
+            return $return[$coord_x][$coord_y];
+        } else {
+            abort(401, 'Configuration for this region (' . $region . ') / gamemode (' . $gamemode . ') missing!');
+        }
     }
 }

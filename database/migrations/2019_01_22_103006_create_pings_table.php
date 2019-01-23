@@ -21,7 +21,7 @@ class CreatePingsTable extends Migration
             $table->string('gamemode', 3)->default('pvp');
             $table->string('coordinates', 3);
             $table->boolean('online')->default(1);
-            $table->integer('players')->default(0);
+            $table->integer('players')->nullable();
             $table->text('info')->nullable();
             $table->timestamps();
         });
