@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\Coordinate;
 use App\Ping;
+use App\PlayerPing;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -104,6 +105,20 @@ class SourceQueryController extends Controller
                     'players'     => (is_array($players) ? sizeof($players) : null),
                     'info'        => json_encode($players, true),
                 ]);
+
+                // Store the players in the database
+                if (is_array($players) && count($players)) {
+                    foreach ($players as $player) {
+                        PlayerPing::create([
+                            'ip'          => $ip,
+                            'player'      => $player['Name'],
+                            'port'        => $port,
+                            'region'      => $region,
+                            'gamemode'    => $gamemode,
+                            'coordinates' => $coordinate,
+                        ]);
+                    }
+                }
             } catch (TimeoutException $e) {
                 // Failed to poll the server. Offline?
                 Ping::create([
