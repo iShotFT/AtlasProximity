@@ -34,7 +34,7 @@ client.on('message', msg => {
 
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
         msg.channel.send('Processing... beep boop...').then((msg) => {
-            msg.edit(config.prefix + '```pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n --- Show the population of the given server and all servers around it\n\n' + config.prefix + 'find <NAME:iShot>\n --- Show the latest information of this player (STEAM NAME ONLY)```');
+            msg.edit('```' + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n --- Show the population of the given server and all servers around it\n\n' + config.prefix + 'find <NAME:iShot>\n --- Show the latest information of this player (STEAM NAME ONLY)```');
         });
 
         return false;
@@ -224,15 +224,21 @@ client.on('message', msg => {
 client.login(config.token);
 
 // ECHO
-this.io = require('socket.io-client');
-this.socket = this.io.connect(config.url + ':6001');
-
-this.socket.on('.tracked.player.moved', function (event, data) {
-    console.log(event);
-    console.log(data);
+const io = require('socket.io-client');
+this.Echo = new Echo({
+    broadcaster: 'socket.io',
+    host: config.url + ':' + config.socketport,
+    client: io,
 });
 
-this.socket.on('tracked.player.moved', function (event, data) {
-    console.log(event);
-    console.log(data);
-});
+this.Echo.channel(`public`)
+    .listen('.tracked.player.moved', (e) => {
+        // { player: 'elt',
+        //     from: 'b4',
+        //     to: 'A1',
+        //     guildid: '323060582419005440',
+        //     channelid: '537654767187525638',
+        //     socket: null }
+        console.log('WebSocket: [TRACKING] Sent message to ' + e.guildid + ' about player ' + e.player);
+        client.channels.get(e.channelid).send('```WARNING! Tracked player ' + e.player + ' has moved from ' + e.from + ' to ' + e.to + '```');
+    });

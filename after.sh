@@ -7,3 +7,7 @@
 # If you have user-specific configurations you would like
 # to apply, you may also create user-customizations.sh,
 # which will be run after this script.
+
+sudo curl -LO https://deployer.org/deployer.phar
+sudo mv deployer.phar /usr/local/bin/dep
+sudo chmod +x /usr/local/bin/dep

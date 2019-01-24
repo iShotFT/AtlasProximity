@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\SourceQueryController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -27,6 +28,10 @@ class Kernel extends ConsoleKernel
     {
         $schedule->call(function () {
             SourceQueryController::getAllPlayersAllServers('eu', 'pvp');
+        })->everyFiveMinutes();
+
+        $schedule->call(function () {
+            ApiController::track();
         })->everyFiveMinutes();
     }
 
