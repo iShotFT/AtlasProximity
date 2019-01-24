@@ -33,7 +33,7 @@ client.on('message', msg => {
 
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
         msg.channel.send('Processing... beep boop...').then((msg) => {
-            msg.edit(config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp] --- Show the population of the given server and all servers around it\n' + config.prefix + 'find <NAME:iShot> --- Show the latest information of this player (STEAM NAME ONLY)');
+            msg.edit(config.prefix + '```pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n --- Show the population of the given server and all servers around it\n\n' + config.prefix + 'find <NAME:iShot>\n --- Show the latest information of this player (STEAM NAME ONLY)```');
         });
 
         return false;
