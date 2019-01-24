@@ -18,6 +18,7 @@ set('git_tty', true);
 add('shared_files', [
     '.env',
     'resources/js/bot/config.json',
+    'laravel-echo-server.json',
 ]);
 
 add('shared_dirs', [
