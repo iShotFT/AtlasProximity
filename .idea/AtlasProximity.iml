@@ -14,6 +14,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/cache/hierarchical-cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/cache/taggable-cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/deployer/recipes" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dnoegel/php-xdg-base-dir" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/dbal" />

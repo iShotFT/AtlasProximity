@@ -3,6 +3,7 @@
 namespace Deployer;
 
 require 'recipe/laravel.php';
+require 'recipe/npm.php';
 
 // Project name
 set('application', 'AtlasProximity');
@@ -50,18 +51,12 @@ task('reload:php-fpm', function () {
     run('sudo /usr/sbin/service php7.2-fpm reload');
 });
 
-task('npm:install', function () {
-    run('cd {{release_path}} && npm install');
-});
-
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
 
 // Migrate database before symlink new release.
-
 before('deploy:symlink', 'artisan:migrate');
-
+after('deploy:update_code', 'npm:install');
 after('deploy', 'reload:php-fpm');
-after('deploy', 'npm:install');
 after('rollback', 'reload:php-fpm');
 

@@ -138,6 +138,7 @@
       <path value="$PROJECT_DIR$/vendor/wyrihaximus/react-guzzle-psr7" />
       <path value="$PROJECT_DIR$/vendor/wyrihaximus/react-guzzle-http-client" />
       <path value="$PROJECT_DIR$/vendor/TrafficCophp/ByteBuffer" />
+      <path value="$PROJECT_DIR$/vendor/deployer/recipes" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />
