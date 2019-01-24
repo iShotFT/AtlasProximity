@@ -51,6 +51,10 @@ task('reload:php-fpm', function () {
     run('sudo /usr/sbin/service php7.2-fpm reload');
 });
 
+task('reload:atlascctv', function () {
+    run('sudo /bin/systemctl restart atlascctv');
+});
+
 set('bin/npm', function () {
     return run('which npm');
 });
@@ -71,5 +75,7 @@ after('deploy:failed', 'deploy:unlock');
 before('deploy:symlink', 'artisan:migrate');
 after('deploy:update_code', 'npm:install');
 after('deploy', 'reload:php-fpm');
+after('deploy', 'reload:atlascctv');
 after('rollback', 'reload:php-fpm');
+after('rollback', 'reload:atlascctv');
 
