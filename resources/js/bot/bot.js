@@ -29,6 +29,8 @@ client.on('message', msg => {
     const args = msg.content.slice(config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
 
+    console.log('Message received from server ' + msg.guild.name + ', user' + msg.client.name + ':\n >' + msg.content);
+
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
         msg.channel.send('Processing... beep boop...').then((msg) => {
             msg.edit(config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp] --- Show the population of the given server and all servers around it\n' + config.prefix + 'find <NAME:iShot> --- Show the latest information of this player (STEAM NAME ONLY)');
@@ -63,6 +65,7 @@ client.on('message', msg => {
                 gamemode = 'pvp';
             }
 
+            var ogserver = server;
             // Poll the API for the information requested
             axios.get(config.url + '/api/population', {
                 params: {
@@ -73,18 +76,35 @@ client.on('message', msg => {
             }).then(function (response) {
                 // var message = '';
                 var array = [];
+                var order = [[2, 3, 4], [1, 0, 5], [8, 7, 6]];
 
-                array.push(['Server', 'Players', 'Direction', '']);
-                for (var server in response.data) {
-                    if (!response.data.hasOwnProperty(server)) {
+                for (var row in order) {
+                    if (!order.hasOwnProperty(row)) {
                         continue;
                     }
 
-                    array.push([server, response.data[server].count, response.data[server].direction, String.fromCodePoint('0x' + response.data[server].unicode)]);
+                    var headers = [];
+                    var items = [];
+                    for (var column in order[row]) {
+                        if (!order[row].hasOwnProperty(column)) {
+                            continue;
+                        }
+
+                        var server = Object.keys(response.data)[order[row][column]];
+                        headers.push(server);
+                        items.push(response.data[server].count);
+                    }
+
+                    array.push(headers);
+                    array.push(items);
+                    if (row < 2) {
+                        array.push(['', '', '']);
+                    }
                 }
 
-                console.log('Sent a message to ' + msg.guild.name);
-                msg.edit('\n```' + table(array) + '```');
+                var message = '\nThese are the amount of players on and around ' + ogserver + '\n```' + table(array) + '```';
+                console.log('Sent a message to ' + msg.guild.name + ':' + message);
+                msg.edit(message);
             });
         });
 
@@ -100,7 +120,7 @@ client.on('message', msg => {
                 return false;
             }
 
-            let [username] = args;
+            let [username] = [args.join(' ')];
 
             // Poll the API for the information requested
             axios.get(config.url + '/api/find', {
@@ -110,24 +130,26 @@ client.on('message', msg => {
             }).then(function (response) {
                 // var message = '';
                 var array = [];
+                var message = '';
 
-                console.log(response.data);
                 if (response.data.length) {
-                    array.push(['Server', 'Username', 'Last detected']);
+                    array.push(['Server', 'Username', 'Last seen']);
                     for (var player in response.data) {
                         if (!response.data.hasOwnProperty(player)) {
                             continue;
                         }
 
                         // 2019-01-23 19:34:39
-                        array.push([response.data[player].coordinates, response.data[player].player, moment(response.data[player].created_at, 'YYYY-MM-DD HH:mm:ss').fromNow()]);
+                        array.push([response.data[player].coordinates, response.data[player].player, moment(response.data[player].updated_at, 'YYYY-MM-DD HH:mm:ss').fromNow()]);
                     }
 
-                    console.log('Sent a message to ' + msg.guild.name);
-                    msg.edit('\n```' + table(array) + '```');
+                    message = '\nWe found the following information for player ' + username + ' (limited to 5 last entries)\n```' + table(array) + '```';
+                    console.log('Sent a message to ' + msg.guild.name + ':' + message);
+                    msg.edit(message);
                 } else {
-                    console.log('Sent a message to ' + msg.guild.name);
-                    msg.edit('\nNo players found with this name');
+                    message = '\n```> No players found with this name```';
+                    console.log('Sent a message to ' + msg.guild.name + ':' + message);
+                    msg.edit(message);
                 }
             });
         });
@@ -135,33 +157,5 @@ client.on('message', msg => {
         return false;
     }
 });
-
-function timeSince(date) {
-
-    var seconds = Math.floor((new Date() - date) / 1000);
-
-    var interval = Math.floor(seconds / 31536000);
-
-    if (interval > 1) {
-        return interval + ' years';
-    }
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) {
-        return interval + ' months';
-    }
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) {
-        return interval + ' days';
-    }
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) {
-        return interval + ' hours';
-    }
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) {
-        return interval + ' minutes';
-    }
-    return Math.floor(seconds) + ' seconds';
-}
 
 client.login(config.token);

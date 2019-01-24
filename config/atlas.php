@@ -1,13 +1,18 @@
 <?php
 
 return [
-    'bot'     => [
+    'settings' => [
+        'cache' => [
+            'lifetime' => env('ATLAS_CACHE_LIFETIME_MINUTES', 5),
+        ],
+    ],
+    'bot'      => [
         'token'      => env('DISCORD_BOT_TOKEN', null),
         'permission' => [
             'integer' => env('DISCORD_BOT_PERMISSION_INTEGER', null),
         ],
     ],
-    'servers' => [
+    'servers'  => [
         'eu' => [
             'pvp' => [
                 'ip'   => [

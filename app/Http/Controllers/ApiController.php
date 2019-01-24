@@ -24,12 +24,12 @@ class ApiController extends Controller
             'username' => 'required|string|min:2',
         ]);
 
-        $found = PlayerPing::where('player', 'LIKE', $request->get('username') . '%')->orderByDesc('created_at')->first([
+        $found = PlayerPing::where('player', '=', $request->get('username'))->orderByDesc('updated_at')->limit(5)->get([
             'player',
             'coordinates',
-            'created_at',
+            'updated_at',
         ]);
 
-        return response()->json(($found ? [$found->toArray()] : []));
+        return response()->json(($found ? $found->toArray() : []));
     }
 }

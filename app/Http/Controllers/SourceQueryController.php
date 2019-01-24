@@ -69,7 +69,7 @@ class SourceQueryController extends Controller
         list ($ip, $port) = array_values(self::getServerIp($coordinate, $region, $gamemode));
 
         // First check if server wasn't polled already in the past minute
-        if ($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinute())->first()) {
+        if ($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinutes(config('atlas.settings.cache.lifetime', 5)))->first()) {
             $players = json_decode($ping->info, true);
             $data    = [
                 'type' => 'database',
@@ -106,15 +106,29 @@ class SourceQueryController extends Controller
 
                 // Store the players in the database
                 if (is_array($players) && count($players)) {
+                    $to_be_updated = array();
                     foreach ($players as $player) {
-                        PlayerPing::create([
-                            'ip'          => $ip,
-                            'player'      => $player['Name'],
-                            'port'        => $port,
-                            'region'      => $region,
-                            'gamemode'    => $gamemode,
-                            'coordinates' => $coordinate,
-                        ]);
+                        if (!empty($player['Name']) && $player['Name'] !== "123") {
+                            $playerping = PlayerPing::firstOrNew([
+                                'player'      => $player['Name'],
+                                'region'      => $region,
+                                'gamemode'    => $gamemode,
+                                'coordinates' => $coordinate,
+                                'ip'          => $ip,
+                                'port'        => $port,
+                            ]);
+
+                            if ($playerping->id) {
+                                array_push($to_be_updated, $playerping->id);
+                            } else {
+                                $playerping->save();
+                            }
+                        }
+                    }
+
+                    $now = Carbon::now();
+                    if (count($to_be_updated)) {
+                        PlayerPing::whereIn('id', $to_be_updated)->update(['updated_at' => $now]);
                     }
                 }
             } catch (TimeoutException $e) {
