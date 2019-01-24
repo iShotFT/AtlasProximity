@@ -3,7 +3,7 @@
 namespace Deployer;
 
 require 'recipe/laravel.php';
-require 'recipe/npm.php';
+//require 'recipe/npm.php';
 
 // Project name
 set('application', 'AtlasProximity');
@@ -49,6 +49,19 @@ task('build', function () {
 
 task('reload:php-fpm', function () {
     run('sudo /usr/sbin/service php7.2-fpm reload');
+});
+
+set('bin/npm', function () {
+    return run('which npm');
+});
+
+task('npm:install', function () {
+    if (has('previous_release')) {
+        if (test('[ -d {{previous_release}}/node_modules ]')) {
+            run('cp -R {{previous_release}}/node_modules {{release_path}}');
+        }
+    }
+    run("cd {{release_path}} && {{bin/npm}} install");
 });
 
 // [Optional] if deploy fails automatically unlock.
