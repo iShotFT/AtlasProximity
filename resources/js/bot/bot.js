@@ -11,8 +11,7 @@ const Echo = require('laravel-echo');
 
 client.on('ready', () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
-    // setActivity like 'Playing servering 1 servers'
-    // client.user.setActivity(`Serving ${client.guilds.size} servers`);
+    client.user.setActivity(`!help | !track | !pop | !grid | !players`);
 });
 
 client.on('message', msg => {
@@ -34,13 +33,123 @@ client.on('message', msg => {
 
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
         msg.channel.send('Processing... beep boop...').then((msg) => {
-            msg.edit('```' + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n --- Show the population of the given server and all servers around it\n\n' + config.prefix + 'find <NAME:iShot>\n --- Show the latest information of this player (STEAM NAME ONLY)```');
+            msg.edit('```---\n' + config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show a list of usernames in the given server and their playtime\n\n---\n' + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it in a list with directions\n\n---\n' + config.prefix + 'grid <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it formatted as a table\n\n---\n' + config.prefix + 'find <NAME:iShot>\n---\n> Show the latest information of this player (STEAM NAME ONLY)\n\n---\n' + config.prefix + 'track <MINUTES:30> <NAME:iShot>\n---\n> Track this player\'s movement for the next XX minutes. You\'ll receive warnings when we see the player skip servers.```');
+        });
+
+        return false;
+    }
+
+    if (command === 'player' || command === 'players') {
+        msg.channel.send('Processing... beep boop...').then((msg) => {
+            // If no arguments, send back the usage of the command
+            if (args.length === 0) {
+                // No parameters given
+                msg.edit(config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]');
+                return false;
+            }
+
+            let [server, region, gamemode] = args;
+
+            // Server (eg B4)
+            if (server === undefined) {
+                server = 'A1';
+            } else {
+                server = server.toUpperCase();
+            }
+
+            if (region === undefined) {
+                region = 'eu';
+            }
+
+            if (gamemode === undefined) {
+                gamemode = 'pvp';
+            }
+
+            // Poll the API for the information requested
+            var ogserver = server;
+            axios.get(config.url + '/api/players', {
+                params: {
+                    server: server,
+                    region: region,
+                    gamemode: gamemode,
+                },
+            }).then(function (response) {
+                // var message = '';
+                var array = [];
+
+                array.push(['Username', 'Playtime']);
+                for (var player in response.data.players) {
+                    if (!response.data.players.hasOwnProperty(player)) {
+                        continue;
+                    }
+
+                    array.push([response.data.players[player].Name, response.data.players[player].TimeF]);
+                }
+
+                console.log('Sent a message to ' + msg.guild.name);
+                msg.edit('\nThese are the ' + response.data.count + ' players on ' + ogserver + ':\n```' + table(array) + '```\n\n*We do not track players with the following names: \'123\' and empty names*');
+            });
         });
 
         return false;
     }
 
     if (command === 'pop' || command === 'population') {
+        msg.channel.send('Processing... beep boop...').then((msg) => {
+            // If no arguments, send back the usage of the command
+            if (args.length === 0) {
+                // No parameters given
+                msg.edit(config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]');
+                return false;
+            }
+
+            let [server, region, gamemode] = args;
+
+            // Server (eg B4)
+            if (server === undefined) {
+                server = 'A1';
+            } else {
+                server = server.toUpperCase();
+            }
+
+            if (region === undefined) {
+                region = 'eu';
+            }
+
+            if (gamemode === undefined) {
+                gamemode = 'pvp';
+            }
+
+            // Poll the API for the information requested
+            var ogserver = server;
+            axios.get(config.url + '/api/population', {
+                params: {
+                    server: server,
+                    region: region,
+                    gamemode: gamemode,
+                },
+            }).then(function (response) {
+                // var message = '';
+                var array = [];
+
+                array.push(['Server', 'Players', 'Direction', '']);
+                for (var server in response.data) {
+                    if (!response.data.hasOwnProperty(server)) {
+                        continue;
+                    }
+
+                    array.push([server, response.data[server].count, response.data[server].direction, String.fromCodePoint('0x' + response.data[server].unicode)]);
+                }
+
+                console.log('Sent a message to ' + msg.guild.name);
+                msg.edit('\nThese are the amount of players on and around ' + ogserver + ':\n```' + table(array) + '```\n\nWant to see this data as a table? Try \'!grid ' + ogserver + '\'');
+            });
+        });
+
+        return false;
+    }
+
+    if (command === 'grid') {
         msg.channel.send('Processing... beep boop...').then((msg) => {
             // If no arguments, send back the usage of the command
             if (args.length === 0) {
@@ -103,7 +212,7 @@ client.on('message', msg => {
                     }
                 }
 
-                var message = '\nThese are the amount of players on and around ' + ogserver + '\n```' + table(array) + '```';
+                var message = '\nThese are the amount of players on and around ' + ogserver + ':\n```' + table(array) + '```\n\nWant to see this data as a list? Try \'!pop ' + ogserver + '\'';
                 console.log('Sent a message to ' + msg.guild.name + ':' + message);
                 msg.edit(message);
             });
