@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,6 +13,9 @@ use Illuminate\Http\Request;
 
 Route::get('population', 'ApiController@population');
 Route::get('find', 'ApiController@find');
+Route::get('track/list', 'ApiController@trackList');
+
+Route::post('track/add', 'ApiController@trackAdd');
 
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();

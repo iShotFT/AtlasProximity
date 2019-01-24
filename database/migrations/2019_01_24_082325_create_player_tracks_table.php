@@ -15,8 +15,8 @@ class CreatePlayerTracksTable extends Migration
     {
         Schema::create('player_tracks', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('guild_id');
-            $table->integer('channel_id');
+            $table->string('guild_id');
+            $table->string('channel_id');
             $table->string('player');
             $table->string('last_coordinate')->nullable();
             $table->timestamp('until')->nullable();

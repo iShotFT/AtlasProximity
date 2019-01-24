@@ -29,7 +29,7 @@ client.on('message', msg => {
     const args = msg.content.slice(config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
 
-    console.log('Message received from server ' + msg.guild.name + ', user' + msg.client.name + ':\n >' + msg.content);
+    console.log('Message received from server ' + msg.guild.name + ' by user ' + msg.author.username + '#' + msg.author.discriminator + ':\n > ' + msg.content);
 
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
         msg.channel.send('Processing... beep boop...').then((msg) => {
@@ -151,6 +151,68 @@ client.on('message', msg => {
                     console.log('Sent a message to ' + msg.guild.name + ':' + message);
                     msg.edit(message);
                 }
+            });
+        });
+
+        return false;
+    }
+
+    if (command === 'track' || command === 'stalk' || command === 'follow') {
+        msg.channel.send('Processing... beep boop...').then((msg) => {
+            // If no arguments, send back the usage of the command
+            if (args.length === 0 || args[1] === undefined) {
+                // No parameters given
+                var message = '';
+                message = message + config.prefix + 'track <MINUTES:30> <NAME:iShot>';
+
+                // Get current tracks for this guild...
+                axios.get(config.url + '/api/track/list', {
+                    params: {
+                        guildid: msg.guild.id,
+                    },
+                }).then(function (response) {
+                    message = message + '\n\n';
+
+                    if (response.data.length) {
+                        var array = [];
+                        array.push(['Username', 'Last Location', 'Expires']);
+                        for (var track in response.data) {
+                            if (!response.data.hasOwnProperty(track)) {
+                                continue;
+                            }
+
+                            var last_coordinate = response.data[track].last_coordinate;
+                            if (last_coordinate === null) {
+                                last_coordinate = 'Unknown';
+                            }
+                            array.push([response.data[track].player, last_coordinate, moment(response.data[track].until, 'YYYY-MM-DD HH:mm:ss').fromNow()]);
+                        }
+
+                        message = message + table(array);
+                    } else {
+                        // No active tracks
+                        message = message + 'No active trackings found';
+                    }
+
+                    msg.edit('```' + message + '```');
+                });
+
+                return false;
+            }
+
+            let [minutes, username] = [args[0], args.slice(1).join(' ')];
+
+            console.log(username, minutes, msg.guild.id, msg.channel.id, config.url + '/api/track/add');
+            // Poll the API for the information requested
+            axios.post(config.url + '/api/track/add', {
+                username: username,
+                minutes: minutes,
+                guildid: msg.guild.id,
+                channelid: msg.channel.id,
+            }).then(function (response) {
+                msg.edit('```' + 'Now tracking ' + username + ' for the next ' + minutes + ' minute(s)' + '```');
+            }).catch(function (response) {
+                msg.edit('```' + response.response.data.message + '```');
             });
         });
 
