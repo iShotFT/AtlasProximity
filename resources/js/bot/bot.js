@@ -7,6 +7,7 @@ const table = require('text-table');
 const moment = require('moment');
 const config = require('./config.json');
 const client = new Discord.Client();
+const Echo = require('laravel-echo');
 
 client.on('ready', () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
@@ -221,3 +222,17 @@ client.on('message', msg => {
 });
 
 client.login(config.token);
+
+// ECHO
+this.io = require('socket.io-client');
+this.socket = this.io.connect(config.url + ':6001');
+
+this.socket.on('.tracked.player.moved', function (event, data) {
+    console.log(event);
+    console.log(data);
+});
+
+this.socket.on('tracked.player.moved', function (event, data) {
+    console.log(event);
+    console.log(data);
+});

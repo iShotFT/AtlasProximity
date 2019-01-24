@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TrackedPlayerMoved;
 use App\PlayerPing;
 use App\PlayerTrack;
 use Carbon\Carbon;
@@ -76,5 +77,32 @@ class ApiController extends Controller
         ]);
 
         return response()->json(($found ? $found->toArray() : []));
+    }
+
+    public function track()
+    {
+        foreach (PlayerTrack::get() as $player_track) {
+            if ($player_track->until <= Carbon::now()) {
+                // remove track
+                $player_track->delete();
+            } else {
+                // Valid track
+                if ($player_ping = PlayerPing::where('player', $player_track->player)->orderByDesc('updated_at')->first()) {
+                    if ($player_ping->coordinates !== $player_track->last_coordinate) {
+                        $original_coordinate = $player_track->last_coordinate;
+                        $new_coordinate      = $player_ping->coordinates;
+                        // Player moved since last track
+                        $player_track->update([
+                            'last_coordinate' => $player_ping->coordinates,
+                        ]);
+
+                        // Trigger event to warn the tracking server about this movement
+                        event(new TrackedPlayerMoved($player_track));
+                    }
+                } else {
+                    // No player in playerping found with this name???
+                }
+            }
+        }
     }
 }
