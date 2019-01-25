@@ -60,6 +60,7 @@ class ApiController extends Controller
                         if ($found_in) {
                             // Player with the same name was found in a neighbouring server
                             $current_coordinate = $found_in;
+
                         } else {
                             // Player was not found in the original server, nor in any of the 8 servers around it
                             // Player might have gone offline or teleported / died
@@ -70,11 +71,16 @@ class ApiController extends Controller
                         list ($x2, $y2) = Coordinate::textToXY($current_coordinate);
                         $last_direction = Coordinate::cardinalDirectionBetween($x1, $y1, $x2, $y2);
 
-                        $player_track->update([
+                        $update_info = [
                             'last_coordinate' => $current_coordinate,
                             'last_direction'  => $last_direction,
-                            'last_status'     => 1,
-                        ]);
+                        ];
+
+                        if ($player_ping->updated_at >= Carbon::now()->subMinutes(15)) {
+                            $update_info['last_status'] = 1;
+                        }
+
+                        $player_track->update($update_info);
 
                         // Player moved since last track
                         // Trigger event to warn the tracking server about this movement
