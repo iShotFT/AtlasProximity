@@ -33,10 +33,20 @@ client.on('message', msg => {
 
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
         msg.channel.send('Processing... beep boop...').then((msg) => {
-            msg.edit('```---\n' + config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show a list of usernames in the given server and their playtime\n\n---\n' + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it in a list with directions\n\n---\n' + config.prefix + 'grid <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it formatted as a table\n\n---\n' + config.prefix + 'find <NAME:iShot>\n---\n> Show the latest information of this player (STEAM NAME ONLY)\n\n---\n' + config.prefix + 'track <MINUTES:30> <NAME:iShot>\n---\n> Track this player\'s movement for the next XX minutes. You\'ll receive warnings when we see the player skip servers.```');
+            msg.edit('```---\n' + config.prefix + 'purge\n---\n> Removes the 100 most recent messages in this channel\n\n---\n' + config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show a list of usernames in the given server and their playtime\n\n---\n' + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it in a list with directions\n\n---\n' + config.prefix + 'grid <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it formatted as a table\n\n---\n' + config.prefix + 'find <NAME:iShot>\n---\n> Show the latest information of this player (STEAM NAME ONLY)\n\n---\n' + config.prefix + 'track <MINUTES:30> <NAME:iShot>\n---\n> Track this player\'s movement for the next XX minutes. You\'ll receive warnings when we see the player skip servers.```');
         });
 
         return false;
+    }
+
+    if (command === 'purge' || command === 'clean' || command === 'clear') {
+        async function clear() {
+            msg.delete();
+            const fetched = await msg.channel.fetchMessages({limit: 100});
+            msg.channel.bulkDelete(fetched);
+        }
+
+        clear();
     }
 
     if (command === 'player' || command === 'players') {
