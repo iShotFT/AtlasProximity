@@ -345,6 +345,10 @@ this.Echo.channel(`public`)
         console.log('WebSocket: [TRACKING] Sent message to ' + e.guildid + ' about player ' + e.player);
         client.channels.get(e.channelid).send(':warning: Tracked player `' + e.player + '` has moved from `' + e.from + '` to `' + e.to + '` heading `' + e.direction + '`');
     })
+    .listen('.tracked.player.lost', (e) => {
+        console.log('WebSocket: [TRACKING] Sent tracking lost message to ' + e.guildid + ' about player ' + e.player);
+        client.channels.get(e.channelid).send(':warning: We suspect that tracked player `' + e.player + '` has gone offline about ' + moment(e.last_seen, 'YYYY-MM-DD HH:mm:ss').fromNow() + '. Last known location: `' + e.last + '`');
+    })
     .listen('.track.expired', (e) => {
         console.log('WebSocket: [TRACKING] Sent track expired message to ' + e.guildid + ' about player ' + e.player);
         client.channels.get(e.channelid).send(':warning: Tracking for player `' + e.player + '` has expired. Last known location: `' + e.last + '`');

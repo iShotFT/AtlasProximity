@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Classes\Coordinate;
+use App\Events\TrackedPlayerLost;
 use App\Events\TrackedPlayerMoved;
 use App\Events\TrackExpired;
 use App\PlayerPing;
@@ -75,7 +76,15 @@ class ApiController extends Controller
 
                         // Player moved since last track
                         // Trigger event to warn the tracking server about this movement
-                        event(new TrackedPlayerMoved($player_track, $original_coordinate));
+                        if ($player_track->last_coordinate !== $original_coordinate) {
+                            event(new TrackedPlayerMoved($player_track, $original_coordinate));
+                        } else {
+                            // If the player ping is older than 15 minutes we can suspect the player went offline.
+                            if ($player_ping->updated_at <= Carbon::now()->subMinutes(15)) {
+                                // We suspect player went offline
+                                event(new TrackedPlayerLost($player_track, $player_ping->updated_at));
+                            }
+                        }
                     }
                 } else {
                     // No player in playerping found with this name???

@@ -7,14 +7,13 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Queue\SerializesModels;
 
-class TrackedPlayerMoved implements ShouldBroadcastNow
+class TrackedPlayerLost implements ShouldBroadcastNow
 {
     use SerializesModels;
 
-    protected $from;
-    protected $to;
-    protected $direction;
     protected $player;
+    protected $last;
+    protected $last_seen;
     protected $guildid;
     protected $channelid;
 
@@ -23,12 +22,11 @@ class TrackedPlayerMoved implements ShouldBroadcastNow
      *
      * @return void
      */
-    public function __construct(PlayerTrack $playerTrack, $oldcoordinates)
+    public function __construct(PlayerTrack $playerTrack, $last_seen)
     {
         $this->player    = $playerTrack->player;
-        $this->from      = $oldcoordinates;
-        $this->to        = $playerTrack->last_coordinate;
-        $this->direction = $playerTrack->last_direction;
+        $this->last      = $playerTrack->last_coordinate;
+        $this->last_seen = $last_seen;
 
         $this->guildid   = $playerTrack->guild_id;
         $this->channelid = $playerTrack->channel_id;
@@ -38,9 +36,8 @@ class TrackedPlayerMoved implements ShouldBroadcastNow
     {
         return [
             'player'    => $this->player,
-            'from'      => $this->from,
-            'to'        => $this->to,
-            'direction' => $this->direction,
+            'last'      => $this->last,
+            'last_seen' => $this->last_seen,
             'guildid'   => $this->guildid,
             'channelid' => $this->channelid,
         ];
@@ -48,13 +45,13 @@ class TrackedPlayerMoved implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'tracked.player.moved';
+        return 'tracked.player.lost';
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return \Illuminate\Broadcasting\Channel
      */
     public function broadcastOn()
     {
