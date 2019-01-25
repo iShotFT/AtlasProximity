@@ -82,7 +82,7 @@ class ApiController extends Controller
                             event(new TrackedPlayerMoved($player_track, $original_coordinate));
                         } else {
                             // If the player ping is older than 15 minutes we can suspect the player went offline.
-                            if ($player_ping->updated_at <= Carbon::now()->subMinutes(15) && $player_track->last_status) {
+                            if ($player_ping->updated_at <= Carbon::now()->subMinutes(15) && $player_track->last_status === 1) {
                                 // We suspect player went offline
                                 event(new TrackedPlayerLost($player_track, $player_ping->updated_at));
                                 $player_track->update([
