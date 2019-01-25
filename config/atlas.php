@@ -3,7 +3,7 @@
 return [
     'settings' => [
         'cache' => [
-            'lifetime' => env('ATLAS_CACHE_LIFETIME_MINUTES', 5),
+            'lifetime' => env('ATLAS_CACHE_LIFETIME_MINUTES', 1),
         ],
     ],
     'bot'      => [
