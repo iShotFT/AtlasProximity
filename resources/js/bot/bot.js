@@ -342,12 +342,10 @@ this.Echo = new Echo({
 
 this.Echo.channel(`public`)
     .listen('.tracked.player.moved', (e) => {
-        // { player: 'elt',
-        //     from: 'b4',
-        //     to: 'A1',
-        //     guildid: '323060582419005440',
-        //     channelid: '537654767187525638',
-        //     socket: null }
         console.log('WebSocket: [TRACKING] Sent message to ' + e.guildid + ' about player ' + e.player);
         client.channels.get(e.channelid).send(':warning: Tracked player `' + e.player + '` has moved from `' + e.from + '` to `' + e.to + '` heading `' + e.direction + '`');
+    })
+    .listen('.track.expired', (e) => {
+        console.log('WebSocket: [TRACKING] Sent track expired message to ' + e.guildid + ' about player ' + e.player);
+        client.channels.get(e.channelid).send(':warning: Tracking for player `' + e.player + '` has expired. Last known location: `' + e.last + '`');
     });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\Coordinate;
 use App\Events\TrackedPlayerMoved;
+use App\Events\TrackExpired;
 use App\PlayerPing;
 use App\PlayerTrack;
 use Carbon\Carbon;
@@ -22,6 +23,7 @@ class ApiController extends Controller
             if ($player_track->until <= Carbon::now()) {
                 // remove track
                 $player_track->delete();
+                event(new TrackExpired($player_track));
             } else {
                 // Valid track
                 if ($player_ping = PlayerPing::where('player', $player_track->player)->orderByDesc('updated_at')->first()) {
@@ -62,7 +64,6 @@ class ApiController extends Controller
                             $current_coordinate = $player_ping->coordinates;
                         }
 
-                        // Todo: calculate the ° degrees of movement change
                         list ($x1, $y1) = Coordinate::textToXY($original_coordinate);
                         list ($x2, $y2) = Coordinate::textToXY($current_coordinate);
                         $last_direction = Coordinate::cardinalDirectionBetween($x1, $y1, $x2, $y2);
