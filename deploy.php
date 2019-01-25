@@ -56,6 +56,10 @@ task('reload:atlascctv', function () {
     run('sudo /bin/systemctl restart atlascctv');
 });
 
+task('reload:queue', function () {
+    run('cd {{release_path}} && php artisan queue:restart');
+});
+
 set('bin/npm', function () {
     return run('which npm');
 });
@@ -77,6 +81,7 @@ before('deploy:symlink', 'artisan:migrate');
 after('deploy:update_code', 'npm:install');
 after('deploy', 'reload:php-fpm');
 after('deploy', 'reload:atlascctv');
+after('deploy', 'reload:queue');
 after('rollback', 'reload:php-fpm');
 after('rollback', 'reload:atlascctv');
 

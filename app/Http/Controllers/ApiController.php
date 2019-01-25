@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\Coordinate;
 use App\Events\TrackedPlayerMoved;
 use App\PlayerPing;
 use App\PlayerTrack;
@@ -10,6 +11,11 @@ use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
+    /**
+     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
+     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
+     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     */
     public static function track()
     {
         foreach (PlayerTrack::get() as $player_track) {
@@ -19,13 +25,54 @@ class ApiController extends Controller
             } else {
                 // Valid track
                 if ($player_ping = PlayerPing::where('player', $player_track->player)->orderByDesc('updated_at')->first()) {
-                    if ($player_ping->coordinates !== $player_track->last_coordinate) {
-                        $original_coordinate = $player_track->last_coordinate;
-                        // Player moved since last track
+                    // Scan the server the player was last seen on
+                    $remained_stationairy = false;
+                    foreach (SourceQueryController::getCoordinatePlayers($player_track->last_coordinate)['players'] as $player) {
+                        // Is the tracked player still on the server we last saw him on?
+                        if ($player_track->player === $player['Name']) {
+                            $remained_stationairy = true;
+                        }
+                    }
+
+                    if ($remained_stationairy) {
+                        // We found the player on the same server as last time we spotted him
+                        // No need for alert, we will update the playerping so we know we checked him out
                         $player_track->update([
-                            'last_coordinate' => $player_ping->coordinates,
+                            'updated_at' => Carbon::now(),
+                        ]);
+                    } else {
+                        // The player is no longer on the same server where we last spotted him... He might have gone offline or he might have moved
+                        // Scan the servers around the last_coordinate for his name
+                        $original_coordinate = $player_track->last_coordinate;
+                        $found_in            = false;
+                        foreach (SourceQueryController::getCoordinatePlayersWithSurrounding($player_track->last_coordinate) as $coordinate => $server_info) {
+                            foreach ($server_info['players'] as $player) {
+                                if ($player_track->player === $player['Name']) {
+                                    $found_in = $coordinate;
+                                }
+                            }
+                        }
+
+                        if ($found_in) {
+                            // Player with the same name was found in a neighbouring server
+                            $current_coordinate = $found_in;
+                        } else {
+                            // Player was not found in the original server, nor in any of the 8 servers around it
+                            // Player might have gone offline or teleported / died
+                            $current_coordinate = $player_ping->coordinates;
+                        }
+
+                        // Todo: calculate the ° degrees of movement change
+                        list ($x1, $y1) = Coordinate::textToXY($original_coordinate);
+                        list ($x2, $y2) = Coordinate::textToXY($current_coordinate);
+                        $last_direction = Coordinate::cardinalDirectionBetween($x1, $y1, $x2, $y2);
+
+                        $player_track->update([
+                            'last_coordinate' => $current_coordinate,
+                            'last_direction'  => $last_direction,
                         ]);
 
+                        // Player moved since last track
                         // Trigger event to warn the tracking server about this movement
                         event(new TrackedPlayerMoved($player_track, $original_coordinate));
                     }
@@ -110,6 +157,7 @@ class ApiController extends Controller
         $found = PlayerTrack::where('guild_id', $request->get('guildid'))->where('until', '>=', Carbon::now())->get([
             'player',
             'last_coordinate',
+            'updated_at',
             'until',
         ]);
 

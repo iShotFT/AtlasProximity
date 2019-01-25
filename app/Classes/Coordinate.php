@@ -62,6 +62,77 @@ class Coordinate
         ],
     ];
 
+    protected static $cardinalDegrees = [
+        'North'           => [
+            348.75,
+            360,
+        ],
+        'North2'          => [
+            0,
+            11.25,
+        ],
+        'North-northeast' => [
+            11.25,
+            33.75,
+        ],
+        'Northeast'       => [
+            33.75,
+            56.25,
+        ],
+        'East-northeast'  => [
+            56.25,
+            78.75,
+        ],
+        'East'            => [
+            78.75,
+            101.25,
+        ],
+        'East-southeast'  => [
+            101.25,
+            123.75,
+        ],
+        'Southeast'       => [
+            123.75,
+            146.25,
+        ],
+        'South-southeast' => [
+            146.25,
+            168.75,
+        ],
+        'South'           => [
+            168.75,
+            191.25,
+        ],
+        'South-southwest' => [
+            191.25,
+            213.75,
+        ],
+        'Southwest'       => [
+            213.75,
+            236.25,
+        ],
+        'West-southwest'  => [
+            236.25,
+            258.75,
+        ],
+        'West'            => [
+            258.75,
+            281.25,
+        ],
+        'West-northwest'  => [
+            281.25,
+            303.75,
+        ],
+        'Northwest'       => [
+            303.75,
+            326.25,
+        ],
+        'North-northwest' => [
+            326.25,
+            348.75,
+        ],
+    ];
+
     /**
      * Coordinate constructor.
      *
@@ -156,5 +227,34 @@ class Coordinate
             'direction' => 'center',
             'unicode'   => '2022',
         ];
+    }
+
+    /**
+     * @param $x1
+     * @param $y1
+     * @param $x2
+     * @param $y2
+     *
+     * @return mixed
+     */
+    public static function cardinalDirectionBetween($x1, $y1, $x2, $y2)
+    {
+        // https://gist.github.com/smallindine/d227743c28418f3426ed36b8969ded1a -> radial to cardinal
+        // rad2deg(atan2($y2-$y1,$x2-$x1));
+        // 360 + rad2deg(atan2(3-4,2-3));
+
+        $y1 = 15 - $y1;
+        $y2 = 15 - $y2;
+
+        $rad    = rad2deg(atan2($y2 - $y1, $x2 - $x1));
+        $degree = 90 - ($rad > 90 ? -($rad) : $rad);
+
+        foreach (self::$cardinalDegrees as $dir => $angles) {
+            if ($degree >= $angles[0] && $degree < $angles[1]) {
+                $cardinal = str_replace("2", "", $dir);
+            }
+        }
+
+        return $cardinal;
     }
 }

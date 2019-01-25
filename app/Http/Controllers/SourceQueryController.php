@@ -212,9 +212,10 @@ class SourceQueryController extends Controller
 
     public function test(Request $request)
     {
-        $start = Carbon::now()->timestamp;
-        self::getAllPlayersAllServers();
-        dd('end', Carbon::now()->timestamp - $start);
+        dd(SourceQueryController::getCoordinatePlayersWithSurrounding('B4'));
+        //        $start = Carbon::now()->timestamp;
+        //        self::getAllPlayersAllServers();
+        //        dd('end', Carbon::now()->timestamp - $start);
     }
 
     public static function getAllPlayersAllServers($region = 'eu', $gamemode = 'pvp')

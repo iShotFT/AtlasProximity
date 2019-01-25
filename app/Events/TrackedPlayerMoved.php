@@ -13,6 +13,7 @@ class TrackedPlayerMoved implements ShouldBroadcast
 
     protected $from;
     protected $to;
+    protected $direction;
     protected $player;
     protected $guildid;
     protected $channelid;
@@ -24,9 +25,10 @@ class TrackedPlayerMoved implements ShouldBroadcast
      */
     public function __construct(PlayerTrack $playerTrack, $oldcoordinates)
     {
-        $this->player = $playerTrack->player;
-        $this->from   = $oldcoordinates;
-        $this->to     = $playerTrack->last_coordinate;
+        $this->player    = $playerTrack->player;
+        $this->from      = $oldcoordinates;
+        $this->to        = $playerTrack->last_coordinate;
+        $this->direction = $playerTrack->last_direction;
 
         $this->guildid   = $playerTrack->guild_id;
         $this->channelid = $playerTrack->channel_id;
@@ -38,6 +40,7 @@ class TrackedPlayerMoved implements ShouldBroadcast
             'player'    => $this->player,
             'from'      => $this->from,
             'to'        => $this->to,
+            'direction' => $this->direction,
             'guildid'   => $this->guildid,
             'channelid' => $this->channelid,
         ];

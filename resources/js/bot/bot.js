@@ -285,7 +285,7 @@ client.on('message', msg => {
 
                     if (response.data.length) {
                         var array = [];
-                        array.push(['Username', 'Last Location', 'Expires']);
+                        array.push(['Username', 'Last Location', 'Last Seen', 'Expires']);
                         for (var track in response.data) {
                             if (!response.data.hasOwnProperty(track)) {
                                 continue;
@@ -295,7 +295,7 @@ client.on('message', msg => {
                             if (last_coordinate === null) {
                                 last_coordinate = 'Unknown';
                             }
-                            array.push([response.data[track].player, last_coordinate, moment(response.data[track].until, 'YYYY-MM-DD HH:mm:ss').fromNow()]);
+                            array.push([response.data[track].player, last_coordinate, moment(response.data[track].updated_at, 'YYYY-MM-DD HH:mm:ss').fromNow(), moment(response.data[track].until, 'YYYY-MM-DD HH:mm:ss').fromNow()]);
                         }
 
                         message = message + table(array);
@@ -349,5 +349,5 @@ this.Echo.channel(`public`)
         //     channelid: '537654767187525638',
         //     socket: null }
         console.log('WebSocket: [TRACKING] Sent message to ' + e.guildid + ' about player ' + e.player);
-        client.channels.get(e.channelid).send('```WARNING! Tracked player ' + e.player + ' has moved from ' + e.from + ' to ' + e.to + '```');
+        client.channels.get(e.channelid).send(':warning: Tracked player `' + e.player + '` has moved from `' + e.from + '` to `' + e.to + '` heading `' + e.direction + '`');
     });
