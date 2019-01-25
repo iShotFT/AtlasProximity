@@ -535,7 +535,7 @@ this.Echo = new Echo({
 this.Echo.channel(`public`)
     .listen('.tracked.player.moved', (e) => {
         console.log('WebSocket: [TRACKING] Sent message to ' + e.guildid + ' about player ' + e.player);
-        client.channels.get(e.channelid).send(':rocket: Tracked player `' + e.player + '` has moved from `' + e.from + '` to `' + e.to + '` heading `' + e.direction + '`');
+        client.channels.get(e.channelid).send(':spy::skin-tone-4: Tracked player `' + e.player + '` has moved from `' + e.from + '` to `' + e.to + '` heading `' + e.direction + '`');
     })
     .listen('.tracked.player.lost', (e) => {
         console.log('WebSocket: [TRACKING] Sent tracking lost message to ' + e.guildid + ' about player ' + e.player);

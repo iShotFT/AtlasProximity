@@ -29,12 +29,6 @@ class ApiController extends Controller
 
                     $new_players_after_scan = array_diff($previous_scanned_players, $new_scanned_players);
 
-                    // TESTING TODO
-                    $new_players_after_scan = [
-                        'Gilga',
-                        'Enkill',
-                    ];
-
                     if (is_array($new_players_after_scan) && count($new_players_after_scan) >= 2) {
                         // 3 or more new players joined in the past minute!!!
                         // Combine each username with the previous server they were spotted on
