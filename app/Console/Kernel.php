@@ -28,9 +28,6 @@ class Kernel extends ConsoleKernel
     {
         $schedule->call(function () {
             SourceQueryController::getAllPlayersAllServers('eu', 'pvp');
-        })->everyFiveMinutes();
-
-        $schedule->call(function () {
             ApiController::track();
         })->everyFiveMinutes();
     }
