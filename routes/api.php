@@ -15,8 +15,13 @@ Route::get('population', 'ApiController@population');
 Route::get('players', 'ApiController@players');
 Route::get('find', 'ApiController@find');
 Route::get('track/list', 'ApiController@trackList');
+Route::get('proximity/list', 'ApiController@proximityList');
 
 Route::post('track/add', 'ApiController@trackAdd');
+Route::post('proximity/add', 'ApiController@proximityAdd');
+
+Route::post('track/remove', 'ApiController@trackRemove');
+Route::post('proximity/remove', 'ApiController@proximityRemove');
 
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();

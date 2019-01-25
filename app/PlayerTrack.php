@@ -37,6 +37,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PlayerTrack whereLastDirection($value)
  * @method static \Illuminate\Database\Query\Builder|\App\PlayerTrack withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\PlayerTrack withoutTrashed()
+ * @property int $last_status
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PlayerTrack whereLastStatus($value)
  */
 class PlayerTrack extends Model
 {

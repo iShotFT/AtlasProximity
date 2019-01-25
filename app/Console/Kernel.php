@@ -33,6 +33,10 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             ApiController::track();
         })->everyMinute();
+
+        $schedule->call(function () {
+            ApiController::proximity();
+        })->everyMinute();
     }
 
     /**

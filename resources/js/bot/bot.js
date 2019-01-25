@@ -9,6 +9,72 @@ const config = require('./config.json');
 const client = new Discord.Client();
 const Echo = require('laravel-echo');
 
+// Random 'Processing...' messages
+const procMsgs = [
+    'Warming up Beric\'s mum...',
+    'Sinking some Kraken ships...',
+    'Browsing /r/playatlas...',
+    'Scratching my balls...',
+    'Pulling a fast wank...',
+    'Waking up from a drug-fueled slumber...',
+    'Quickly closing the incognito window...',
+    'Wobbling to 299%...',
+    'ATLAS CCTV REQUIRES MORE MINERALS...',
+    'Untap, Upkeep, Draw...',
+    'Traveling to Hanamura...',
+    'TIME\'S UP - LET\'S DO THIS!...',
+    'This loading is a line...',
+    'They see me loading, They waiting...',
+    'Start your engines...',
+    'Skipping cutscenes...',
+    'Shuffling the deck...',
+    'Reviving dead memes...',
+    'Returning the slab...',
+    'Recombobulating Discombobulators...',
+    'now with scratch and sniff...',
+    'Now with 100% more Screenshare!...',
+    'Dropping in Pochinki...',
+    'Looking for the power button...',
+    'Look behind you...',
+    'Locating Wumpus...',
+    'Loading your digital hug...',
+    'Loading Simulation...',
+    'Jumping to hyperspace...',
+    'Is this thing on?...',
+    'Initiating launch sequence...',
+    'Initializing socialization...',
+    'If you are reading this, you can read...',
+    'I swear it\'s around here somewhere...',
+    'i need healing...',
+    'how do i turn this thing on...',
+    'Loading machine broke...',
+    'Get ready for a surprise!...',
+    'Finishing this senta......',
+    'Dusting the cobwebs...',
+    'Do you even notice these?...',
+    'Opening the loading bay doors...',
+    'Atlas CCTV is my city...',
+    'Disconnecting from Reality...',
+    'Charging spirit bomb...',
+    'Charging Limit Break...',
+    'Calibrating flux capacitors...',
+    'Buckle up!...',
+    'Assembling Voltron...',
+    'Are we there yet?...',
+    'A brawl is surely brewing!...',
+    'LOADING 001: ARP 303 Saw...',
+    '*Elevator Music Plays*',
+    'Researching cheat codes...',
+    'Wizard needs food badly...',
+    'Decrypting Engrams...',
+    'And now for something completely different...',
+    'Stopping to smell the flowers...',
+    'Achieving Nirvana...',
+    'Managing Inventory...',
+    'Griding up some leprechauns to make Nutella...',
+    'Putting the D into the V...',
+];
+
 client.on('ready', () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
     client.user.setActivity(`!help | !track | !pop | !grid | !players`);
@@ -32,8 +98,8 @@ client.on('message', msg => {
     console.log('Message received from server ' + msg.guild.name + ' by user ' + msg.author.username + '#' + msg.author.discriminator + ':\n > ' + msg.content);
 
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
-        msg.channel.send('Processing... beep boop...').then((msg) => {
-            msg.edit('```---\n' + config.prefix + 'purge\n---\n> Removes the 100 most recent messages in this channel\n\n---\n' + config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show a list of usernames in the given server and their playtime\n\n---\n' + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it in a list with directions\n\n---\n' + config.prefix + 'grid <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it formatted as a table\n\n---\n' + config.prefix + 'find <NAME:iShot>\n---\n> Show the latest information of this player (STEAM NAME ONLY)\n\n---\n' + config.prefix + 'track <MINUTES:30> <NAME:iShot>\n---\n> Track this player\'s movement for the next XX minutes. You\'ll receive warnings when we see the player skip servers.```');
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            msg.edit('```\n---\n' + config.prefix + 'purge\n---\n> Removes the 100 most recent messages in this channel\n\n---\n' + config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show a list of usernames in the given server and their playtime\n\n---\n' + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it in a list with directions\n\n---\n' + config.prefix + 'grid <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it formatted as a table\n\n---\n' + config.prefix + 'find <NAME:iShot>\n---\n> Show the latest information of this player (STEAM NAME ONLY)\n\n---\n' + config.prefix + 'track <MINUTES:30> <NAME:iShot>\n---\n> Track this player\'s movement for the next XX minutes. You\'ll receive warnings when we see the player skip servers.```');
         });
 
         return false;
@@ -50,7 +116,7 @@ client.on('message', msg => {
     }
 
     if (command === 'player' || command === 'players') {
-        msg.channel.send('Processing... beep boop...').then((msg) => {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             // If no arguments, send back the usage of the command
             if (args.length === 0) {
                 // No parameters given
@@ -105,7 +171,7 @@ client.on('message', msg => {
     }
 
     if (command === 'pop' || command === 'population') {
-        msg.channel.send('Processing... beep boop...').then((msg) => {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             // If no arguments, send back the usage of the command
             if (args.length === 0) {
                 // No parameters given
@@ -160,7 +226,7 @@ client.on('message', msg => {
     }
 
     if (command === 'grid') {
-        msg.channel.send('Processing... beep boop...').then((msg) => {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             // If no arguments, send back the usage of the command
             if (args.length === 0) {
                 // No parameters given
@@ -232,7 +298,7 @@ client.on('message', msg => {
     }
 
     if (command === 'find' || command === 'search' || command === 'whereis') {
-        msg.channel.send('Processing... beep boop...').then((msg) => {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             // If no arguments, send back the usage of the command
             if (args.length === 0) {
                 // No parameters given
@@ -277,8 +343,124 @@ client.on('message', msg => {
         return false;
     }
 
+    if (command === 'unproximity' || command === 'unprox' || command === 'unalert') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            // If no arguments, send back the usage of the command
+            if (args.length === 0) {
+                // No parameters given
+                var message = '';
+                message = message + config.prefix + 'unprox <SERVER:B4>';
+                msg.edit('```' + message + '```');
+                return false;
+            }
+
+            let [server] = args;
+
+            console.log(server, config.url + '/api/proximity/remove');
+            // Poll the API for the information requested
+            axios.post(config.url + '/api/proximity/remove', {
+                coordinate: server,
+                guildid: msg.guild.id,
+                channelid: msg.channel.id,
+            }).then(function (response) {
+                msg.edit('```' + 'No longer alerting on server ' + server + '```');
+            }).catch(function (response) {
+                msg.edit('```' + response.response.data.message + '```');
+            });
+        });
+
+        return false;
+    }
+    ;
+
+    if (command === 'proximity' || command === 'prox' || command === 'alert') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            // If no arguments, send back the usage of the command
+            if (args.length === 0) {
+                // No parameters given
+                var message = '';
+                message = message + config.prefix + 'alert <SERVER:B4>';
+
+                // Get current tracks for this guild...
+                axios.get(config.url + '/api/proximity/list', {
+                    params: {
+                        guildid: msg.guild.id,
+                    },
+                }).then(function (response) {
+                    message = message + '\n\n';
+
+                    if (response.data.length) {
+                        var array = [];
+                        array.push(['Server', 'Added']);
+                        for (var server in response.data) {
+                            if (!response.data.hasOwnProperty(server)) {
+                                continue;
+                            }
+
+                            array.push([response.data[server].coordinate, moment(response.data[server].updated_at, 'YYYY-MM-DD HH:mm:ss').fromNow()]);
+                        }
+
+                        message = message + table(array);
+                    } else {
+                        // No active tracks
+                        message = message + 'No active proximity alerts found';
+                    }
+
+                    msg.edit('These are the active proximity alerts:\n```' + message + '```');
+                });
+
+                return false;
+            }
+
+            let [server] = args;
+
+            console.log(server, config.url + '/api/proximity/add');
+            // Poll the API for the information requested
+            axios.post(config.url + '/api/proximity/add', {
+                coordinate: server,
+                guildid: msg.guild.id,
+                channelid: msg.channel.id,
+            }).then(function (response) {
+                msg.edit('```' + 'Now alerting on server ' + server + '```');
+            }).catch(function (response) {
+                msg.edit('```' + response.response.data.message + '```');
+            });
+        });
+
+        return false;
+    }
+
+    if (command === 'untrack' || command === 'unstalk' || command === 'unfollow') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            // If no arguments, send back the usage of the command
+            if (args.length === 0) {
+                // No parameters given
+                var message = '';
+                message = message + config.prefix + 'untrack <NAME:iShot>';
+                msg.edit('```' + message + '```');
+                return false;
+            }
+
+            let [username] = [args.join(' ')];
+
+            console.log(username, msg.guild.id, msg.channel.id, config.url + '/api/track/remove');
+            // Poll the API for the information requested
+            axios.post(config.url + '/api/track/remove', {
+                username: username,
+                guildid: msg.guild.id,
+                channelid: msg.channel.id,
+            }).then(function (response) {
+                msg.edit('```' + 'No longer tracking ' + username + '```');
+            }).catch(function (response) {
+                msg.edit('```' + response.response.data.message + '```');
+            });
+        });
+
+        return false;
+    }
+
     if (command === 'track' || command === 'stalk' || command === 'follow') {
-        msg.channel.send('Processing... beep boop...').then((msg) => {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             // If no arguments, send back the usage of the command
             if (args.length === 0 || args[1] === undefined) {
                 // No parameters given
@@ -353,13 +535,17 @@ this.Echo = new Echo({
 this.Echo.channel(`public`)
     .listen('.tracked.player.moved', (e) => {
         console.log('WebSocket: [TRACKING] Sent message to ' + e.guildid + ' about player ' + e.player);
-        client.channels.get(e.channelid).send(':warning: Tracked player `' + e.player + '` has moved from `' + e.from + '` to `' + e.to + '` heading `' + e.direction + '`');
+        client.channels.get(e.channelid).send(':rocket: Tracked player `' + e.player + '` has moved from `' + e.from + '` to `' + e.to + '` heading `' + e.direction + '`');
     })
     .listen('.tracked.player.lost', (e) => {
         console.log('WebSocket: [TRACKING] Sent tracking lost message to ' + e.guildid + ' about player ' + e.player);
-        client.channels.get(e.channelid).send(':warning: We suspect that tracked player `' + e.player + '` has gone offline. Last known location: `' + e.last + '`');
+        client.channels.get(e.channelid).send(':sleeping: We suspect that tracked player `' + e.player + '` has gone offline. Last known location: `' + e.last + '`');
     })
     .listen('.track.expired', (e) => {
         console.log('WebSocket: [TRACKING] Sent track expired message to ' + e.guildid + ' about player ' + e.player);
-        client.channels.get(e.channelid).send(':warning: Tracking for player `' + e.player + '` has expired. Last known location: `' + e.last + '`');
+        client.channels.get(e.channelid).send(':timer: Tracking for player `' + e.player + '` has expired. Last known location: `' + e.last + '`');
+    })
+    .listen('.tracked.server.boat', (e) => {
+        console.log('WebSocket: [TRACKING] Sent boat warning message to ' + e.guildid + ' about coordinate ' + e.to);
+        client.channels.get(e.channelid).send(':sailboat: A suspected boat entered coordinate `' + e.to + '`. Player(s) on the boat:\n```\n' + e.players.join('\n') + '```');
     });

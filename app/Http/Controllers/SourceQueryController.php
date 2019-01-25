@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Classes\Coordinate;
 use App\Ping;
 use App\PlayerPing;
+use App\ProximityTrack;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -16,39 +17,48 @@ class SourceQueryController extends Controller
     protected static $server_timeout = 1;
     protected static $server_engine = SourceQuery::SOURCE;
 
-    /**
-     * @param string $coordinate
-     * @param string $region
-     * @param string $gamemode
-     *
-     * @return array
-     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
-     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
-     * @throws \xPaw\SourceQuery\Exception\TimeoutException
-     */
-    public static function getCoordinatePlayersWithSurrounding($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
+    public static function getAllPlayersAllServers($region = 'eu', $gamemode = 'pvp')
     {
-        $players = array();
-        // First get the center server players
-        $information              = self::getCoordinatePlayers($coordinate, $region, $gamemode);
-        $information['direction'] = '';
-        $information['unicode']   = '00B7';
-        $players[$coordinate]     = $information;
+        foreach (self::getAllServers($region, $gamemode) as $x => $servers) {
+            foreach ($servers as $y => $server) {
+                self::getPlayersOnCoordinate($x . $y, $region, $gamemode);
+            }
+        };
+    }
 
-        // Get players for all surrounding servers
-        $center = new Coordinate($coordinate);
-        foreach ($center->getSurrounding() as $coordinate) {
-            // x
-            // y
-            // text
-            // direction
-            $information                  = self::getCoordinatePlayers($coordinate['text'], $region, $gamemode);
-            $information['direction']     = $coordinate['direction'];
-            $information['unicode']       = $coordinate['unicode'];
-            $players[$coordinate['text']] = $information;
-        }
+    public static function getAllServers($region = 'eu', $gamemode = 'pvp')
+    {
+        $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
 
-        return $players;
+        $return = Cache::remember('servers_list', 60, function () use ($servers) {
+            $max_x = explode('x', $servers['size'])[0];
+            $max_y = explode('x', $servers['size'])[1];
+
+            $servers_list = array();
+            foreach ($servers['ip'] as $ip) {
+                foreach ($servers['port'] as $port) {
+                    array_push($servers_list, [
+                        'ip'   => $ip,
+                        'port' => $port,
+                    ]);
+                }
+            }
+
+            $return    = array();
+            $iteration = 0;
+            for ($x = 1; $x <= $max_x; $x++) {
+                $character          = chr($x + 64);
+                $return[$character] = array();
+                for ($y = 1; $y <= $max_y; $y++) {
+                    $return[$character][$y] = $servers_list[$iteration];
+                    $iteration++;
+                }
+            }
+
+            return $return;
+        });
+
+        return $return;
     }
 
     /**
@@ -60,7 +70,7 @@ class SourceQueryController extends Controller
      * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
      * @throws \xPaw\SourceQuery\Exception\TimeoutException
      */
-    public static function getCoordinatePlayers($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
+    public static function getPlayersOnCoordinate($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
         $Query  = new SourceQuery();
         $return = '';
@@ -175,55 +185,55 @@ class SourceQueryController extends Controller
         }
     }
 
-    public static function getAllServers($region = 'eu', $gamemode = 'pvp')
-    {
-        $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
-
-        $return = Cache::remember('servers_list', 60, function () use ($servers) {
-            $max_x = explode('x', $servers['size'])[0];
-            $max_y = explode('x', $servers['size'])[1];
-
-            $servers_list = array();
-            foreach ($servers['ip'] as $ip) {
-                foreach ($servers['port'] as $port) {
-                    array_push($servers_list, [
-                        'ip'   => $ip,
-                        'port' => $port,
-                    ]);
-                }
-            }
-
-            $return    = array();
-            $iteration = 0;
-            for ($x = 1; $x <= $max_x; $x++) {
-                $character          = chr($x + 64);
-                $return[$character] = array();
-                for ($y = 1; $y <= $max_y; $y++) {
-                    $return[$character][$y] = $servers_list[$iteration];
-                    $iteration++;
-                }
-            }
-
-            return $return;
-        });
-
-        return $return;
-    }
-
     public function test(Request $request)
     {
-        dd(SourceQueryController::getCoordinatePlayersWithSurrounding('B4'));
+        $proximity = ProximityTrack::updateOrCreate([
+            //            $table->string('guild_id');
+            //        $table->string('channel_id');
+            //        $table->string('coordinate');
+            'guild_id'   => '123456',
+            'channel_id' => '123456',
+            'coordinate' => 'B4',
+        ]);
+        dd(ApiController::proximity());
+        dd(SourceQueryController::getPlayersOnCoordinateWithSurrounding('B4'));
         //        $start = Carbon::now()->timestamp;
         //        self::getAllPlayersAllServers();
         //        dd('end', Carbon::now()->timestamp - $start);
     }
 
-    public static function getAllPlayersAllServers($region = 'eu', $gamemode = 'pvp')
+    /**
+     * @param string $coordinate
+     * @param string $region
+     * @param string $gamemode
+     *
+     * @return array
+     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
+     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
+     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     */
+    public static function getPlayersOnCoordinateWithSurrounding($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
-        foreach (self::getAllServers($region, $gamemode) as $x => $servers) {
-            foreach ($servers as $y => $server) {
-                self::getCoordinatePlayers($x . $y, $region, $gamemode);
-            }
-        };
+        $players = array();
+        // First get the center server players
+        $information              = self::getPlayersOnCoordinate($coordinate, $region, $gamemode);
+        $information['direction'] = '';
+        $information['unicode']   = '00B7';
+        $players[$coordinate]     = $information;
+
+        // Get players for all surrounding servers
+        $center = new Coordinate($coordinate);
+        foreach ($center->getSurrounding() as $coordinate) {
+            // x
+            // y
+            // text
+            // direction
+            $information                  = self::getPlayersOnCoordinate($coordinate['text'], $region, $gamemode);
+            $information['direction']     = $coordinate['direction'];
+            $information['unicode']       = $coordinate['unicode'];
+            $players[$coordinate['text']] = $information;
+        }
+
+        return $players;
     }
 }
