@@ -41,7 +41,8 @@ class ApiController extends Controller
                         // We found the player on the same server as last time we spotted him
                         // No need for alert, we will update the playerping so we know we checked him out
                         $player_track->update([
-                            'updated_at' => Carbon::now(),
+                            'updated_at'  => Carbon::now(),
+                            'last_status' => 1,
                         ]);
                     } else {
                         // The player is no longer on the same server where we last spotted him... He might have gone offline or he might have moved
@@ -72,6 +73,7 @@ class ApiController extends Controller
                         $player_track->update([
                             'last_coordinate' => $current_coordinate,
                             'last_direction'  => $last_direction,
+                            'last_status'     => 1,
                         ]);
 
                         // Player moved since last track
@@ -80,9 +82,12 @@ class ApiController extends Controller
                             event(new TrackedPlayerMoved($player_track, $original_coordinate));
                         } else {
                             // If the player ping is older than 15 minutes we can suspect the player went offline.
-                            if ($player_ping->updated_at <= Carbon::now()->subMinutes(15)) {
+                            if ($player_ping->updated_at <= Carbon::now()->subMinutes(15) && $player_track->last_status) {
                                 // We suspect player went offline
                                 event(new TrackedPlayerLost($player_track, $player_ping->updated_at));
+                                $player_track->update([
+                                    'last_status' => 0,
+                                ]);
                             }
                         }
                     }

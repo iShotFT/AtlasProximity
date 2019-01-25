@@ -347,7 +347,7 @@ this.Echo.channel(`public`)
     })
     .listen('.tracked.player.lost', (e) => {
         console.log('WebSocket: [TRACKING] Sent tracking lost message to ' + e.guildid + ' about player ' + e.player);
-        client.channels.get(e.channelid).send(':warning: We suspect that tracked player `' + e.player + '` has gone offline about ' + moment(e.last_seen, 'YYYY-MM-DD HH:mm:ss').fromNow() + '. Last known location: `' + e.last + '`');
+        client.channels.get(e.channelid).send(':warning: We suspect that tracked player `' + e.player + '` has gone offline. Last known location: `' + e.last + '`');
     })
     .listen('.track.expired', (e) => {
         console.log('WebSocket: [TRACKING] Sent track expired message to ' + e.guildid + ' about player ' + e.player);
