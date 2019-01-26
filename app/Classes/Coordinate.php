@@ -2,66 +2,10 @@
 
 namespace App\Classes;
 
+use Illuminate\Support\Facades\Cache;
+
 class Coordinate
 {
-    protected $x;
-    protected $x_max;
-    protected $x_min = 1;
-    protected $y;
-    protected $y_max;
-    protected $y_min = 1;
-
-    protected $surroundings = [
-        [
-            -1,
-            0,
-            'west',
-            '2B05',
-        ],
-        [
-            -1,
-            -1,
-            'northwest',
-            '2196',
-        ],
-        [
-            0,
-            -1,
-            'north',
-            '2B06',
-        ],
-        [
-            1,
-            -1,
-            'northeast',
-            '2197',
-        ],
-        [
-            1,
-            0,
-            'east',
-            '27A1',
-        ],
-        [
-            1,
-            1,
-            'southeast',
-            '2198',
-        ],
-        [
-            0,
-            1,
-            'south',
-            '2B07',
-        ],
-        [
-            -1,
-            1,
-            'southwest',
-            '2199',
-        ],
-    ];
-
     protected static $cardinalDegrees = [
         'North'           => [
             348.75,
@@ -132,6 +76,62 @@ class Coordinate
             348.75,
         ],
     ];
+    protected $x;
+    protected $x_max;
+    protected $x_min = 1;
+    protected $y;
+    protected $y_max;
+    protected $y_min = 1;
+    protected $surroundings = [
+        [
+            -1,
+            0,
+            'west',
+            '2B05',
+        ],
+        [
+            -1,
+            -1,
+            'northwest',
+            '2196',
+        ],
+        [
+            0,
+            -1,
+            'north',
+            '2B06',
+        ],
+        [
+            1,
+            -1,
+            'northeast',
+            '2197',
+        ],
+        [
+            1,
+            0,
+            'east',
+            '27A1',
+        ],
+        [
+            1,
+            1,
+            'southeast',
+            '2198',
+        ],
+        [
+            0,
+            1,
+            'south',
+            '2B07',
+        ],
+        [
+            -1,
+            1,
+            'southwest',
+            '2199',
+        ],
+    ];
 
     /**
      * Coordinate constructor.
@@ -178,28 +178,61 @@ class Coordinate
     }
 
     /**
+     * @param $x1
+     * @param $y1
+     * @param $x2
+     * @param $y2
+     *
+     * @return mixed
+     */
+    public static function cardinalDirectionBetween($x1, $y1, $x2, $y2)
+    {
+        // https://gist.github.com/smallindine/d227743c28418f3426ed36b8969ded1a -> radial to cardinal
+        // rad2deg(atan2($y2-$y1,$x2-$x1));
+        // 360 + rad2deg(atan2(3-4,2-3));
+
+        $y1 = 15 - $y1;
+        $y2 = 15 - $y2;
+
+        $rad    = rad2deg(atan2($y2 - $y1, $x2 - $x1));
+        $degree = 90 - ($rad > 90 ? -($rad) : $rad);
+
+        foreach (self::$cardinalDegrees as $dir => $angles) {
+            if ($degree >= $angles[0] && $degree < $angles[1]) {
+                $cardinal = str_replace("2", "", $dir);
+            }
+        }
+
+        return $cardinal;
+    }
+
+    /**
      * @return array
      */
     public function getSurrounding()
     {
-        $target = array_map(function ($movement) {
-            $x = $this->x + $movement[0];
-            $x = (($x < $this->x_min) ? $this->x_max + ($x % $this->x_max) : ($x > $this->x_max ? ($x % $this->x_max) : $x));
+        $target = Cache::remember('getSurrounding' . $this->x . $this->y, 1440, function () {
+            $target = array_map(function ($movement) {
+                $x = $this->x + $movement[0];
+                $x = (($x < $this->x_min) ? $this->x_max + ($x % $this->x_max) : ($x > $this->x_max ? ($x % $this->x_max) : $x));
 
-            $y = $this->y + $movement[1];
-            $y = (($y < $this->y_min) ? $this->y_max + ($y % $this->y_max) : ($y > $this->y_max ? ($y % $this->y_max) : $y));
+                $y = $this->y + $movement[1];
+                $y = (($y < $this->y_min) ? $this->y_max + ($y % $this->y_max) : ($y > $this->y_max ? ($y % $this->y_max) : $y));
 
-            //$x = $movement[0] + ((($movement[0] + $this->x) < $this->x_min) ? $this->x_max + ($this->x % $this->x_max) : $this->x % $this->x_max);
-            // $y = $movement[1] + ((($movement[1] + $this->y) < $this->y_min) ? $this->y_max + ($this->y % $this->y_max) : $this->y % $this->y_max);
+                //$x = $movement[0] + ((($movement[0] + $this->x) < $this->x_min) ? $this->x_max + ($this->x % $this->x_max) : $this->x % $this->x_max);
+                // $y = $movement[1] + ((($movement[1] + $this->y) < $this->y_min) ? $this->y_max + ($this->y % $this->y_max) : $this->y % $this->y_max);
 
-            return [
-                'x'         => $x,
-                'y'         => $y,
-                'text'      => self::xyToText($x, $y),
-                'direction' => $movement[2],
-                'unicode'   => $movement[3],
-            ];
-        }, $this->surroundings);
+                return [
+                    'x'         => $x,
+                    'y'         => $y,
+                    'text'      => self::xyToText($x, $y),
+                    'direction' => $movement[2],
+                    'unicode'   => $movement[3],
+                ];
+            }, $this->surroundings);
+
+            return $target;
+        });
 
         return $target;
     }
@@ -227,34 +260,5 @@ class Coordinate
             'direction' => 'center',
             'unicode'   => '2022',
         ];
-    }
-
-    /**
-     * @param $x1
-     * @param $y1
-     * @param $x2
-     * @param $y2
-     *
-     * @return mixed
-     */
-    public static function cardinalDirectionBetween($x1, $y1, $x2, $y2)
-    {
-        // https://gist.github.com/smallindine/d227743c28418f3426ed36b8969ded1a -> radial to cardinal
-        // rad2deg(atan2($y2-$y1,$x2-$x1));
-        // 360 + rad2deg(atan2(3-4,2-3));
-
-        $y1 = 15 - $y1;
-        $y2 = 15 - $y2;
-
-        $rad    = rad2deg(atan2($y2 - $y1, $x2 - $x1));
-        $degree = 90 - ($rad > 90 ? -($rad) : $rad);
-
-        foreach (self::$cardinalDegrees as $dir => $angles) {
-            if ($degree >= $angles[0] && $degree < $angles[1]) {
-                $cardinal = str_replace("2", "", $dir);
-            }
-        }
-
-        return $cardinal;
     }
 }

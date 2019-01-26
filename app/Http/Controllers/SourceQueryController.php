@@ -72,100 +72,110 @@ class SourceQueryController extends Controller
      */
     public static function getPlayersOnCoordinate($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
-        $Query  = new SourceQuery();
         $return = '';
 
         // Get the IP for this server
-        list ($ip, $port) = array_values(self::getServerIp($coordinate, $region, $gamemode));
-
-        // First check if server wasn't polled already in the past minute
-        if ($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinutes(config('atlas.settings.cache.lifetime', 1)))->first()) {
-            $players = json_decode($ping->info, true);
-            $data    = [
-                'type' => 'database',
-                'age'  => [
-                    'timestamp' => $ping->created_at->timestamp,
-                    'seconds'   => Carbon::now()->timestamp - $ping->created_at->timestamp,
-                ],
-            ];
+        if (Cache::has('getPlayersOnCoordinate' . $coordinate . $region . $gamemode)) {
+            $return                           = Cache::get('getPlayersOnCoordinate' . $coordinate . $region . $gamemode);
+            $return['data']['type']           = 'redis';
+            $return['data']['age']['seconds'] = Carbon::now()->timestamp - $return['data']['age']['timestamp'];
         } else {
-            // No database record found younger than a minute. Pull new information
-            try {
-                $Query->Connect($ip, $port, self::$server_timeout, self::$server_engine);
-                $players = $Query->GetPlayers();
-
-                $data = [
-                    'type' => 'live',
+            list ($ip, $port) = array_values(self::getServerIp($coordinate, $region, $gamemode));
+            // First check if server wasn't polled already in the past minute
+            if ($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinutes(config('atlas.settings.cache.lifetime', 1)))->first()) {
+                $players = json_decode($ping->info, true);
+                $data    = [
+                    'type' => 'database',
                     'age'  => [
-                        'timestamp' => Carbon::now()->timestamp,
-                        'seconds'   => 0,
+                        'timestamp' => $ping->created_at->timestamp,
+                        'seconds'   => Carbon::now()->timestamp - $ping->created_at->timestamp,
                     ],
                 ];
+            } else {
+                // No database record found younger than a minute. Pull new information
+                try {
+                    $Query = new SourceQuery();
+                    $Query->Connect($ip, $port, self::$server_timeout, self::$server_engine);
+                    $players = $Query->GetPlayers();
 
-                // Store pulled information into the DB
-                Ping::create([
-                    'ip'          => $ip,
-                    'port'        => $port,
-                    'region'      => $region,
-                    'gamemode'    => $gamemode,
-                    'coordinates' => $coordinate,
-                    'online'      => 1,
-                    'players'     => (is_array($players) ? sizeof($players) : null),
-                    'info'        => json_encode($players, true),
-                ]);
+                    $data = [
+                        'type' => 'live',
+                        'age'  => [
+                            'timestamp' => Carbon::now()->timestamp,
+                            'seconds'   => 0,
+                        ],
+                    ];
 
-                // Store the players in the database
-                if (is_array($players) && count($players)) {
-                    $to_be_updated = array();
-                    foreach ($players as $player) {
-                        if (!empty($player['Name']) && $player['Name'] !== "123") {
-                            $playerping = PlayerPing::firstOrNew([
-                                'player'      => $player['Name'],
-                                'region'      => $region,
-                                'gamemode'    => $gamemode,
-                                'coordinates' => $coordinate,
-                                'ip'          => $ip,
-                                'port'        => $port,
-                            ]);
+                    // Store pulled information into the DB
+                    Ping::create([
+                        'ip'          => $ip,
+                        'port'        => $port,
+                        'region'      => $region,
+                        'gamemode'    => $gamemode,
+                        'coordinates' => $coordinate,
+                        'online'      => 1,
+                        'players'     => (is_array($players) ? sizeof($players) : null),
+                        'info'        => json_encode($players, true),
+                    ]);
 
-                            if ($playerping->id) {
-                                array_push($to_be_updated, $playerping->id);
-                            } else {
-                                $playerping->save();
+                    // Store the players in the database
+                    if (is_array($players) && count($players)) {
+                        $to_be_updated = array();
+                        foreach ($players as $player) {
+                            if (!empty($player['Name']) && $player['Name'] !== "123") {
+                                $playerping = PlayerPing::firstOrNew([
+                                    'player'      => $player['Name'],
+                                    'region'      => $region,
+                                    'gamemode'    => $gamemode,
+                                    'coordinates' => $coordinate,
+                                    'ip'          => $ip,
+                                    'port'        => $port,
+                                ]);
+
+                                if ($playerping->id) {
+                                    array_push($to_be_updated, $playerping->id);
+                                } else {
+                                    $playerping->save();
+                                }
                             }
                         }
-                    }
 
-                    $now = Carbon::now();
-                    if (count($to_be_updated)) {
-                        PlayerPing::whereIn('id', $to_be_updated)->update(['updated_at' => $now]);
+                        $now = Carbon::now();
+                        if (count($to_be_updated)) {
+                            PlayerPing::whereIn('id', $to_be_updated)->update(['updated_at' => $now]);
+                        }
                     }
+                } catch (TimeoutException $e) {
+                    // Failed to poll the server. Offline?
+                    Ping::create([
+                        'ip'          => $ip,
+                        'port'        => $port,
+                        'region'      => $region,
+                        'gamemode'    => $gamemode,
+                        'coordinates' => $coordinate,
+                        'online'      => 0,
+                        'players'     => null,
+                        'info'        => null,
+                    ]);
+
+                    $players = null;
                 }
-            } catch (TimeoutException $e) {
-                // Failed to poll the server. Offline?
-                Ping::create([
-                    'ip'          => $ip,
-                    'port'        => $port,
-                    'region'      => $region,
-                    'gamemode'    => $gamemode,
-                    'coordinates' => $coordinate,
-                    'online'      => 0,
-                    'players'     => null,
-                    'info'        => null,
-                ]);
+                finally {
+                    $Query->Disconnect();
+                }
+            }
 
-                $players = null;
-            }
-            finally {
-                $Query->Disconnect();
-            }
+            $return = [
+                'players' => $players,
+                'count'   => (is_array($players) ? count($players) : 0),
+                'data'    => $data,
+            ];
+
+            // Save in cache for next usage
+            Cache::put('getPlayersOnCoordinate' . $coordinate . $region . $gamemode, $return, 0.25);
         }
 
-        return [
-            'players' => $players,
-            'count'   => (is_array($players) ? count($players) : 0),
-            'data'    => $data,
-        ];
+        return $return;
     }
 
     public static function getServerIp($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
@@ -187,6 +197,8 @@ class SourceQueryController extends Controller
 
     public function test(Request $request)
     {
+        //        Cache::forget('getPlayersOnCoordinateB4eupvp');
+        dd(SourceQueryController::getPlayersOnCoordinateWithSurrounding('B4'));
         $proximity = ProximityTrack::updateOrCreate([
             //            $table->string('guild_id');
             //        $table->string('channel_id');
@@ -196,7 +208,7 @@ class SourceQueryController extends Controller
             'coordinate' => 'B4',
         ]);
         dd(ApiController::proximity());
-        dd(SourceQueryController::getPlayersOnCoordinateWithSurrounding('B4'));
+
         //        $start = Carbon::now()->timestamp;
         //        self::getAllPlayersAllServers();
         //        dd('end', Carbon::now()->timestamp - $start);
@@ -215,6 +227,8 @@ class SourceQueryController extends Controller
     public static function getPlayersOnCoordinateWithSurrounding($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
         $players = array();
+
+
         // First get the center server players
         $information              = self::getPlayersOnCoordinate($coordinate, $region, $gamemode);
         $information['direction'] = '';
