@@ -11,6 +11,7 @@
 |
 */
 
+Route::get('help', 'ApiController@help');
 Route::get('population', 'ApiController@population');
 Route::get('players', 'ApiController@players');
 Route::get('find', 'ApiController@find');

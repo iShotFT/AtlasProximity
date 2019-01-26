@@ -71,7 +71,7 @@ const procMsgs = [
     'Stopping to smell the flowers...',
     'Achieving Nirvana...',
     'Managing Inventory...',
-    'Griding up some leprechauns to make Nutella...',
+    'Grinding up some leprechauns to make Nutella...',
     'Putting the D into the V...',
 ];
 
@@ -81,6 +81,8 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
+    var author = msg.author;
+
     // Ignore all bot messages
     if (msg.author.bot) {
         return;
@@ -95,19 +97,73 @@ client.on('message', msg => {
     const args = msg.content.slice(config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
 
-    console.log('Message received from server ' + msg.guild.name + ' by user ' + msg.author.username + '#' + msg.author.discriminator + ':\n > ' + msg.content);
-
-    if (command === 'test') {
-        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
-
-        });
-
-        return false;
+    if (msg.channel.type === 'dm') {
+        // Private message
+        console.log('Private message received from ' + msg.author.username + '#' + msg.author.discriminator + ':\n > ' + msg.content);
+        msg.author.send('Sorry, I don\'t do private messages, use me in a server ( ͡° ͜ʖ ͡°)');
+        return;
+    } else {
+        console.log('Message received from server ' + msg.guild.name + ' by user ' + msg.author.username + '#' + msg.author.discriminator + ':\n > ' + msg.content);
     }
 
+
+    // if (command === 'test') {
+    //     msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+    //
+    //     });
+    //
+    //     return false;
+    // }
+
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
-        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
-            msg.edit('```\n---\n' + config.prefix + 'purge\n---\n> Removes the 100 most recent messages in this channel\n\n---\n' + config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show a list of usernames in the given server and their playtime\n\n---\n' + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it in a list with directions\n\n---\n' + config.prefix + 'grid <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it formatted as a table\n\n---\n' + config.prefix + 'find <NAME:iShot>\n---\n> Show the latest information of this player (STEAM NAME ONLY)\n\n---\n' + config.prefix + 'track <MINUTES:30> <NAME:iShot>\n---\n> Track this player\'s movement for the next XX minutes. You\'ll receive warnings when we see the player skip servers.```');
+        msg.delete();
+        msg.author.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            axios.get(config.url + '/api/help', {
+                params: {},
+            }).then(function (response) {
+                // var message = '';
+                if (response.data) {
+                    msg.delete();
+                    // array.push(['COMMAND', 'EXPLANATION', 'ALIASES']);
+                    var array = [];
+                    for (var command in response.data) {
+                        if (!response.data.hasOwnProperty(command)) {
+                            continue;
+                        }
+
+                        var strCommand = config.prefix + command;
+                        if (response.data[command]['arguments'].length) {
+                            strCommand = strCommand + ' ' + response.data[command]['arguments'].join(' ');
+                        }
+
+                        array.push([strCommand]);
+                        array.push([response.data[command].explanation]);
+                        if (response.data[command].aliases.length) {
+                            array.push(['Aliases: !' + response.data[command].aliases.join(' !')]);
+                        }
+                        array.push([]);
+
+                        if (array.length >= 16) {
+                            console.log(array.length);
+                            // Bind help information together
+                            author.send('```' + table(array) + '```');
+                            array = [];
+                        }
+                    }
+
+                    if (array.length >= 1) {
+                        // Send last part
+                        author.send('```' + table(array) + '```');
+                        array = [];
+                    }
+
+                    console.log('Sent a private messages to ' + author.username + ' with the help information');
+                } else {
+                    message = '\n> Something went wrong when pulling the help information';
+                    console.log('Sent a private message to ' + msg.author.username + ':' + message);
+                    msg.edit('```' + message + '```');
+                }
+            });
         });
 
         return false;

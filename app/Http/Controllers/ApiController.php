@@ -145,7 +145,8 @@ class ApiController extends Controller
                             'last_direction'  => $last_direction,
                         ];
 
-                        if ($player_ping->updated_at >= Carbon::now()->subMinutes(15)) {
+                        if ($player_track->last_status === 0 && $player_ping->updated_at >= Carbon::now()->subMinutes(15)) {
+                            // User came back online!
                             $update_info['last_status'] = 1;
                         }
 
@@ -171,6 +172,17 @@ class ApiController extends Controller
                 }
             }
         }
+    }
+
+    public function map(Request $request)
+    {
+        $request->validate([
+            'region'   => 'required|string|size:2',
+            'gamemode' => 'required|string|size:3',
+        ]);
+
+        // Generate a table with all the servers (from the DB or cache) and send it back
+
     }
 
     public function players(Request $request)
@@ -199,6 +211,8 @@ class ApiController extends Controller
     {
         $request->validate([
             'username' => 'required|string|min:2',
+            //            'region'   => 'required|string|size:2',
+            //            'gamemode' => 'required|string|size:3',
         ]);
 
         $found = PlayerPing::where('player', '=', $request->get('username'))->orderByDesc('updated_at')->limit(5)->get([
@@ -308,7 +322,7 @@ class ApiController extends Controller
             'guildid' => 'required|integer',
         ]);
 
-        $found = PlayerTrack::where('guild_id', $request->get('guildid'))->where('until', '>=', Carbon::now())->orderBy('until')->get([
+        $found = PlayerTrack::where('guild_id', $request->get('guildid'))->where('updated_at', '>=', Carbon::now())->orderBy('until')->get([
             'player',
             'last_coordinate',
             'updated_at',
@@ -316,5 +330,143 @@ class ApiController extends Controller
         ]);
 
         return response()->json(($found ? $found->toArray() : []));
+    }
+
+    public function help(Request $request)
+    {
+        $commmands = [
+            'help'    => [
+                'explanation' => 'Returns all the commands registered on this bot with explanation.',
+                'aliases'     => [
+                    'cmdlist',
+                    'commands',
+                    'bot',
+                    'info',
+                ],
+                'arguments'   => [],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'purge'   => [
+                'explanation' => 'Removes the 100 most recent messages in the channel you use the command in.',
+                'aliases'     => [
+                    'clean',
+                    'clear',
+                ],
+                'arguments'   => [],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'players' => [
+                'explanation' => 'Shows a list of players and their time connected on the coordinate of your choice.',
+                'aliases'     => [
+                    'player',
+                ],
+                'arguments'   => [
+                    'COORDINATE:A1',
+                    'REGION:eu',
+                    'GAMEMODE:pvp',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'pop'     => [
+                'explanation' => 'Show a list of the amount of players on and around the coordinate of your choice.',
+                'aliases'     => [
+                    'population',
+                ],
+                'arguments'   => [
+                    'COORDINATE:A1',
+                    'REGION:eu',
+                    'GAMEMODE:pvp',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'grid'    => [
+                'explanation' => 'Show a formatted table of the amount of players on and around the coordinate of your choice.',
+                'aliases'     => [],
+                'arguments'   => [
+                    'COORDINATE:A1',
+                    'REGION:eu',
+                    'GAMEMODE:pvp',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'find'    => [
+                'explanation' => 'Find a player (based on steam username). This currently only works for [EU PVP].',
+                'aliases'     => [
+                    'search',
+                    'whereis',
+                ],
+                'arguments'   => [
+                    'STEAMNAME:iShot',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'alert'   => [
+                'explanation' => 'Adds a coordinate to the list of coordinates that trigger an alert when we think a boat of 2 or more people joined that coordinate.',
+                'aliases'     => [
+                    'prox',
+                    'proximity',
+                ],
+                'arguments'   => [
+                    'COORDINATE:A1',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'unalert' => [
+                'explanation' => 'Removes a coordinate to the list of coordinates that trigger an alert when we think a boat of 2 or more people joined that coordinate.',
+                'aliases'     => [
+                    'unprox',
+                    'unproximity',
+                ],
+                'arguments'   => [
+                    'COORDINATE:A1',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'track'   => [
+                'explanation' => 'Track a player for XXX minutes. Every time we detect the player changed coordinates the bot will post an alert',
+                'aliases'     => [
+                    'stalk',
+                    'follow',
+                ],
+                'arguments'   => [
+                    'MINUTES:120',
+                    'USERNAME:iShot',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'untrack' => [
+                'explanation' => 'Remove a player from the tracking list.',
+                'aliases'     => [
+                    'unstalk',
+                    'unfollow',
+                ],
+                'arguments'   => [
+                    'USERNAME:iShot',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
+        ];
+
+        return response()->json($commmands);
     }
 }
