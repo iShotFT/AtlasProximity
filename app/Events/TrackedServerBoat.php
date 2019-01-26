@@ -30,8 +30,8 @@ class TrackedServerBoat implements ShouldBroadcastNow
         $this->to      = $proximityTrack->coordinate;
         $this->players = $players;
 
-        list ($x1, $y1) = Coordinate::textToXY($from);
-        list ($x2, $y2) = Coordinate::textToXY($proximityTrack->coordinate);
+        list ($x1, $y1) = Coordinate::textToXY($proximityTrack->coordinate);
+        list ($x2, $y2) = Coordinate::textToXY($from);
         $this->direction = Coordinate::cardinalDirectionBetween($x1, $y1, $x2, $y2);
 
         $this->guildid   = $proximityTrack->guild_id;

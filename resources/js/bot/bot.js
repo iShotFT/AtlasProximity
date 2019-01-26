@@ -547,5 +547,5 @@ this.Echo.channel(`public`)
     })
     .listen('.tracked.server.boat', (e) => {
         console.log('WebSocket: [TRACKING] Sent boat warning message to ' + e.guildid + ' about coordinate ' + e.to);
-        client.channels.get(e.channelid).send(':sailboat: A suspected boat entered coordinate `' + e.to + '`. Player(s) on the boat:\n```\n' + e.players.join('\n') + '```');
+        client.channels.get(e.channelid).send(':sailboat: A suspected boat entered coordinate `' + e.to + '`. They came from the `' + e.direction + '` (`' + e.from + '`). Player(s) on the boat:\n```\n' + e.players.join('\n') + '```');
     });

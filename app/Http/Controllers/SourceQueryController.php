@@ -226,8 +226,9 @@ class SourceQueryController extends Controller
     public function test(Request $request)
     {
         //        dd(self::getAllPlayersAllServers('na', 'pvp'));
+        dd(self::getAllServers('eu', 'pve'));
         $Query = new SourceQuery();
-        $Query->Connect('37.10.127.123', 57555, self::$server_timeout, self::$server_engine);
+        $Query->Connect('46.251.238.58', 57555, self::$server_timeout, self::$server_engine);
         $players = $Query->GetRules();
         dd($players);
 
