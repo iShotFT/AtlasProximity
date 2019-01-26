@@ -171,16 +171,20 @@ client.on('message', msg => {
     }
 
     if (command === 'purge' || command === 'clean' || command === 'clear') {
-        if (message.member.hasPermission('ADMINISTRATOR') || message.member.hasPermission('MANAGE_MESSAGES')) {
-            async function clear() {
-                msg.delete();
-                const fetched = await msg.channel.fetchMessages({limit: 100});
-                msg.channel.bulkDelete(fetched);
-            }
+        if (message.member.guild.me.hasPermission('ADMINISTRATOR') || message.member.guild.me.hasPermission('MANAGE_MESSAGES')) {
+            if (message.member.hasPermission('ADMINISTRATOR') || message.member.hasPermission('MANAGE_MESSAGES')) {
+                async function clear() {
+                    msg.delete();
+                    const fetched = await msg.channel.fetchMessages({limit: 100});
+                    msg.channel.bulkDelete(fetched);
+                }
 
-            clear();
+                clear();
+            } else {
+                msg.edit('You do not have the correct permissions to use !purge (You need to be able to delete messages)');
+            }
         } else {
-            msg.edit('You do not have the correct permissions to use !purge (You need to be able to delete messages)');
+            msg.edit('This bot doesn\'t have permissions to remove messages');
         }
 
         return false;
