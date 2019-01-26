@@ -110,6 +110,12 @@ class ApiController extends Controller
                     if ($remained_stationairy) {
                         // We found the player on the same server as last time we spotted him
                         // No need for alert, we will update the playerping so we know we checked him out
+                        // Trigger online warning
+                        if ($player_track->last_status === 0 && $player_ping->updated_at >= Carbon::now()->subMinutes(10)) {
+                            // User came back online!
+                            event(new TrackedPlayerRefound($player_track));
+                        }
+
                         $player_track->update([
                             'updated_at'  => Carbon::now(),
                             'last_status' => 1,

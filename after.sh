@@ -11,3 +11,5 @@
 sudo curl -LO https://deployer.org/deployer.phar
 sudo mv deployer.phar /usr/local/bin/dep
 sudo chmod +x /usr/local/bin/dep
+sudo phpdismod xdebug
+sudo service php7.3-fpm reload
