@@ -324,7 +324,7 @@ class ApiController extends Controller
             'guildid' => 'required|integer',
         ]);
 
-        $found = PlayerTrack::where('guild_id', $request->get('guildid'))->where('updated_at', '>=', Carbon::now())->orderBy('until')->get([
+        $found = PlayerTrack::where('guild_id', $request->get('guildid'))->where('until', '>=', Carbon::now())->orderByDesc('updated_at')->get([
             'player',
             'last_coordinate',
             'updated_at',
