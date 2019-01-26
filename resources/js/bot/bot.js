@@ -8,6 +8,7 @@ const moment = require('moment');
 const config = require('./config.json');
 const client = new Discord.Client();
 const Echo = require('laravel-echo');
+const htmlToImage = require('html-to-image');
 
 // Random 'Processing...' messages
 const procMsgs = [
@@ -521,6 +522,8 @@ client.on('message', msg => {
         return false;
     }
 });
+
+client.on('error', (e) => console.error(e));
 
 client.login(config.token);
 

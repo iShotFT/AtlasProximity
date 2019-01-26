@@ -218,6 +218,9 @@ class ApiController extends Controller
             'channelid'  => 'required',
         ]);
 
+        // Refresh the data
+        SourceQueryController::getPlayersOnCoordinateWithSurrounding($request->get('coordinate'));
+
         ProximityTrack::updateOrCreate([
             'coordinate' => $request->get('coordinate'),
             'guild_id'   => $request->get('guildid'),

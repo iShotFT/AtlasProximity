@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "discord.js": "^11.4.2",
+        "html-to-image": "^0.1.0",
         "laravel-echo": "^1.5.2",
         "laravel-echo-server": "^1.5.0",
         "moment": "^2.24.0",
