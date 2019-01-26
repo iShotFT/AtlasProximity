@@ -77,7 +77,7 @@ const procMsgs = [
 
 client.on('ready', () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
-    client.user.setActivity(`!help | !track | !pop | !grid | !players`);
+    client.user.setActivity(`!help`);
 });
 
 client.on('message', msg => {
@@ -494,7 +494,7 @@ client.on('message', msg => {
                 guildid: msg.guild.id,
                 channelid: msg.channel.id,
             }).then(function (response) {
-                msg.edit('```' + 'Now alerting on server ' + server + '```');
+                msg.edit('```' + 'Now alerting about ships entering server ' + server + '```');
             }).catch(function (response) {
                 msg.edit('```' + response.response.data.message + '```');
             });
@@ -585,7 +585,7 @@ client.on('message', msg => {
                 guildid: msg.guild.id,
                 channelid: msg.channel.id,
             }).then(function (response) {
-                msg.edit('```' + 'Now tracking ' + username + ' for the next ' + minutes + ' minute(s)' + '```');
+                msg.edit('```' + 'Now tracking ' + username + ' for the next ' + minutes + ' minute(s). We\'ll post a message each time we see the player move servers.' + '```');
             }).catch(function (response) {
                 msg.edit('```' + response.response.data.message + '```');
             });
