@@ -220,29 +220,31 @@ client.on('message', msg => {
                 var array = [];
                 var multiple = false;
 
-                msg.channel.send('These are the `' + response.data.players.length + '` players on `' + ogserver + '`');
+                if (response.data.players !== false) {
+                    msg.channel.send('These are the `' + response.data.players.length + '` players on `' + ogserver + '`');
+                    array.push(['USERNAME', 'PLAYTIME']);
+                    for (var player in response.data.players) {
+                        if (!response.data.players.hasOwnProperty(player)) {
+                            continue;
+                        }
 
-                msg.delete();
-                array.push(['USERNAME', 'PLAYTIME']);
-                for (var player in response.data.players) {
-                    if (!response.data.players.hasOwnProperty(player)) {
-                        continue;
+                        array.push([response.data.players[player].Name, response.data.players[player].TimeF]);
+
+                        // If the array is larger than 25 lines, push it as a message and restart the array
+                        if (array.length >= 25) {
+                            msg.channel.send('```' + table(array) + '```');
+                            multiple = true;
+
+                            array = [];
+                            array.push(['USERNAME', 'PLAYTIME']);
+                        }
                     }
 
-                    array.push([response.data.players[player].Name, response.data.players[player].TimeF]);
-
-                    // If the array is larger than 25 lines, push it as a message and restart the array
-                    if (array.length >= 25) {
-                        msg.channel.send('```' + table(array) + '```');
-                        multiple = true;
-
-                        array = [];
-                        array.push(['USERNAME', 'PLAYTIME']);
-                    }
+                    console.log('Sent a message to ' + msg.guild.name);
+                    msg.channel.send('```' + table(array) + '```');
+                } else {
+                    msg.edit(':skull_crossbones: Server ' + ogserver + ' seems to be offline');
                 }
-
-                console.log('Sent a message to ' + msg.guild.name);
-                msg.channel.send('```' + table(array) + '```');
 
             });
         });
@@ -640,5 +642,5 @@ this.Echo.channel(`public`)
     })
     .listen('.tracked.server.boat', (e) => {
         console.log('WebSocket: [TRACKING] Sent boat warning message to ' + e.guildid + ' about coordinate ' + e.to);
-        client.channels.get(e.channelid).send(':sailboat: A suspected boat entered coordinate `' + e.to + '`. They came from the `' + e.direction + '` (`' + e.from + '`). Player(s) on the boat:\n```\n' + e.players.join('\n') + '```');
+        client.channels.get(e.channelid).send(':anchor: A suspected boat entered coordinate `' + e.to + '`. They came from the `' + e.direction + '` (`' + e.from + '`). Player(s) on the boat:\n```\n' + e.players.join('\n') + '```');
     });
