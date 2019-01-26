@@ -27,7 +27,7 @@ class ApiController extends Controller
                     $previous_scanned_players = array_column($previous_scanned_players, 'Name');
                     $new_scanned_players      = array_column($new_scanned_players, 'Name');
 
-                    $new_players_after_scan = array_diff($previous_scanned_players, $new_scanned_players);
+                    $new_players_after_scan = array_diff($new_scanned_players, $previous_scanned_players);
 
                     if (is_array($new_players_after_scan) && count($new_players_after_scan) >= 2) {
                         // 3 or more new players joined in the past minute!!!

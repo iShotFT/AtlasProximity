@@ -17,48 +17,41 @@ class SourceQueryController extends Controller
     protected static $server_timeout = 1;
     protected static $server_engine = SourceQuery::SOURCE;
 
-    public static function getAllPlayersAllServers($region = 'eu', $gamemode = 'pvp')
+    /**
+     * @param string $coordinate
+     * @param string $region
+     * @param string $gamemode
+     *
+     * @return array
+     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
+     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
+     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     */
+    public static function getPlayersOnCoordinateWithSurrounding($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
     {
-        foreach (self::getAllServers($region, $gamemode) as $x => $servers) {
-            foreach ($servers as $y => $server) {
-                self::getPlayersOnCoordinate($x . $y, $region, $gamemode);
-            }
-        };
-    }
+        $players = array();
 
-    public static function getAllServers($region = 'eu', $gamemode = 'pvp')
-    {
-        $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
 
-        $return = Cache::remember('servers_list', 60, function () use ($servers) {
-            $max_x = explode('x', $servers['size'])[0];
-            $max_y = explode('x', $servers['size'])[1];
+        // First get the center server players
+        $information              = self::getPlayersOnCoordinate($coordinate, $region, $gamemode);
+        $information['direction'] = '';
+        $information['unicode']   = '00B7';
+        $players[$coordinate]     = $information;
 
-            $servers_list = array();
-            foreach ($servers['ip'] as $ip) {
-                foreach ($servers['port'] as $port) {
-                    array_push($servers_list, [
-                        'ip'   => $ip,
-                        'port' => $port,
-                    ]);
-                }
-            }
+        // Get players for all surrounding servers
+        $center = new Coordinate($coordinate);
+        foreach ($center->getSurrounding() as $coordinate) {
+            // x
+            // y
+            // text
+            // direction
+            $information                  = self::getPlayersOnCoordinate($coordinate['text'], $region, $gamemode);
+            $information['direction']     = $coordinate['direction'];
+            $information['unicode']       = $coordinate['unicode'];
+            $players[$coordinate['text']] = $information;
+        }
 
-            $return    = array();
-            $iteration = 0;
-            for ($x = 1; $x <= $max_x; $x++) {
-                $character          = chr($x + 64);
-                $return[$character] = array();
-                for ($y = 1; $y <= $max_y; $y++) {
-                    $return[$character][$y] = $servers_list[$iteration];
-                    $iteration++;
-                }
-            }
-
-            return $return;
-        });
-
-        return $return;
+        return $players;
     }
 
     /**
@@ -195,10 +188,51 @@ class SourceQueryController extends Controller
         }
     }
 
+    public static function getAllServers($region = 'eu', $gamemode = 'pvp')
+    {
+        $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
+
+        $return = Cache::remember('servers_list' . $region . $gamemode, 60, function () use ($servers) {
+            $max_x = explode('x', $servers['size'])[0];
+            $max_y = explode('x', $servers['size'])[1];
+
+            $servers_list = array();
+            foreach ($servers['ip'] as $ip) {
+                foreach ($servers['port'] as $port) {
+                    array_push($servers_list, [
+                        'ip'   => $ip,
+                        'port' => $port,
+                    ]);
+                }
+            }
+
+            $return    = array();
+            $iteration = 0;
+            for ($x = 1; $x <= $max_x; $x++) {
+                $character          = chr($x + 64);
+                $return[$character] = array();
+                for ($y = 1; $y <= $max_y; $y++) {
+                    $return[$character][$y] = $servers_list[$iteration];
+                    $iteration++;
+                }
+            }
+
+            return $return;
+        });
+
+        return $return;
+    }
+
     public function test(Request $request)
     {
+        //        dd(self::getAllPlayersAllServers('na', 'pvp'));
+        $Query = new SourceQuery();
+        $Query->Connect('37.10.127.123', 57555, self::$server_timeout, self::$server_engine);
+        $players = $Query->GetRules();
+        dd($players);
+
         //        Cache::forget('getPlayersOnCoordinateB4eupvp');
-        dd(SourceQueryController::getPlayersOnCoordinateWithSurrounding('B4'));
+        dd(SourceQueryController::getAllPlayersAllServers());
         $proximity = ProximityTrack::updateOrCreate([
             //            $table->string('guild_id');
             //        $table->string('channel_id');
@@ -214,40 +248,12 @@ class SourceQueryController extends Controller
         //        dd('end', Carbon::now()->timestamp - $start);
     }
 
-    /**
-     * @param string $coordinate
-     * @param string $region
-     * @param string $gamemode
-     *
-     * @return array
-     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
-     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
-     * @throws \xPaw\SourceQuery\Exception\TimeoutException
-     */
-    public static function getPlayersOnCoordinateWithSurrounding($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
+    public static function getAllPlayersAllServers($region = 'eu', $gamemode = 'pvp')
     {
-        $players = array();
-
-
-        // First get the center server players
-        $information              = self::getPlayersOnCoordinate($coordinate, $region, $gamemode);
-        $information['direction'] = '';
-        $information['unicode']   = '00B7';
-        $players[$coordinate]     = $information;
-
-        // Get players for all surrounding servers
-        $center = new Coordinate($coordinate);
-        foreach ($center->getSurrounding() as $coordinate) {
-            // x
-            // y
-            // text
-            // direction
-            $information                  = self::getPlayersOnCoordinate($coordinate['text'], $region, $gamemode);
-            $information['direction']     = $coordinate['direction'];
-            $information['unicode']       = $coordinate['unicode'];
-            $players[$coordinate['text']] = $information;
-        }
-
-        return $players;
+        foreach (self::getAllServers($region, $gamemode) as $x => $servers) {
+            foreach ($servers as $y => $server) {
+                self::getPlayersOnCoordinate($x . $y, $region, $gamemode);
+            }
+        };
     }
 }
