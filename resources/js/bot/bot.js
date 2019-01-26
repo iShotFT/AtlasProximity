@@ -616,6 +616,10 @@ this.Echo.channel(`public`)
         console.log('WebSocket: [TRACKING] Sent tracking lost message to ' + e.guildid + ' about player ' + e.player);
         client.channels.get(e.channelid).send(':sleeping: We suspect that tracked player `' + e.player + '` has gone offline. Last known location: `' + e.last + '`');
     })
+    .listen('.tracked.player.refound', (e) => {
+        console.log('WebSocket: [TRACKING] Sent tracking refound message to ' + e.guildid + ' about player ' + e.player);
+        client.channels.get(e.channelid).send(':spy::skin-tone-4: Tracked player `' + e.player + '` came back online in location: `' + e.last + '`');
+    })
     .listen('.track.expired', (e) => {
         console.log('WebSocket: [TRACKING] Sent track expired message to ' + e.guildid + ' about player ' + e.player);
         client.channels.get(e.channelid).send(':timer: Tracking for player `' + e.player + '` has expired. Last known location: `' + e.last + '`');

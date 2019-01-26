@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Classes\Coordinate;
 use App\Events\TrackedPlayerLost;
 use App\Events\TrackedPlayerMoved;
+use App\Events\TrackedPlayerRefound;
 use App\Events\TrackedServerBoat;
 use App\Events\TrackExpired;
 use App\Ping;
@@ -148,6 +149,7 @@ class ApiController extends Controller
                         if ($player_track->last_status === 0 && $player_ping->updated_at >= Carbon::now()->subMinutes(15)) {
                             // User came back online!
                             $update_info['last_status'] = 1;
+                            event(new TrackedPlayerRefound($player_track));
                         }
 
                         $player_track->update($update_info);
