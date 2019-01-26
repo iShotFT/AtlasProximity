@@ -537,7 +537,7 @@ client.on('message', msg => {
             axios.post(config.url + '/api/track/remove', {
                 username: username,
                 guildid: msg.guild.id,
-                channelid: msg.channel.id,
+                // channelid: msg.channel.id,
             }).then(function (response) {
                 msg.edit('```' + 'No longer tracking ' + username + '```');
             }).catch(function (response) {

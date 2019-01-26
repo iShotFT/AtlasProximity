@@ -298,15 +298,15 @@ class ApiController extends Controller
     public function trackRemove(Request $request)
     {
         $request->validate([
-            'username'  => 'required|string|min:2',
-            'guildid'   => 'required',
-            'channelid' => 'required',
+            'username' => 'required|string|min:2',
+            'guildid'  => 'required',
+            //            'channelid' => 'required',
         ]);
 
         PlayerTrack::where([
-            'player'     => $request->get('username'),
-            'guild_id'   => $request->get('guildid'),
-            'channel_id' => $request->get('channelid'),
+            'player'   => $request->get('username'),
+            'guild_id' => $request->get('guildid'),
+            //            'channel_id' => $request->get('channelid'),
         ])->delete();
     }
 
