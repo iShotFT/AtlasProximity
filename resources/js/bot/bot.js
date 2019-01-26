@@ -218,7 +218,11 @@ client.on('message', msg => {
             }).then(function (response) {
                 // var message = '';
                 var array = [];
+                var multiple = false;
 
+                msg.channel.send('These are the `' + response.data.players.length + '` players on `' + ogserver + '`');
+
+                msg.delete();
                 array.push(['USERNAME', 'PLAYTIME']);
                 for (var player in response.data.players) {
                     if (!response.data.players.hasOwnProperty(player)) {
@@ -226,10 +230,20 @@ client.on('message', msg => {
                     }
 
                     array.push([response.data.players[player].Name, response.data.players[player].TimeF]);
+
+                    // If the array is larger than 25 lines, push it as a message and restart the array
+                    if (array.length >= 25) {
+                        msg.channel.send('```' + table(array) + '```');
+                        multiple = true;
+
+                        array = [];
+                        array.push(['USERNAME', 'PLAYTIME']);
+                    }
                 }
 
                 console.log('Sent a message to ' + msg.guild.name);
-                msg.edit('\nThese are the ' + response.data.count + ' players on ' + ogserver + ':\n```' + table(array) + '```\n\n*We do not track players with the following names: \'123\' and empty names*');
+                msg.channel.send('```' + table(array) + '```');
+
             });
         });
 
