@@ -16,6 +16,7 @@
 		"doctrine/dbal": "^2.9",
 		"fideloper/proxy": "^4.0",
 		"laravel/framework": "5.7.*",
+		"laravel/telescope": "^1.0",
 		"laravel/tinker": "^1.0",
 		"nopjmp/discord-webhooks": "^0.3.1",
 		"predis/predis": "^1.1",
