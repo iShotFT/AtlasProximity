@@ -8,7 +8,6 @@ const moment = require('moment');
 const config = require('./config.json');
 const client = new Discord.Client();
 const Echo = require('laravel-echo');
-const htmlToImage = require('html-to-image');
 
 // Random 'Processing...' messages
 const procMsgs = [
@@ -98,6 +97,14 @@ client.on('message', msg => {
 
     console.log('Message received from server ' + msg.guild.name + ' by user ' + msg.author.username + '#' + msg.author.discriminator + ':\n > ' + msg.content);
 
+    if (command === 'test') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+
+        });
+
+        return false;
+    }
+
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
         msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             msg.edit('```\n---\n' + config.prefix + 'purge\n---\n> Removes the 100 most recent messages in this channel\n\n---\n' + config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show a list of usernames in the given server and their playtime\n\n---\n' + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it in a list with directions\n\n---\n' + config.prefix + 'grid <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]\n---\n> Show the population of the given server and all servers around it formatted as a table\n\n---\n' + config.prefix + 'find <NAME:iShot>\n---\n> Show the latest information of this player (STEAM NAME ONLY)\n\n---\n' + config.prefix + 'track <MINUTES:30> <NAME:iShot>\n---\n> Track this player\'s movement for the next XX minutes. You\'ll receive warnings when we see the player skip servers.```');
@@ -121,7 +128,9 @@ client.on('message', msg => {
             // If no arguments, send back the usage of the command
             if (args.length === 0) {
                 // No parameters given
-                msg.edit(config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]');
+                var message = '';
+                message = message + config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]';
+                msg.edit('```' + message + '```');
                 return false;
             }
 
@@ -154,7 +163,7 @@ client.on('message', msg => {
                 // var message = '';
                 var array = [];
 
-                array.push(['Username', 'Playtime']);
+                array.push(['USERNAME', 'PLAYTIME']);
                 for (var player in response.data.players) {
                     if (!response.data.players.hasOwnProperty(player)) {
                         continue;
@@ -176,7 +185,9 @@ client.on('message', msg => {
             // If no arguments, send back the usage of the command
             if (args.length === 0) {
                 // No parameters given
-                msg.edit(config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]');
+                var message = '';
+                message = message + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]';
+                msg.edit('```' + message + '```');
                 return false;
             }
 
@@ -209,7 +220,7 @@ client.on('message', msg => {
                 // var message = '';
                 var array = [];
 
-                array.push(['Server', 'Players', 'Direction', '']);
+                array.push(['COORDINATE', 'PLAYERS', 'DIRECTION', '']);
                 for (var server in response.data) {
                     if (!response.data.hasOwnProperty(server)) {
                         continue;
@@ -231,7 +242,10 @@ client.on('message', msg => {
             // If no arguments, send back the usage of the command
             if (args.length === 0) {
                 // No parameters given
-                msg.edit(config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]');
+
+                var message = '';
+                message = message + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]';
+                msg.edit('```' + message + '```');
                 return false;
             }
 
@@ -303,7 +317,9 @@ client.on('message', msg => {
             // If no arguments, send back the usage of the command
             if (args.length === 0) {
                 // No parameters given
-                msg.edit(config.prefix + 'find <NAME:iShot>');
+                var message = '';
+                message = message + config.prefix + 'find <NAME:iShot>';
+                msg.edit('```' + message + '```');
                 return false;
             }
 
@@ -320,7 +336,7 @@ client.on('message', msg => {
                 var message = '';
 
                 if (response.data.length) {
-                    array.push(['Server', 'Username', 'Last seen']);
+                    array.push(['COORDINATE', 'USERNAME', 'LAST SEEN']);
                     for (var player in response.data) {
                         if (!response.data.hasOwnProperty(player)) {
                             continue;
@@ -392,7 +408,7 @@ client.on('message', msg => {
 
                     if (response.data.length) {
                         var array = [];
-                        array.push(['Server', 'Added']);
+                        array.push(['COORDINATE', 'ADDED']);
                         for (var server in response.data) {
                             if (!response.data.hasOwnProperty(server)) {
                                 continue;
@@ -478,7 +494,7 @@ client.on('message', msg => {
 
                     if (response.data.length) {
                         var array = [];
-                        array.push(['Username', 'Last Location', 'Last Seen', 'Expires']);
+                        array.push(['USERNAME', 'LAST LOCATION', 'LAST SEEN', 'EXPIRES']);
                         for (var track in response.data) {
                             if (!response.data.hasOwnProperty(track)) {
                                 continue;
