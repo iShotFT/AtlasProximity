@@ -221,7 +221,7 @@ client.on('message', msg => {
                 var multiple = false;
 
                 if (response.data.players !== false) {
-                    msg.channel.send('These are the `' + response.data.players.length + '` players on `' + ogserver + '`');
+                    msg.edit('These are the `' + response.data.players.length + '` players on `' + ogserver + '`');
                     array.push(['USERNAME', 'PLAYTIME']);
                     for (var player in response.data.players) {
                         if (!response.data.players.hasOwnProperty(player)) {
