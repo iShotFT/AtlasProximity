@@ -82,6 +82,7 @@ client.on('ready', () => {
 
 client.on('message', msg => {
     var author = msg.author;
+    var message = msg;
 
     // Ignore all bot messages
     if (msg.author.bot) {
@@ -170,13 +171,19 @@ client.on('message', msg => {
     }
 
     if (command === 'purge' || command === 'clean' || command === 'clear') {
-        async function clear() {
-            msg.delete();
-            const fetched = await msg.channel.fetchMessages({limit: 100});
-            msg.channel.bulkDelete(fetched);
+        if (message.member.hasPermission('ADMINISTRATOR') || message.member.hasPermission('MANAGE_MESSAGES')) {
+            async function clear() {
+                msg.delete();
+                const fetched = await msg.channel.fetchMessages({limit: 100});
+                msg.channel.bulkDelete(fetched);
+            }
+
+            clear();
+        } else {
+            msg.edit('You do not have the correct permissions to use !purge (You need to be able to delete messages)');
         }
 
-        clear();
+        return false;
     }
 
     if (command === 'player' || command === 'players') {
