@@ -26,7 +26,7 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function help(Request $request)
+    public function map(Request $request)
     {
 
     }
