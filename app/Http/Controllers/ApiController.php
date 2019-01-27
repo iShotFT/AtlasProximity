@@ -477,4 +477,15 @@ class ApiController extends Controller
 
         return response()->json($commmands);
     }
+
+    public function faq(Request $request)
+    {
+        $questions = [
+            'Question' => [
+                'answer' => 'answertest',
+            ],
+        ];
+
+        return response()->json($questions);
+    }
 }
