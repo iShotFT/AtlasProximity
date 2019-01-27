@@ -28,7 +28,16 @@
                             </div>
                             <div class="form-group">
                                 <label for="changes">Changes</label>
-                                <textarea name="changes" id="changes" aria-describedby="changesHelp" cols="30" rows="10" class="form-control"></textarea>
+                                <textarea name="changes" id="changes" aria-describedby="changesHelp" cols="30" rows="10" class="form-control">
+__New command(s):__
+*none*
+
+__General change(s):__
+*none*
+
+__Extra(s):__
+*none*
+                                </textarea>
                                 <small id="changesHelp" class="form-text text-muted">What has changed since last version?</small>
                             </div>
                             <div class="form-group">

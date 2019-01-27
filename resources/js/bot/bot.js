@@ -738,7 +738,7 @@ this.Echo.channel(`public`)
     })
     .listen('.bot.updated', (e) => {
         console.log('WebSocket: [UPDATE] We noticed an update happened and sent a message to the webhook');
-        updateHook.send(':satellite: The ATLAS CCTV bot has just been updated!\n``` > Current version: ' + e.version + '\n > Changes: ' + e.changes + '```');
+        updateHook.send(':satellite: The ATLAS CCTV bot has just been updated!\n > Current version: `' + e.version + '`\n > Changes:\n' + e.changes + '```');
     })
     .listen('.tracked.server.boat', (e) => {
         console.log('WebSocket: [TRACKING] Sent boat warning message to ' + e.guildid + ' about coordinate ' + e.to);
