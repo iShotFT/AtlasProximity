@@ -8,6 +8,7 @@ const moment = require('moment');
 const config = require('./config.json');
 const client = new Discord.Client();
 const Echo = require('laravel-echo');
+const contactHook = new Discord.WebhookClient(config.mentionwebhook.id, config.mentionwebhook.token);
 
 // Random 'Processing...' messages
 const procMsgs = [
@@ -177,25 +178,33 @@ client.on('message', msg => {
         return false;
     }
 
-    // if (command === 'contact' || command === 'feedback') {
-    //     msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
-    //         // If no arguments, send back the usage of the command
-    //         if (args.length === 0) {
-    //             // No parameters given
-    //             var message = '';
-    //             message = message + config.prefix + 'contact [MESSAGE]';
-    //             msg.edit('```' + message + '```');
-    //             return false;
-    //         }
-    //
-    //         let input = args.join(' ');
-    //
-    //         // Send a message to the bot owner
-    //
-    //     });
-    //
-    //     return false;
-    // }
+    if (command === 'ask' || command === 'feedback' || command === 'contact' || command === 'question') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            // If no arguments, send back the usage of the command
+            if (args.length === 0) {
+                // No parameters given
+                var message = '';
+                message = message + config.prefix + 'contact [MESSAGE]';
+                msg.edit('```' + message + '```');
+                return false;
+            }
+
+            let input = args.join(' ');
+
+            // Send a message to the bot owner
+            msg.edit(':microphone2: We have sent your message to the bot owner!');
+            contactHook.send('Someone sent you a message using the !contact command\n``` > Message: ' + input + '\n > User: ' + author.username + '#' + author.discriminator + '\n > Origin server: ' + msg.guild.name + '\n > Origin channel: ' + msg.channel.name + '```');
+            //
+            //
+            // console.log(config.ownerid);
+            // console.log(author.id);
+            // console.log(client.users.get(config.ownerid.toString()));
+            // client.users.get(config.ownerid.toString()).send();
+
+        });
+
+        return false;
+    }
 
     if (command === 'map' || command === 'world') {
         msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {

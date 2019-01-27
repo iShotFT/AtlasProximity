@@ -187,7 +187,7 @@ class ApiController extends Controller
 
     public static function percent2Color($value, $brightness = 255, $max = 75, $min = 1, $thirdColorHex = '00')
     {
-        if ($value <= $min) {
+        if ($value < $min) {
             return self::hex2rgba('ffffff', 0.5);
         }
 
@@ -463,6 +463,20 @@ class ApiController extends Controller
                     'info',
                 ],
                 'arguments'   => [],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'ask'     => [
+                'explanation' => 'Send a message to the creator / owner of this bot. This can be used to send feedback, ask for help, etc.',
+                'aliases'     => [
+                    'contact',
+                    'question',
+                    'feedback',
+                ],
+                'arguments'   => [
+                    'MESSAGE',
+                ],
                 'example'     => [
                     '',
                 ],
