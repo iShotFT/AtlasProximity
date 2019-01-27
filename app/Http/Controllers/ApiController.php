@@ -419,6 +419,19 @@ class ApiController extends Controller
                     '',
                 ],
             ],
+            'map'     => [
+                'explanation' => 'Generate and show an image of the map with the current population of each server.',
+                'aliases'     => [
+                    'world',
+                ],
+                'arguments'   => [
+                    'REGION:eu',
+                    'GAMEMODE:pvp',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
             'players' => [
                 'explanation' => 'Shows a list of players and their time connected on the coordinate of your choice.',
                 'aliases'     => [
