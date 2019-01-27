@@ -10,6 +10,7 @@ const client = new Discord.Client();
 const Echo = require('laravel-echo');
 const contactHook = new Discord.WebhookClient(config.mentionwebhook.id, config.mentionwebhook.token);
 const updateHook = new Discord.WebhookClient(config.updatewebhook.id, config.updatewebhook.token);
+const notificationHook = new Discord.WebhookClient(config.notificationswebhook.id, config.notificationswebhook.token);
 
 const key = config.axioskey;
 
@@ -25,7 +26,7 @@ const procMsgs = [
     'Waking up from a drug-fueled slumber...',
     'Quickly closing the incognito window...',
     'Wobbling to 299%...',
-    'ATLAS CCTV REQUIRES MORE MINERALS...',
+    'Atlas CCTV REQUIRES MORE MINERALS...',
     'Untap, Upkeep, Draw...',
     'Traveling to Hanamura...',
     'TIME\'S UP - LET\'S DO THIS!...',
@@ -223,7 +224,7 @@ client.on('message', msg => {
                 var array = [];
                 var multiple = false;
 
-                author.send(':question: These are currently the most asked questions about the ATLAS CCTV bot:');
+                author.send(':question: These are currently the most asked questions about the Atlas CCTV bot:');
                 for (var faq in response.data) {
                     if (!response.data.hasOwnProperty(faq)) {
                         continue;
@@ -793,6 +794,18 @@ client.on('message', msg => {
     }
 });
 
+client.on('guildCreate', guild => {
+    // This event triggers when the bot joins a guild.
+    notificationHook.send(':heavy_plus_sign: The Atlas CCTV bot was added to server `' + guild.name + '` (id: `' + guild.id + '`, members: `' + guild.memberCount + '`). We are now active on `' + client.guilds.size + '` servers!');
+    // client.user.setActivity(`Serving ${client.guilds.size} servers`);
+});
+
+client.on('guildDelete', guild => {
+    // this event triggers when the bot is removed from a guild.
+    notificationHook.send(':heavy_minus_sign: The Atlas CCTV bot was removed from server `' + guild.name + '` (id: `' + guild.id + '`, members: `' + guild.memberCount + '`). We are now active on only `' + client.guilds.size + '` servers!');
+    // client.user.setActivity(`Serving ${client.guilds.size} servers`);
+});
+
 client.on('error', (e) => console.error(e));
 
 client.login(config.token);
@@ -824,7 +837,7 @@ this.Echo.channel(`public`)
     })
     .listen('.bot.updated', (e) => {
         console.log('WebSocket: [UPDATE] We noticed an update happened and sent a message to the webhook');
-        updateHook.send(':satellite: The ATLAS CCTV bot has just been updated!\n > Current version: `' + e.version + '`\n\n' + e.changes + '');
+        updateHook.send(':satellite: The Atlas CCTV bot has just been updated!\n > Current version: `' + e.version + '`\n\n' + e.changes + '');
     })
     .listen('.faq.created', (e) => {
         console.log('WebSocket: [FAQ] We noticed a new FAQ appeared!');
