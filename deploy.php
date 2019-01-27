@@ -3,7 +3,13 @@
 namespace Deployer;
 
 require 'recipe/laravel.php';
+require 'recipe/discord.php';
 //require 'recipe/npm.php';
+
+// Discord
+//https://discordapp.com/api/webhooks/538996091576778753/4VMHrmqrBzsbSRr7_Hqdlfg6gFhQixFb50eQPC3frp4-7eiaek77Gyp3IuOgQpID7QW_
+set('discord_channel', '538996091576778753');
+set('discord_token', '4VMHrmqrBzsbSRr7_Hqdlfg6gFhQixFb50eQPC3frp4-7eiaek77Gyp3IuOgQpID7QW_');
 
 // Project name
 set('application', 'AtlasProximity');
@@ -79,6 +85,9 @@ after('deploy:failed', 'deploy:unlock');
 // Migrate database before symlink new release.
 before('deploy:symlink', 'artisan:migrate');
 after('deploy:update_code', 'npm:install');
+after('success', 'discord:notify:success');
+after('deploy:failed', 'discord:notify:failure');
+before('deploy', 'discord:notify');
 after('deploy', 'reload:php-fpm');
 after('deploy', 'reload:atlascctv');
 after('deploy', 'reload:queue');
