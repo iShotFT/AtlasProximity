@@ -24,6 +24,11 @@ class CreatePingsTable extends Migration
             $table->integer('players')->nullable();
             $table->text('info')->nullable();
             $table->timestamps();
+
+            // Indexes
+            $table->index('ip');
+            $table->index('port');
+            $table->index('coordinates');
         });
     }
 
