@@ -22,6 +22,10 @@ class CreatePlayerPingsTable extends Migration
             $table->string('gamemode', 3)->default('pvp');
             $table->string('coordinates', 3);
             $table->timestamps();
+
+            $table->index('region');
+            $table->index('gamemode');
+            $table->index('coordinates');
         });
     }
 

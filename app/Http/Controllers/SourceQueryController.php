@@ -121,8 +121,9 @@ class SourceQueryController extends Controller
                                     'region'      => $region,
                                     'gamemode'    => $gamemode,
                                     'coordinates' => $coordinate,
-                                    'ip'          => $ip,
-                                    'port'        => $port,
+                                ], [
+                                    'ip'   => $ip,
+                                    'port' => $port,
                                 ]);
 
                                 if ($playerping->id) {

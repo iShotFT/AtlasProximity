@@ -77,6 +77,13 @@ const procMsgs = [
 
 client.on('ready', () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
+    // client.user.setPresence({
+    //     game: {
+    //         name: 'iShot#5449',
+    //         type: 'LISTENING',
+    //     },
+    //     status: 'idle',
+    // });
     client.user.setActivity(`!help`);
 });
 
@@ -169,6 +176,26 @@ client.on('message', msg => {
 
         return false;
     }
+
+    // if (command === 'contact' || command === 'feedback') {
+    //     msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+    //         // If no arguments, send back the usage of the command
+    //         if (args.length === 0) {
+    //             // No parameters given
+    //             var message = '';
+    //             message = message + config.prefix + 'contact [MESSAGE]';
+    //             msg.edit('```' + message + '```');
+    //             return false;
+    //         }
+    //
+    //         let input = args.join(' ');
+    //
+    //         // Send a message to the bot owner
+    //
+    //     });
+    //
+    //     return false;
+    // }
 
     if (command === 'map' || command === 'world') {
         msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
