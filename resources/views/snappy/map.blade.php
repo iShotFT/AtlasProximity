@@ -36,9 +36,9 @@
                 <tr>
                     @for($x = 1; $x <= count($grid[chr($y + 64)]); $x++)
                         @php($x_text = chr($x + 64))
-                        <td style="background-color: #{!! $servers[$x_text . $y]['players'] ? \App\Http\Controllers\ApiController::percent2Color($servers[$x_text . $y]['players']) : 'ffffff' !!};">
+                        <td style="background-color: #{!! $servers[$x_text . $y]['players'] !== false ? \App\Http\Controllers\ApiController::percent2Color($servers[$x_text . $y]['players']) : 'ffffff' !!};">
                             <b>{{ $x_text . $y }}</b><br/>
-                            {{ $servers[$x_text . $y]['players'] ? $servers[$x_text . $y]['players'] : '?' }}
+                            {{ $servers[$x_text . $y]['players']  !== false ? $servers[$x_text . $y]['players'] : '?' }}
                         </td>
                     @endfor
                 </tr>
