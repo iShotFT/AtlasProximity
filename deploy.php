@@ -60,8 +60,9 @@ task('discord:notify:failure', function () {
 })->once()->shallow()->isPrivate();
 // Discord
 //https://discordapp.com/api/webhooks/538996091576778753/4VMHrmqrBzsbSRr7_Hqdlfg6gFhQixFb50eQPC3frp4-7eiaek77Gyp3IuOgQpID7QW_
-set('discord_channel', '538996091576778753');
-set('discord_token', '4VMHrmqrBzsbSRr7_Hqdlfg6gFhQixFb50eQPC3frp4-7eiaek77Gyp3IuOgQpID7QW_');
+// https://discordapp.com/api/webhooks/539068559574171648/5wfkG0CD9bLcIvPxEQp6M2QgN1SQwRKBfuD1jkQ6Ue3rjEC9xWlPJW5XwS54X689bTSC
+set('discord_channel', '539068559574171648');
+set('discord_token', '5wfkG0CD9bLcIvPxEQp6M2QgN1SQwRKBfuD1jkQ6Ue3rjEC9xWlPJW5XwS54X689bTSC');
 set('user', 'iShot');
 
 // Project name
