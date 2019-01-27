@@ -685,7 +685,7 @@ client.on('message', msg => {
             // Poll the API for the information requested
             axios.post(config.url + '/api/proximity/add', {
                 key: key,
-                coordinate: server,
+                coordinate: server.toUpperCase(),
                 guildid: msg.guild.id,
                 channelid: msg.channel.id,
             }).then(function (response) {
