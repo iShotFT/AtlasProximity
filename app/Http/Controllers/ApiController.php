@@ -185,8 +185,12 @@ class ApiController extends Controller
         }
     }
 
-    public static function percent2Color($value, $brightness = 255, $max = 75, $min = 0, $thirdColorHex = '00')
+    public static function percent2Color($value, $brightness = 255, $max = 75, $min = 1, $thirdColorHex = '00')
     {
+        if ($value <= $min) {
+            return self::hex2rgba('ffffff', 0.5);
+        }
+
         // Calculate first and second color (Inverse relationship)
         $second = (1 - ($value / $max)) * $brightness;
         $first  = ($value / $max) * $brightness;
