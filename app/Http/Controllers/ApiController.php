@@ -9,6 +9,7 @@ use App\Events\TrackedPlayerRefound;
 use App\Events\TrackedServerBoat;
 use App\Events\TrackExpired;
 use App\Faq;
+use App\Guild;
 use App\Ping;
 use App\PlayerPing;
 use App\PlayerTrack;
@@ -367,6 +368,22 @@ class ApiController extends Controller
         return response()->json(($found ? $found->toArray() : []));
     }
 
+    public function guildAdd(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string',
+            'id'   => 'required',
+        ]);
+
+        Guild::updateOrCreate([
+            'guild_id' => $request->get('id'),
+        ], [
+            'name'       => $request->get('name'),
+            'updated_at' => Carbon::now(),
+            'deleted_at' => null,
+        ]);
+    }
+
     public function proximityAdd(Request $request)
     {
         $request->validate([
@@ -443,6 +460,18 @@ class ApiController extends Controller
             'guild_id' => $request->get('guildid'),
             //            'channel_id' => $request->get('channelid'),
         ])->delete();
+    }
+
+    public function guildRemove(Request $request)
+    {
+        $request->validate([
+            //            'name' => 'required|string',
+            'id' => 'required',
+        ]);
+
+        if ($guild = Guild::where('guild_id', $request->get('id'))->first()) {
+            $guild->delete();
+        };
     }
 
     public function proximityList(Request $request)

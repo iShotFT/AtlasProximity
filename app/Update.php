@@ -27,6 +27,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Update whereVersion($value)
  * @mixin \Eloquent
  * @property-read mixed                      $full_version
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Update onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Update whereDeletedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Update withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Update withoutTrashed()
  */
 class Update extends Model
 {

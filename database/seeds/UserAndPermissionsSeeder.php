@@ -21,6 +21,7 @@ class UserAndPermissionsSeeder extends Seeder
         $p_admin_pt     = Permission::findOrCreate('a.playertrack');
         $p_admin_lc     = Permission::findOrCreate('a.linkclick');
         $p_admin_proxt  = Permission::findOrCreate('a.proximitytrack');
+        $p_admin_guild  = Permission::findOrCreate('a.guild');
 
         // Roles
         $r_superadmin = Role::findOrCreate('superadmin');

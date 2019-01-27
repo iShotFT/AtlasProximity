@@ -49,3 +49,7 @@ Route::group(['middleware' => ['permission:a.linkclick']], function () {
 Route::group(['middleware' => ['permission:a.proximitytrack']], function () {
     Route::resource('proximitytrack', 'ProximityTrackController');
 });
+
+Route::group(['middleware' => ['permission:a.guild']], function () {
+    Route::resource('guild', 'GuildController');
+});

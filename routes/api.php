@@ -21,9 +21,11 @@ Route::get('find', 'ApiController@find');
 Route::get('track/list', 'ApiController@trackList');
 Route::get('proximity/list', 'ApiController@proximityList');
 
+Route::post('guild/add', 'ApiController@guildAdd');
 Route::post('track/add', 'ApiController@trackAdd');
 Route::post('proximity/add', 'ApiController@proximityAdd');
 
+Route::post('guild/remove', 'ApiController@guildRemove');
 Route::post('track/remove', 'ApiController@trackRemove');
 Route::post('proximity/remove', 'ApiController@proximityRemove');
 

@@ -92,6 +92,30 @@ client.on('ready', () => {
     //     status: 'idle',
     // });
     client.user.setActivity(`!help`);
+
+    client.guilds.forEach(function (guild) {
+        // guild.name
+        // guild.id
+
+        axios.post(config.url + '/api/guild/add', {
+            key: key,
+            name: guild.name,
+            id: guild.id,
+        }).then(function (response) {
+            console.log('Added or updated guild ' + guild.name + ' in the database');
+        });
+    });
+
+    // console.log(client.guilds);
+    // for (var guild in client.guilds) {
+    //     // if (!client.guilds.hasOwnProperty(guild)) {
+    //     //     continue;
+    //     // }
+    //
+    //     console.log(guild.name);
+    // }
+
+
 });
 
 client.on('message', msg => {
@@ -797,12 +821,27 @@ client.on('message', msg => {
 client.on('guildCreate', guild => {
     // This event triggers when the bot joins a guild.
     notificationHook.send(':heavy_plus_sign: The Atlas CCTV bot was added to server `' + guild.name + '` (id: `' + guild.id + '`, members: `' + guild.memberCount + '`). We are now active on `' + client.guilds.size + '` servers!');
+
+    axios.post(config.url + '/api/guild/add', {
+        key: key,
+        name: guild.name,
+        id: guild.id,
+    }).then(function (response) {
+        console.log('Added or updated guild ' + guild.name + ' in the database');
+    });
     // client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
 
 client.on('guildDelete', guild => {
     // this event triggers when the bot is removed from a guild.
     notificationHook.send(':heavy_minus_sign: The Atlas CCTV bot was removed from server `' + guild.name + '` (id: `' + guild.id + '`, members: `' + guild.memberCount + '`). We are now active on only `' + client.guilds.size + '` servers!');
+
+    axios.post(config.url + '/api/guild/remove', {
+        key: key,
+        id: guild.id,
+    }).then(function (response) {
+        console.log('Removed guild ' + guild.name + ' from the database');
+    });
     // client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
 
