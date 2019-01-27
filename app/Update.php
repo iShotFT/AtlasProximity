@@ -33,6 +33,6 @@ class Update extends Model
 
     public function getFullVersionAttribute()
     {
-        return $this->version . '.' . $this->major . '.' . $this->minor;
+        return (($this->version ? $this->version : 'B') . '.' . $this->major . '.' . $this->minor;
     }
 }
