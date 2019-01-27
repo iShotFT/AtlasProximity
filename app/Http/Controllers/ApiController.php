@@ -226,7 +226,7 @@ class ApiController extends Controller
                 WHERE id IN (
                     SELECT MAX(id)
                     FROM pings
-                    WHERE gamemode = "pvp" AND region = "eu"
+                    WHERE gamemode = "' . $request->get('gamemode') . '" AND region = "' . $request->get('region') . '"
                     GROUP BY coordinates, region, gamemode
                 )
                 Order by coordinates'), true), true);
