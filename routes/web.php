@@ -29,3 +29,23 @@ Route::group(['middleware' => ['permission:a.faq']], function () {
     Route::resource('faq', 'FaqController');
     Route::get('faq/get/destroy', 'FaqController@destroy')->name('faq.get.destroy');
 });
+
+Route::group(['middleware' => ['permission:a.ping']], function () {
+    Route::resource('ping', 'PingController');
+});
+
+Route::group(['middleware' => ['permission:a.playerping']], function () {
+    Route::resource('playerping', 'PlayerPingController');
+});
+
+Route::group(['middleware' => ['permission:a.playertrack']], function () {
+    Route::resource('playertrack', 'PlayerTrackController');
+});
+
+Route::group(['middleware' => ['permission:a.linkclick']], function () {
+    Route::resource('linkclick', 'LinkClickController');
+});
+
+Route::group(['middleware' => ['permission:a.proximitytrack']], function () {
+    Route::resource('proximitytrack', 'ProximityTrackController');
+});

@@ -39,6 +39,21 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('faq.index') }}">Faqs</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('ping.index') }}">Pings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('playerping.index') }}">Player Pings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('playertrack.index') }}">Player Tracks</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('proximitytrack.index') }}">Proximity Tracks</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('linkclick.index') }}">Link Clicks</a>
+                            </li>
                         </ul>
 
                         <!-- Right Side Of Navbar -->
