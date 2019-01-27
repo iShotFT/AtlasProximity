@@ -7,6 +7,7 @@ return [
         ],
     ],
     'bot'      => [
+        'clientid'   => env('DISCORD_CLIENT_ID', null),
         'token'      => env('DISCORD_BOT_TOKEN', null),
         'permission' => [
             'integer' => env('DISCORD_BOT_PERMISSION_INTEGER', null),

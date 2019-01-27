@@ -13,6 +13,7 @@
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/test', 'SourceQueryController@test')->name('test');
+Route::get('/get', 'HomeController@get')->name('get');
 //Route::get('/help', 'HomeController@help')->name('help');
 //Route::get('/map', 'HomeController@map')->name('map');
 //Route::get('/bot', 'DiscordBotController@run')->name('bot');
