@@ -6,8 +6,8 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
-                        <span>Updates</span>
-                        <a href="{{ route('update.create') }}" class="btn btn-success">New update</a>
+                        <span>Frequently Asked Questions</span>
+                        <a href="{{ route('faq.create') }}" class="btn btn-success">New faq</a>
                     </div>
 
                     <div class="card-body">
@@ -16,8 +16,8 @@
                             <thead class="thead-dark">
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Full Version</th>
-                                <th scope="col">Changes</th>
+                                <th scope="col">Question</th>
+                                <th scope="col">Answer</th>
                                 <th scope="col">Added</th>
                                 <th scope="col"></th>
                             </tr>
@@ -25,14 +25,14 @@
                             <tbody>
 
 
-                            @foreach ($updates as $update)
+                            @foreach ($faqs as $faq)
                                 <tr>
-                                    <th scope="row">{{ $update->id }}</th>
-                                    <td>{{ $update->full_version }}</td>
-                                    <td>{{ $update->changes }}</td>
-                                    <td>{{ $update->created_at->diffForHumans() }}</td>
+                                    <th scope="row">{{ $faq->id }}</th>
+                                    <td>{{ $faq->question }}</td>
+                                    <td>{{ $faq->answer }}</td>
+                                    <td>{{ $faq->created_at->diffForHumans() }}</td>
                                     <td>
-                                        <a href="{{ route('update.get.destroy', ['id' => $update->id]) }}">X</a>
+                                        <a href="{{ route('faq.get.destroy', ['id' => $faq->id]) }}">X</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -40,7 +40,7 @@
                             </tbody>
                         </table>
 
-                        {{ $updates->links() }}
+                        {{ $faqs->links() }}
                     </div>
                 </div>
             </div>

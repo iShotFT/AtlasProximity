@@ -22,4 +22,10 @@ Route::get('/get', 'HomeController@get')->name('get');
 //Route::get('/surround', 'SourceQueryController@getSurroundingServers')->name('surround');
 Route::group(['middleware' => ['permission:a.update']], function () {
     Route::resource('update', 'UpdateController');
+    Route::get('faq/destroy', 'UpdateController@destroy')->name('update.get.destroy');
+});
+
+Route::group(['middleware' => ['permission:a.faq']], function () {
+    Route::resource('faq', 'FaqController');
+    Route::get('faq/destroy', 'FaqController@destroy')->name('faq.get.destroy');
 });

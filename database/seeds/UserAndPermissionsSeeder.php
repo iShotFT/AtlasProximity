@@ -15,6 +15,7 @@ class UserAndPermissionsSeeder extends Seeder
     {
         // Permissions
         $p_admin_update = Permission::findOrCreate('a.update');
+        $p_admin_faq    = Permission::findOrCreate('a.faq');
 
         // Roles
         $r_superadmin = Role::findOrCreate('superadmin');

@@ -101,9 +101,13 @@ class UpdateController extends Controller
      * @param  int $id
      *
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $update = Update::findOrFail($request->get('id'));
+        $update->delete();
+
+        return redirect()->route('faq.index');
     }
 }

@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Update whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Update whereVersion($value)
  * @mixin \Eloquent
+ * @property-read mixed $full_version
  */
 class Update extends Model
 {

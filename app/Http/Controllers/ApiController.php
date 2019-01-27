@@ -8,6 +8,7 @@ use App\Events\TrackedPlayerMoved;
 use App\Events\TrackedPlayerRefound;
 use App\Events\TrackedServerBoat;
 use App\Events\TrackExpired;
+use App\Faq;
 use App\Ping;
 use App\PlayerPing;
 use App\PlayerTrack;
@@ -303,6 +304,17 @@ class ApiController extends Controller
         // return $image;
 
         return response()->json(['image' => $image]);
+    }
+
+    public function faq(Request $request)
+    {
+        $faqs = Faq::orderByDesc('created_at')->get([
+            'question',
+            'answer',
+            'created_at',
+        ]);
+
+        return response()->json($faqs->toArray());
     }
 
     public function version(Request $request)
@@ -636,16 +648,5 @@ class ApiController extends Controller
         ];
 
         return response()->json($commmands);
-    }
-
-    public function faq(Request $request)
-    {
-        $questions = [
-            'Question' => [
-                'answer' => 'answertest',
-            ],
-        ];
-
-        return response()->json($questions);
     }
 }

@@ -11,6 +11,10 @@ const Echo = require('laravel-echo');
 const contactHook = new Discord.WebhookClient(config.mentionwebhook.id, config.mentionwebhook.token);
 const updateHook = new Discord.WebhookClient(config.updatewebhook.id, config.updatewebhook.token);
 
+const key = config.axioskey;
+
+// axios.defaults.params['key'] = config.axioskey;
+
 // Random 'Processing...' messages
 const procMsgs = [
     'Warming up Beric\'s mum...',
@@ -129,7 +133,9 @@ client.on('message', msg => {
         msg.delete();
         msg.author.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             axios.get(config.url + '/api/help', {
-                params: {},
+                params: {
+                    key: key,
+                },
             }).then(function (response) {
                 // var message = '';
                 if (response.data) {
@@ -183,7 +189,9 @@ client.on('message', msg => {
         msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             // Poll the API for the information requested
             axios.get(config.url + '/api/version', {
-                params: {},
+                params: {
+                    key: key,
+                },
             }).then(function (response) {
                 // var message = '';
                 var array = [];
@@ -195,6 +203,49 @@ client.on('message', msg => {
                     msg.edit(':skull_crossbones: Something went wrong while trying to pull the version information');
                 }
 
+            });
+        });
+
+        return false;
+    }
+
+    if (command === 'faq' || command === 'frequentlyaskedquestions') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            // Poll the API for the information requested
+            axios.get(config.url + '/api/faq', {
+                params: {
+                    key: key,
+                },
+            }).then(function (response) {
+                // var message = '';
+                msg.delete();
+                message.delete();
+                var array = [];
+                var multiple = false;
+
+                author.send(':question: These are currently the most asked questions about the ATLAS CCTV bot:');
+                for (var faq in response.data) {
+                    if (!response.data.hasOwnProperty(faq)) {
+                        continue;
+                    }
+
+                    array.push(['Question: `' + response.data[faq].question + '`']);
+                    array.push(['Answer: ' + response.data[faq].answer + '']);
+                    array.push(['']);
+
+                    // If the array is larger than 25 lines, push it as a message and restart the array
+                    if (array.length >= 10) {
+                        author.send('' + table(array) + '');
+                        multiple = true;
+
+                        array = [];
+                    }
+                }
+
+                console.log('Sent a message to ' + msg.guild.name);
+                if (array.length >= 1) {
+                    author.send('' + table(array) + '');
+                }
             });
         });
 
@@ -254,6 +305,7 @@ client.on('message', msg => {
             // Poll the API for the information requested
             axios.get(config.url + '/api/map', {
                 params: {
+                    key: key,
                     region: region,
                     gamemode: gamemode,
                 },
@@ -329,6 +381,7 @@ client.on('message', msg => {
             var ogserver = server;
             axios.get(config.url + '/api/players', {
                 params: {
+                    key: key,
                     server: server,
                     region: region,
                     gamemode: gamemode,
@@ -359,7 +412,9 @@ client.on('message', msg => {
                     }
 
                     console.log('Sent a message to ' + msg.guild.name);
-                    msg.channel.send('```' + table(array) + '```');
+                    if (array.length >= 1) {
+                        msg.channel.send('```' + table(array) + '```');
+                    }
                 } else {
                     msg.edit(':skull_crossbones: Server ' + ogserver + ' seems to be offline');
                 }
@@ -402,6 +457,7 @@ client.on('message', msg => {
             var ogserver = server;
             axios.get(config.url + '/api/population', {
                 params: {
+                    key: key,
                     server: server,
                     region: region,
                     gamemode: gamemode,
@@ -460,6 +516,7 @@ client.on('message', msg => {
             // Poll the API for the information requested
             axios.get(config.url + '/api/population', {
                 params: {
+                    key: key,
                     server: server,
                     region: region,
                     gamemode: gamemode,
@@ -518,6 +575,7 @@ client.on('message', msg => {
             // Poll the API for the information requested
             axios.get(config.url + '/api/find', {
                 params: {
+                    key: key,
                     username: username,
                 },
             }).then(function (response) {
@@ -566,6 +624,7 @@ client.on('message', msg => {
             console.log(server, config.url + '/api/proximity/remove');
             // Poll the API for the information requested
             axios.post(config.url + '/api/proximity/remove', {
+                key: key,
                 coordinate: server,
                 guildid: msg.guild.id,
                 channelid: msg.channel.id,
@@ -591,6 +650,7 @@ client.on('message', msg => {
                 // Get current tracks for this guild...
                 axios.get(config.url + '/api/proximity/list', {
                     params: {
+                        key: key,
                         guildid: msg.guild.id,
                     },
                 }).then(function (response) {
@@ -624,6 +684,7 @@ client.on('message', msg => {
             console.log(server, config.url + '/api/proximity/add');
             // Poll the API for the information requested
             axios.post(config.url + '/api/proximity/add', {
+                key: key,
                 coordinate: server,
                 guildid: msg.guild.id,
                 channelid: msg.channel.id,
@@ -653,6 +714,7 @@ client.on('message', msg => {
             console.log(username, msg.guild.id, msg.channel.id, config.url + '/api/track/remove');
             // Poll the API for the information requested
             axios.post(config.url + '/api/track/remove', {
+                key: key,
                 username: username,
                 guildid: msg.guild.id,
                 // channelid: msg.channel.id,
@@ -677,6 +739,7 @@ client.on('message', msg => {
                 // Get current tracks for this guild...
                 axios.get(config.url + '/api/track/list', {
                     params: {
+                        key: key,
                         guildid: msg.guild.id,
                     },
                 }).then(function (response) {
@@ -714,6 +777,7 @@ client.on('message', msg => {
             console.log(username, minutes, msg.guild.id, msg.channel.id, config.url + '/api/track/add');
             // Poll the API for the information requested
             axios.post(config.url + '/api/track/add', {
+                key: key,
                 username: username,
                 minutes: minutes,
                 guildid: msg.guild.id,
@@ -761,6 +825,10 @@ this.Echo.channel(`public`)
     .listen('.bot.updated', (e) => {
         console.log('WebSocket: [UPDATE] We noticed an update happened and sent a message to the webhook');
         updateHook.send(':satellite: The ATLAS CCTV bot has just been updated!\n > Current version: `' + e.version + '`\n\n' + e.changes + '');
+    })
+    .listen('.faq.created', (e) => {
+        console.log('WebSocket: [FAQ] We noticed a new FAQ appeared!');
+        updateHook.send(':question: A new frequently asked question was added to the !faq command!\n\n`' + e.question + '`\n' + e.answer + '');
     })
     .listen('.tracked.server.boat', (e) => {
         console.log('WebSocket: [TRACKING] Sent boat warning message to ' + e.guildid + ' about coordinate ' + e.to);
