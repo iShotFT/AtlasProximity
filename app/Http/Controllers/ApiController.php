@@ -266,7 +266,7 @@ class ApiController extends Controller
             'gamemode' => 'required|string|size:3',
         ]);
 
-        Cache::forget('servers_list_for_map' . $request->get('region') . $request->get('gamemode'));
+        // Cache::forget('servers_list_for_map' . $request->get('region') . $request->get('gamemode'));
         $image = Cache::remember('servers_list_for_map' . $request->get('region') . $request->get('gamemode'), 1, function () use ($request) {
             $region   = $request->get('region');
             $gamemode = $request->get('gamemode');
