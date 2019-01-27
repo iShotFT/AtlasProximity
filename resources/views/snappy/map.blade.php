@@ -12,7 +12,7 @@
             /*}*/
 
             table {
-                background-image: url('/storage/atlas_map.png');
+                background-image: url('{!! config('app.url') !!}/storage/atlas_map.png');
                 background-size: cover; /* <------ */
                 background-repeat: no-repeat;
                 background-position: center center; /* optional, center the image */
