@@ -12,6 +12,7 @@ use App\Ping;
 use App\PlayerPing;
 use App\PlayerTrack;
 use App\ProximityTrack;
+use App\Update;
 use Barryvdh\Snappy\Facades\SnappyImage;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -304,6 +305,17 @@ class ApiController extends Controller
         return response()->json(['image' => $image]);
     }
 
+    public function version(Request $request)
+    {
+        $latest_update = Update::orderByDesc('created_at')->first();
+
+        return response()->json([
+            'version'    => $latest_update->full_version,
+            'changes'    => $latest_update->changes,
+            'created_at' => $latest_update->created_at->timestamp,
+        ]);
+    }
+
     public function players(Request $request)
     {
         $request->validate([
@@ -461,6 +473,16 @@ class ApiController extends Controller
                     'commands',
                     'bot',
                     'info',
+                ],
+                'arguments'   => [],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'version' => [
+                'explanation' => 'Find out what version the bot is currently on. This includes the latest changes.',
+                'aliases'     => [
+                    'v',
                 ],
                 'arguments'   => [],
                 'example'     => [

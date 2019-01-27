@@ -14,6 +14,7 @@
 Route::get('help', 'ApiController@help');
 Route::get('faq', 'ApiController@faq');
 Route::get('map', 'ApiController@map');
+Route::get('version', 'ApiController@version');
 Route::get('population', 'ApiController@population');
 Route::get('players', 'ApiController@players');
 Route::get('find', 'ApiController@find');

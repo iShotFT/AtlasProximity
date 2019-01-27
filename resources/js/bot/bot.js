@@ -179,6 +179,28 @@ client.on('message', msg => {
         return false;
     }
 
+    if (command === 'version' || command === 'v') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            // Poll the API for the information requested
+            axios.get(config.url + '/api/version', {
+                params: {},
+            }).then(function (response) {
+                // var message = '';
+                var array = [];
+                var multiple = false;
+
+                if (response.data.version !== undefined) {
+                    msg.edit(':information_source: Current bot version `' + response.data.version + '`, this update happened `' + moment(response.data.created_at * 1000).fromNow() + '`\n\n' + response.data.changes);
+                } else {
+                    msg.edit(':skull_crossbones: Something went wrong while trying to pull the version information');
+                }
+
+            });
+        });
+
+        return false;
+    }
+
     if (command === 'ask' || command === 'feedback' || command === 'contact' || command === 'question') {
         msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             // If no arguments, send back the usage of the command
