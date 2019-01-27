@@ -12,8 +12,11 @@ use App\Ping;
 use App\PlayerPing;
 use App\PlayerTrack;
 use App\ProximityTrack;
+use Barryvdh\Snappy\Facades\SnappyImage;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
@@ -182,6 +185,30 @@ class ApiController extends Controller
         }
     }
 
+    public static function percent2Color($value, $brightness = 255, $max = 75, $min = 0, $thirdColorHex = '00')
+    {
+        // Calculate first and second color (Inverse relationship)
+        $second = (1 - ($value / $max)) * $brightness;
+        $first  = ($value / $max) * $brightness;
+
+        // Find the influence of the middle color (yellow if 1st and 2nd are red and green)
+        $diff      = abs($first - $second);
+        $influence = ($brightness - $diff) / 2;
+        $first     = intval($first + $influence);
+        $second    = intval($second + $influence);
+
+        // Convert to HEX, format and return
+        $firstHex  = str_pad(dechex($first), 2, 0, STR_PAD_LEFT);
+        $secondHex = str_pad(dechex($second), 2, 0, STR_PAD_LEFT);
+
+        return $firstHex . $secondHex . $thirdColorHex;
+
+        // alternatives:
+        // return $thirdColorHex . $firstHex . $secondHex;
+        // return $firstHex . $thirdColorHex . $secondHex;
+
+    }
+
     public function map(Request $request)
     {
         $request->validate([
@@ -189,8 +216,33 @@ class ApiController extends Controller
             'gamemode' => 'required|string|size:3',
         ]);
 
-        // Generate a table with all the servers (from the DB or cache) and send it back
+        Cache::forget('servers_list_for_map' . $request->get('region') . $request->get('gamemode'));
+        $image = Cache::remember('servers_list_for_map' . $request->get('region') . $request->get('gamemode'), 1, function () use ($request) {
+            $region   = $request->get('region');
+            $gamemode = $request->get('gamemode');
 
+            $query_result = json_decode(json_encode(DB::select('SELECT id, region, gamemode, coordinates, players, info, created_at
+                FROM pings
+                WHERE id IN (
+                    SELECT MAX(id)
+                    FROM pings
+                    WHERE gamemode = "pvp" AND region = "eu"
+                    GROUP BY coordinates, region, gamemode
+                )
+                Order by coordinates'), true), true);
+            $servers      = array_combine(array_column($query_result, 'coordinates'), $query_result);
+
+            $grid = SourceQueryController::getAllServers($request->get('region'), $request->get('gamemode'));
+
+            //        $snappy = App::make('snappy.image');
+            $snappy_image = SnappyImage::loadView('snappy.map', compact('region', 'gamemode', 'servers', 'grid'));
+            $filename     = Carbon::now()->timestamp . '-' . $region . '-' . $gamemode . '.png';
+            $snappy_image->save(storage_path() . '/app/public/images/map/' . $filename);
+
+            return url('/storage/images/map/' . $filename);
+        });
+
+        return response()->json(['image' => $image]);
     }
 
     public function players(Request $request)

@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Ping;
+use Barryvdh\Snappy\Facades\SnappyImage;
+use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -13,7 +18,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        //        $this->middleware('auth');
     }
 
     /**
@@ -24,10 +29,5 @@ class HomeController extends Controller
     public function index()
     {
         return view('home');
-    }
-
-    public function map(Request $request)
-    {
-
     }
 }

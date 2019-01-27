@@ -170,6 +170,53 @@ client.on('message', msg => {
         return false;
     }
 
+    if (command === 'map' || command === 'world') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            // If no arguments, send back the usage of the command
+            // if (args.length === 0) {
+            //     // No parameters given
+            //     var message = '';
+            //     message = message + config.prefix + 'map [REGION:eu] [GAMEMODE:pvp]';
+            //     msg.edit('```' + message + '```');
+            //     return false;
+            // }
+
+            let [region, gamemode] = args;
+
+            if (region === undefined) {
+                region = 'eu';
+            }
+
+            if (gamemode === undefined) {
+                gamemode = 'pvp';
+            }
+
+            // Poll the API for the information requested
+            axios.get(config.url + '/api/map', {
+                params: {
+                    region: region,
+                    gamemode: gamemode,
+                },
+            }).then(function (response) {
+                // var message = '';
+                var array = [];
+                var multiple = false;
+
+                if (response.data.image !== undefined) {
+                    msg.edit(':map: This is the current map of the ' + region + ' ' + gamemode + ' server:');
+                    msg.channel.send('', {
+                        file: response.data.image, // Or replace with FileOptions object
+                    });
+                } else {
+                    msg.edit(':skull_crossbones: Something went wrong while trying to pull the map information');
+                }
+
+            });
+        });
+
+        return false;
+    }
+
     if (command === 'purge' || command === 'clean' || command === 'clear') {
         if (message.member.guild.me.hasPermission('ADMINISTRATOR') || message.member.guild.me.hasPermission('MANAGE_MESSAGES')) {
             if (message.member.hasPermission('ADMINISTRATOR') || message.member.hasPermission('MANAGE_MESSAGES')) {
