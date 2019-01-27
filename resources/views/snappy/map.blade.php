@@ -12,13 +12,17 @@
             /*}*/
 
             table {
+                background-image: url('/storage/atlas_map.png');
+                background-size: cover; /* <------ */
+                background-repeat: no-repeat;
+                background-position: center center; /* optional, center the image */
                 width: 1000px;
                 height: 1000px;
             }
 
             table td, table th {
                 text-align: center;
-                border: 1px solid #ddd;
+                border: 1px solid white;
                 box-sizing: border-box;
                 width: 65px;
                 height: 65px;
@@ -26,7 +30,7 @@
             }
 
             table tr:nth-child(even) {
-                background-color: #f2f2f2;
+                /*background-color: #f2f2f2;*/
             }
         </style>
     </head>
@@ -36,7 +40,7 @@
                 <tr>
                     @for($x = 1; $x <= count($grid[chr($y + 64)]); $x++)
                         @php($x_text = chr($x + 64))
-                        <td style="background-color: #{!! $servers[$x_text . $y]['players'] !== false ? \App\Http\Controllers\ApiController::percent2Color($servers[$x_text . $y]['players']) : 'ffffff' !!};">
+                        <td style="background-color: {!! $servers[$x_text . $y]['players'] !== false ? \App\Http\Controllers\ApiController::percent2Color($servers[$x_text . $y]['players'], 255, $max) : 'ffffff' !!};">
                             <b>{{ $x_text . $y }}</b><br/>
                             {{ $servers[$x_text . $y]['players']  !== false ? $servers[$x_text . $y]['players'] : '?' }}
                         </td>

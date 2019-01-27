@@ -201,12 +201,62 @@ class ApiController extends Controller
         $firstHex  = str_pad(dechex($first), 2, 0, STR_PAD_LEFT);
         $secondHex = str_pad(dechex($second), 2, 0, STR_PAD_LEFT);
 
-        return $firstHex . $secondHex . $thirdColorHex;
+        return self::hex2rgba($firstHex . $secondHex . $thirdColorHex, 0.5);
 
         // alternatives:
         // return $thirdColorHex . $firstHex . $secondHex;
         // return $firstHex . $thirdColorHex . $secondHex;
 
+    }
+
+
+    public static function hex2rgba($color, $opacity = false)
+    {
+
+        $default = 'rgb(0,0,0)';
+
+        //Return default if no color provided
+        if (empty($color)) {
+            return $default;
+        }
+
+        //Sanitize $color if "#" is provided
+        if ($color[0] == '#') {
+            $color = substr($color, 1);
+        }
+
+        //Check if color has 6 or 3 characters and get values
+        if (strlen($color) == 6) {
+            $hex = array(
+                $color[0] . $color[1],
+                $color[2] . $color[3],
+                $color[4] . $color[5],
+            );
+        } elseif (strlen($color) == 3) {
+            $hex = array(
+                $color[0] . $color[0],
+                $color[1] . $color[1],
+                $color[2] . $color[2],
+            );
+        } else {
+            return $default;
+        }
+
+        //Convert hexadec to rgb
+        $rgb = array_map('hexdec', $hex);
+
+        //Check if opacity is set(rgba or rgb)
+        if ($opacity) {
+            if (abs($opacity) > 1) {
+                $opacity = 1.0;
+            }
+            $output = 'rgba(' . implode(",", $rgb) . ',' . $opacity . ')';
+        } else {
+            $output = 'rgb(' . implode(",", $rgb) . ')';
+        }
+
+        //Return rgb(a) color string
+        return $output;
     }
 
     public function map(Request $request)
@@ -216,7 +266,7 @@ class ApiController extends Controller
             'gamemode' => 'required|string|size:3',
         ]);
 
-        //        Cache::forget('servers_list_for_map' . $request->get('region') . $request->get('gamemode'));
+        Cache::forget('servers_list_for_map' . $request->get('region') . $request->get('gamemode'));
         $image = Cache::remember('servers_list_for_map' . $request->get('region') . $request->get('gamemode'), 1, function () use ($request) {
             $region   = $request->get('region');
             $gamemode = $request->get('gamemode');
@@ -231,16 +281,21 @@ class ApiController extends Controller
                 )
                 Order by coordinates'), true), true);
             $servers      = array_combine(array_column($query_result, 'coordinates'), $query_result);
+            $max          = max(array_column($servers, 'players'));
 
             $grid = SourceQueryController::getAllServers($request->get('region'), $request->get('gamemode'));
 
             //        $snappy = App::make('snappy.image');
-            $snappy_image = SnappyImage::loadView('snappy.map', compact('region', 'gamemode', 'servers', 'grid'));
+            // return view('snappy.map', compact('region', 'gamemode', 'servers', 'grid', 'max'))->render();
+            $snappy_image = SnappyImage::loadView('snappy.map', compact('region', 'gamemode', 'servers', 'grid', 'max'));
             $filename     = Carbon::now()->timestamp . '-' . $region . '-' . $gamemode . '.png';
             $snappy_image->save(storage_path() . '/app/public/images/map/' . $filename);
 
             return url('/storage/images/map/' . $filename);
         });
+
+
+        // return $image;
 
         return response()->json(['image' => $image]);
     }
