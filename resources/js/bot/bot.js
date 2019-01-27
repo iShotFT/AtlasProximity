@@ -9,6 +9,7 @@ const config = require('./config.json');
 const client = new Discord.Client();
 const Echo = require('laravel-echo');
 const contactHook = new Discord.WebhookClient(config.mentionwebhook.id, config.mentionwebhook.token);
+const updateHook = new Discord.WebhookClient(config.updatewebhook.id, config.updatewebhook.token);
 
 // Random 'Processing...' messages
 const procMsgs = [
@@ -192,6 +193,7 @@ client.on('message', msg => {
             let input = args.join(' ');
 
             // Send a message to the bot owner
+            console.log('User ' + author.username + '#' + author.discriminator + ' sent a message to the devs using !contact');
             msg.edit(':microphone2: We have sent your message to the bot owner!');
             contactHook.send('Someone sent you a message using the !contact command\n``` > Message: ' + input + '\n > User: ' + author.username + '#' + author.discriminator + '\n > Origin server: ' + msg.guild.name + '\n > Origin channel: ' + msg.channel.name + '```');
             //
@@ -733,6 +735,10 @@ this.Echo.channel(`public`)
     .listen('.track.expired', (e) => {
         console.log('WebSocket: [TRACKING] Sent track expired message to ' + e.guildid + ' about player ' + e.player);
         client.channels.get(e.channelid).send(':timer: Tracking for player `' + e.player + '` has expired. Last known location: `' + e.last + '`');
+    })
+    .listen('.bot.updated', (e) => {
+        console.log('WebSocket: [UPDATE] We noticed an update happened and sent a message to the webhook');
+        updateHook.send(':satellite: The ATLAS CCTV bot has just been updated!\n``` > Current version: ' + e.version + '\n > Changes: ' + e.changes + '```');
     })
     .listen('.tracked.server.boat', (e) => {
         console.log('WebSocket: [TRACKING] Sent boat warning message to ' + e.guildid + ' about coordinate ' + e.to);
