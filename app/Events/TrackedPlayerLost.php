@@ -4,10 +4,10 @@ namespace App\Events;
 
 use App\PlayerTrack;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 
-class TrackedPlayerLost implements ShouldBroadcastNow
+class TrackedPlayerLost implements ShouldBroadcast
 {
     use SerializesModels;
 

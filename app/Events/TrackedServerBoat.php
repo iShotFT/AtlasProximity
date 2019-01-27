@@ -5,10 +5,10 @@ namespace App\Events;
 use App\Classes\Coordinate;
 use App\ProximityTrack;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 
-class TrackedServerBoat implements ShouldBroadcastNow
+class TrackedServerBoat implements ShouldBroadcast
 {
     use SerializesModels;
 

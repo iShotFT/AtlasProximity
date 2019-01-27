@@ -108,7 +108,7 @@ task('build', function () {
 });
 
 task('reload:php-fpm', function () {
-    run('sudo /usr/sbin/service php7.2-fpm reload');
+    run('sudo /usr/sbin/service php7.3-fpm reload');
 });
 
 task('reload:atlascctv', function () {
