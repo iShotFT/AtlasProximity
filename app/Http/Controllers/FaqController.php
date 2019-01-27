@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\BotUpdated;
-use App\Update;
+use App\Events\FaqCreated;
+use App\Faq;
 use Illuminate\Http\Request;
 
-class UpdateController extends Controller
+class FaqController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,9 +16,9 @@ class UpdateController extends Controller
     public function index()
     {
         //
-        $updates = Update::orderByDesc('created_at')->paginate(15);
+        $faqs = Faq::orderByDesc('created_at')->paginate(15);
 
-        return view('update.index', compact('updates'));
+        return view('faq.index', compact('faqs'));
     }
 
     /**
@@ -28,10 +28,7 @@ class UpdateController extends Controller
      */
     public function create()
     {
-        //
-        $previous_update = Update::orderByDesc('created_at')->first();
-
-        return view('update.create', compact('previous_update'));
+        return view('faq.create');
     }
 
     /**
@@ -44,18 +41,16 @@ class UpdateController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'version' => 'required',
-            'major'   => 'required',
-            'minor'   => 'required',
-            'changes' => 'required',
+            'question' => 'required',
+            'answer'   => 'required',
         ]);
 
-        $update = Update::create($request->all());
+        $faq = Faq::create($request->all());
 
         // Notify the bot about the update
-        event(new BotUpdated($update));
+        event(new FaqCreated($faq));
 
-        return redirect()->route('update.index');
+        return redirect()->route('faq.index');
     }
 
     /**
@@ -105,10 +100,9 @@ class UpdateController extends Controller
      */
     public function destroy(Request $request)
     {
-        dd('hi');
-        $update = Update::findOrFail($request->get('id'));
-        $update->delete();
+        $faq = Faq::findOrFail($request->get('id'));
+        $faq->delete();
 
-        return redirect()->route('update.index');
+        return redirect()->route('faq.index');
     }
 }

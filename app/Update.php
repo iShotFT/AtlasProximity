@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Update
@@ -25,12 +26,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Update whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Update whereVersion($value)
  * @mixin \Eloquent
- * @property-read mixed $full_version
+ * @property-read mixed                      $full_version
  */
 class Update extends Model
 {
+    use SoftDeletes;
     //
     protected $guarded = [];
+    protected $dates = ['deleted_at'];
 
     public function getFullVersionAttribute()
     {
