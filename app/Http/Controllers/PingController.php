@@ -14,7 +14,7 @@ class PingController extends Controller
      */
     public function index()
     {
-        $pings = Ping::orderByDesc('created_at')->paginate(15);
+        $pings = Ping::orderByDesc('created_at')->paginate(250);
 
         return view('ping.index', compact('pings'));
     }

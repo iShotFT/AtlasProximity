@@ -14,7 +14,7 @@ class PlayerPingController extends Controller
      */
     public function index()
     {
-        $playerpings = PlayerPing::orderByDesc('updated_at')->paginate(15);
+        $playerpings = PlayerPing::orderByDesc('updated_at')->paginate(250);
 
         return view('playerping.index', compact('playerpings'));
     }
