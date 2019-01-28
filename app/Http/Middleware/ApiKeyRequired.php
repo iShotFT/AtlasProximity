@@ -21,7 +21,7 @@ class ApiKeyRequired
             return response()->json(['message' => 'API request requires valid key to identify yourself.'], 400);
         }
 
-        if (ApiKey::whereKey($request->get('key'))->count() <= 0) {
+        if (ApiKey::where('key', $request->get('key'))->count() <= 0) {
             return response()->json(['message' => 'The given API key is invalid.'], 401);
         }
 
