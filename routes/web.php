@@ -53,3 +53,8 @@ Route::group(['middleware' => ['permission:a.proximitytrack']], function () {
 Route::group(['middleware' => ['permission:a.guild']], function () {
     Route::resource('guild', 'GuildController');
 });
+
+Route::group(['middleware' => ['permission:u.apikey']], function () {
+    Route::resource('apikey', 'ApiKeyController');
+    Route::get('apikey/get/destroy', 'ApiKeyController@destroy')->name('apikey.get.destroy');
+});

@@ -60,6 +60,9 @@
                                     <span class="badge badge-info text-light p-1">{{ \App\Guild::count() }}</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('apikey.index') }}">API Keys</a>
+                            </li>
                         </ul>
 
                         <!-- Right Side Of Navbar -->

@@ -16,6 +16,7 @@ class ApiKeysSeeder extends Seeder
     {
         $default_key = ApiKey::firstOrCreate([
             'user_id' => User::where('email', 'averbanck1992@gmail.com')->first()->id,
+            'title'   => 'Atlas CCTV',
         ]);
     }
 }

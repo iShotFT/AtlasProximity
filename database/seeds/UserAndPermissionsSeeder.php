@@ -22,10 +22,13 @@ class UserAndPermissionsSeeder extends Seeder
         $p_admin_lc     = Permission::findOrCreate('a.linkclick');
         $p_admin_proxt  = Permission::findOrCreate('a.proximitytrack');
         $p_admin_guild  = Permission::findOrCreate('a.guild');
+        $p_user_apikey  = Permission::findOrCreate('u.apikey');
 
         // Roles
         $r_superadmin = Role::findOrCreate('superadmin');
         $r_superadmin->syncPermissions(Permission::all());
+        $r_user = Role::findOrCreate('user');
+        $r_user->syncPermissions(['u.apikey']);
 
         // Users
         $test_admin = array(
