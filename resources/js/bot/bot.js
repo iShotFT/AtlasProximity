@@ -437,7 +437,7 @@ client.on('message', msg => {
                     }
 
                     console.log('Sent a message to ' + msg.guild.name);
-                    if (array.length >= 1) {
+                    if (array.length >= 2) {
                         msg.channel.send('```' + table(array) + '```');
                     }
                 } else {
