@@ -17,6 +17,7 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
         <!-- Styles -->
+        {{--<link href="{{ asset(mix('app-dark.css', 'vendor/telescope')) }}" rel="stylesheet" type="text/css">--}}
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     </head>
     <body>

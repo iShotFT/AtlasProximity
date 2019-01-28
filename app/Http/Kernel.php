@@ -40,6 +40,7 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
+            'api_key_required',
         ],
     ];
 
@@ -63,6 +64,7 @@ class Kernel extends HttpKernel
         'role'               => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission'         => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
+        'api_key_required'   => \App\Http\Middleware\ApiKeyRequired::class,
     ];
 
     /**
