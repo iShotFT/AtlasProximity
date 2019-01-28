@@ -466,7 +466,7 @@ class ApiController extends Controller
     public function help(Request $request)
     {
         $commmands = [
-            'help'    => [
+            'help'       => [
                 'explanation' => 'Returns all the commands registered on this bot with explanation.',
                 'aliases'     => [
                     'cmdlist',
@@ -479,7 +479,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'version' => [
+            'version'    => [
                 'explanation' => 'Find out what version the bot is currently on. This includes the latest changes.',
                 'aliases'     => [
                     'v',
@@ -489,7 +489,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'ask'     => [
+            'ask'        => [
                 'explanation' => 'Send a message to the creator / owner of this bot. This can be used to send feedback, ask for help, etc.',
                 'aliases'     => [
                     'contact',
@@ -503,7 +503,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'purge'   => [
+            'purge'      => [
                 'explanation' => 'Removes the 100 most recent messages in the channel you use the command in.',
                 'aliases'     => [
                     'clean',
@@ -514,7 +514,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'map'     => [
+            'map'        => [
                 'explanation' => 'Generate and show an image of the map with the current population of each server.',
                 'aliases'     => [
                     'world',
@@ -527,7 +527,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'players' => [
+            'players'    => [
                 'explanation' => 'Shows a list of players and their time connected on the coordinate of your choice.',
                 'aliases'     => [
                     'player',
@@ -541,7 +541,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'pop'     => [
+            'pop'        => [
                 'explanation' => 'Show a list of the amount of players on and around the coordinate of your choice.',
                 'aliases'     => [
                     'population',
@@ -555,7 +555,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'grid'    => [
+            'grid'       => [
                 'explanation' => 'Show a formatted table of the amount of players on and around the coordinate of your choice.',
                 'aliases'     => [],
                 'arguments'   => [
@@ -567,7 +567,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'find'    => [
+            'find'       => [
                 'explanation' => 'Find a player (based on steam username). This currently only works for [EU PVP].',
                 'aliases'     => [
                     'search',
@@ -580,7 +580,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'alert'   => [
+            'alert'      => [
                 'explanation' => 'Adds a coordinate to the list of coordinates that trigger an alert when we think a boat of 2 or more people joined that coordinate.',
                 'aliases'     => [
                     'prox',
@@ -593,7 +593,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'unalert' => [
+            'unalert'    => [
                 'explanation' => 'Removes a coordinate to the list of coordinates that trigger an alert when we think a boat of 2 or more people joined that coordinate.',
                 'aliases'     => [
                     'unprox',
@@ -606,7 +606,18 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'track'   => [
+            'unalertall' => [
+                'explanation' => 'Removes all active tracking from this channel (needs ADMINISTRATOR or MANAGE_MESSAGES permission on Discord server).',
+                'aliases'     => [
+                    'unproxall',
+                    'unproximityall',
+                ],
+                'arguments'   => [],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'track'      => [
                 'explanation' => 'Track a player for XXX minutes. Every time we detect the player changed coordinates the bot will post an alert',
                 'aliases'     => [
                     'stalk',
@@ -620,7 +631,7 @@ class ApiController extends Controller
                     '',
                 ],
             ],
-            'untrack' => [
+            'untrack'    => [
                 'explanation' => 'Remove a player from the tracking list.',
                 'aliases'     => [
                     'unstalk',
@@ -629,6 +640,17 @@ class ApiController extends Controller
                 'arguments'   => [
                     'USERNAME:iShot',
                 ],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'untrackall' => [
+                'explanation' => 'Removes all active proximity alerts from this channel (needs ADMINISTRATOR or MANAGE_MESSAGES permission on Discord server).',
+                'aliases'     => [
+                    'unstalk',
+                    'unfollow',
+                ],
+                'arguments'   => [],
                 'example'     => [
                     '',
                 ],
