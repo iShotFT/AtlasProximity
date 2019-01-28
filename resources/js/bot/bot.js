@@ -633,6 +633,28 @@ client.on('message', msg => {
         return false;
     }
 
+    if (command === 'unproximityall' || command === 'unproxall' || command === 'unalertall') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            if (message.member.hasPermission('ADMINISTRATOR') || message.member.hasPermission('MANAGE_MESSAGES')) {
+                console.log(msg.guild.id, msg.channel.id, config.url + '/api/proximity/remove/all');
+                // Poll the API for the information requested
+                axios.post(config.url + '/api/proximity/remove/all', {
+                    key: key,
+                    guildid: msg.guild.id,
+                    channelid: msg.channel.id,
+                }).then(function (response) {
+                    msg.edit('```Removed all active proximity alerts from this channel```');
+                }).catch(function (response) {
+                    msg.edit('```' + response.response.data.message + '```');
+                });
+            } else {
+                msg.edit('```You need message removal permissions in your Discord server to use this command```');
+            }
+        });
+
+        return false;
+    }
+
     if (command === 'unproximity' || command === 'unprox' || command === 'unalert') {
         msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             // If no arguments, send back the usage of the command
@@ -718,6 +740,29 @@ client.on('message', msg => {
             }).catch(function (response) {
                 msg.edit('```' + response.response.data.message + '```');
             });
+        });
+
+        return false;
+    }
+
+    if (command === 'untrackall' || command === 'unstalkall' || command === 'unfollowall') {
+
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            if (message.member.hasPermission('ADMINISTRATOR') || message.member.hasPermission('MANAGE_MESSAGES')) {
+                console.log(msg.guild.id, msg.channel.id, config.url + '/api/track/remove/all');
+                // Poll the API for the information requested
+                axios.post(config.url + '/api/track/remove/all', {
+                    key: key,
+                    guildid: msg.guild.id,
+                    channelid: msg.channel.id,
+                }).then(function (response) {
+                    msg.edit('```Removed all active trackings from this channel```');
+                }).catch(function (response) {
+                    msg.edit('```' + response.response.data.message + '```');
+                });
+            } else {
+                msg.edit('```You need message removal permissions in your Discord server to use this command```');
+            }
         });
 
         return false;

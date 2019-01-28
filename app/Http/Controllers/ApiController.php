@@ -363,6 +363,34 @@ class ApiController extends Controller
         }
     }
 
+    public function trackRemoveAll(Request $request)
+    {
+        $request->validate([
+            //            'username' => 'required|string|min:2',
+            'guildid'   => 'required',
+            'channelid' => 'required',
+        ]);
+
+        PlayerTrack::where([
+            //            'player'   => $request->get('username'),
+            'guild_id'   => $request->get('guildid'),
+            'channel_id' => $request->get('channelid'),
+        ])->delete();
+    }
+
+    public function proximityRemoveAll(Request $request)
+    {
+        $request->validate([
+            'guildid'   => 'required',
+            'channelid' => 'required',
+        ]);
+
+        ProximityTrack::where([
+            'guild_id'   => $request->get('guildid'),
+            'channel_id' => $request->get('channelid'),
+        ])->delete();
+    }
+
     public function proximityRemove(Request $request)
     {
         $request->validate([

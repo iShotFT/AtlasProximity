@@ -7,6 +7,7 @@ use App\ProximityTrack;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class TrackedServerBoat implements ShouldBroadcast
 {

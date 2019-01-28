@@ -28,6 +28,8 @@ Route::post('proximity/add', 'ApiController@proximityAdd');
 Route::post('guild/remove', 'ApiController@guildRemove');
 Route::post('track/remove', 'ApiController@trackRemove');
 Route::post('proximity/remove', 'ApiController@proximityRemove');
+Route::post('track/remove/all', 'ApiController@trackRemoveAll');
+Route::post('proximity/remove/all', 'ApiController@proximityRemoveAll');
 
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();
