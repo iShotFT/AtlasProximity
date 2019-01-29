@@ -18,7 +18,7 @@ class CreateBoatsTable extends Migration
             $table->string('coordinate', 3);
             $table->string('guild_id');
             $table->string('channel_id');
-            $table->text('players')->default(false);
+            $table->text('players');
             $table->timestamps();
         });
     }
