@@ -36,7 +36,7 @@ class ApiController extends Controller
             // Get list of players from the previous scan
             if ($old_players = Ping::where('coordinates', $proximity_track->coordinate)->orderByDesc('created_at')->first()) {
                 $previous_scanned_players = json_decode($old_players->info, true);
-                if ($new_scanned_players = SourceQueryController::getPlayersOnCoordinate($proximity_track->coordinate)['players']) {
+                if ($new_scanned_players = SourceQueryController::getPlayersOnCoordinate($proximity_track->coordinate, 'eu', 'pvp', true)['players']) {
                     // We only want to compare usernames
                     $previous_scanned_players = array_column($previous_scanned_players, 'Name');
                     $new_scanned_players      = array_column($new_scanned_players, 'Name');

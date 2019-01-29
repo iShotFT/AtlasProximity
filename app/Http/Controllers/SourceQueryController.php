@@ -63,19 +63,19 @@ class SourceQueryController extends Controller
      * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
      * @throws \xPaw\SourceQuery\Exception\TimeoutException
      */
-    public static function getPlayersOnCoordinate($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
+    public static function getPlayersOnCoordinate($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp', $skip_cache = false)
     {
         $return = '';
 
         // Get the IP for this server
-        if (Cache::has('getPlayersOnCoordinate' . $coordinate . $region . $gamemode)) {
+        if (Cache::has('getPlayersOnCoordinate' . $coordinate . $region . $gamemode) && $skip_cache !== true) {
             $return                           = Cache::get('getPlayersOnCoordinate' . $coordinate . $region . $gamemode);
             $return['data']['type']           = 'redis';
             $return['data']['age']['seconds'] = Carbon::now()->timestamp - $return['data']['age']['timestamp'];
         } else {
             list ($ip, $port) = array_values(self::getServerIp($coordinate, $region, $gamemode));
             // First check if server wasn't polled already in the past minute
-            if ($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinutes(config('atlas.settings.cache.lifetime', 1)))->first()) {
+            if ($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinutes(config('atlas.settings.cache.lifetime', 1)))->first() && $skip_cache !== true) {
                 $players = json_decode($ping->info, true);
                 $data    = [
                     'type' => 'database',
