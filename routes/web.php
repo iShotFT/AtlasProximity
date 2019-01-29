@@ -58,3 +58,6 @@ Route::group(['middleware' => ['permission:u.apikey']], function () {
     Route::resource('apikey', 'ApiKeyController');
     Route::get('apikey/get/destroy', 'ApiKeyController@destroy')->name('apikey.get.destroy');
 });
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
