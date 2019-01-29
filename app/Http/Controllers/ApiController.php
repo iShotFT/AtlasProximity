@@ -92,6 +92,7 @@ class ApiController extends Controller
                                         'guild_id'   => $proximity_track->guild_id,
                                         'channel_id' => $proximity_track->guild_id,
                                         'coordinate' => $coordinate_to_scan->coordinate,
+                                        'from'       => $location,
                                         'players'    => json_encode($players, true),
                                     ]);
                                 }
