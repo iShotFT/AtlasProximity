@@ -75,7 +75,7 @@ class SourceQueryController extends Controller
         } else {
             list ($ip, $port) = array_values(self::getServerIp($coordinate, $region, $gamemode));
             // First check if server wasn't polled already in the past minute
-            if ($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinutes(config('atlas.settings.cache.lifetime', 1)))->first() && $skip_cache === false) {
+            if (($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinutes(config('atlas.settings.cache.lifetime', 1)))->first()) && $skip_cache === false) {
                 $players = json_decode($ping->info, true);
                 $data    = [
                     'type' => 'database',
