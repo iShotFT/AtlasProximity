@@ -14,7 +14,7 @@ class ProximityTrackController extends Controller
      */
     public function index()
     {
-        $proximitytracks = ProximityTrack::orderByDesc('created_at')->paginate(15);
+        $proximitytracks = ProximityTrack::orderByDesc('created_at')->limit(1000)->get();
 
         return view('proximitytrack.index', compact('proximitytracks'));
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Boat;
 use App\Classes\Coordinate;
 use App\Events\TrackedPlayerLost;
 use App\Events\TrackedPlayerMoved;
@@ -86,6 +87,13 @@ class ApiController extends Controller
                                 // Trigger 'Boat entered server XXX from XXX'
                                 foreach ($proximity_tracks->where('coordinate', $coordinate_to_scan->coordinate) as $proximity_track) {
                                     event(new TrackedServerBoat($proximity_track, $players, $location));
+
+                                    Boat::create([
+                                        'guild_id'   => $proximity_track->guild_id,
+                                        'channel_id' => $proximity_track->guild_id,
+                                        'coordinate' => $coordinate_to_scan->coordinate,
+                                        'players'    => json_encode($players, true),
+                                    ]);
                                 }
                             }
                         }

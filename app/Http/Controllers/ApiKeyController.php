@@ -16,7 +16,7 @@ class ApiKeyController extends Controller
     {
         //
 
-        $api_keys = $request->user()->api_keys()->paginate(15);
+        $api_keys = $request->user()->api_keys()->limit(1000)->get();
 
         return view('apikey.index', compact('api_keys'));
     }

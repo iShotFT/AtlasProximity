@@ -14,7 +14,7 @@ class GuildController extends Controller
      */
     public function index()
     {
-        $guilds = Guild::orderByDesc('created_at')->paginate(15);
+        $guilds = Guild::orderByDesc('created_at')->limit(1000)->get();
 
         return view('guild.index', compact('guilds'));
     }

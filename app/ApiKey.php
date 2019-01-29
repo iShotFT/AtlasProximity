@@ -19,6 +19,20 @@ use Webpatser\Uuid\Uuid;
  * @method static \Illuminate\Database\Query\Builder|\App\ApiKey withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\ApiKey withoutTrashed()
  * @mixin \Eloquent
+ * @property int $id
+ * @property int $user_id
+ * @property string $title
+ * @property string $key
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApiKey whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApiKey whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApiKey whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApiKey whereKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApiKey whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApiKey whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApiKey whereUserId($value)
  */
 class ApiKey extends Model
 {

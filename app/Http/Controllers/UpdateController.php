@@ -16,7 +16,7 @@ class UpdateController extends Controller
     public function index()
     {
         //
-        $updates = Update::orderByDesc('created_at')->paginate(15);
+        $updates = Update::orderByDesc('created_at')->limit(1000)->get();
 
         return view('update.index', compact('updates'));
     }

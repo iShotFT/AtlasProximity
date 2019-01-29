@@ -14,7 +14,7 @@ class LinkClickController extends Controller
      */
     public function index()
     {
-        $linkclicks = LinkClick::orderByDesc('created_at')->paginate(50);
+        $linkclicks = LinkClick::orderByDesc('created_at')->limit(1000)->get();
 
         return view('linkclick.index', compact('linkclicks'));
     }
