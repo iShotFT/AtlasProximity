@@ -57,7 +57,7 @@
                                     </tbody>
                                 </table>
 
-                                {{ $pings->links() }}
+
                             </div>
                             <!-- /.col -->
                         </div>

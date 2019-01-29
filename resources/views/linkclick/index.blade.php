@@ -49,7 +49,7 @@
                                     </tbody>
                                 </table>
 
-                                {{ $linkclicks->links() }}
+
                             </div>
                             <!-- /.col -->
                         </div>

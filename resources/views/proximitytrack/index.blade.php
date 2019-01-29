@@ -49,7 +49,7 @@
                                     </tbody>
                                 </table>
 
-                                {{ $proximitytracks->links() }}
+
                             </div>
                             <!-- /.col -->
                         </div>

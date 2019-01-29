@@ -51,7 +51,7 @@
                                     </tbody>
                                 </table>
 
-                                {{ $faqs->links() }}
+
                             </div>
                             <!-- /.col -->
                         </div>

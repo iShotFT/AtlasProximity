@@ -51,7 +51,7 @@
                                     </tbody>
                                 </table>
 
-                                {{ $updates->links() }}
+
                             </div>
                             <!-- /.col -->
                         </div>

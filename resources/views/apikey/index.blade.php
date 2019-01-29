@@ -51,7 +51,7 @@
                                     </tbody>
                                 </table>
 
-                                {{ $api_keys->links() }}
+
                             </div>
                             <!-- /.col -->
                         </div>

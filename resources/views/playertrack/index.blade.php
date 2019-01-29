@@ -57,7 +57,7 @@
                                     </tbody>
                                 </table>
 
-                                {{ $playertracks->links() }}
+
                             </div>
                             <!-- /.col -->
                         </div>

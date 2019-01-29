@@ -55,7 +55,7 @@
                                     </tbody>
                                 </table>
 
-                                {{ $playerpings->links() }}
+
                             </div>
                             <!-- /.col -->
                         </div>

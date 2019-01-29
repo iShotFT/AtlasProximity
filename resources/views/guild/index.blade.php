@@ -48,7 +48,7 @@
                                     </tbody>
                                 </table>
 
-                                {{ $guilds->links() }}
+
                             </div>
                             <!-- /.col -->
                         </div>
