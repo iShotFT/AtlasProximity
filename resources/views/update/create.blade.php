@@ -78,11 +78,3 @@ __Extra(s):__
         </div>
     </div>
 @stop
-
-@section('js')
-    <script>
-        $(document).ready(function () {
-            $('#table').DataTable();
-        });
-    </script>
-@stop

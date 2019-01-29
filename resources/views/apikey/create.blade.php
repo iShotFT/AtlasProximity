@@ -55,11 +55,3 @@
         </div>
     </div>
 @stop
-
-@section('js')
-    <script>
-        $(document).ready(function () {
-            $('#table').DataTable();
-        });
-    </script>
-@stop
