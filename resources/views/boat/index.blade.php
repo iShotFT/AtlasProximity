@@ -27,7 +27,8 @@
                                     <thead class="thead-dark">
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">Coordinate</th>
+                                        <th scope="col">From</th>
+                                        <th scope="col">To</th>
                                         <th scope="col">Players</th>
                                         <th scope="col">Guild ID</th>
                                         <th scope="col">Channel ID</th>
@@ -40,6 +41,7 @@
                                     @foreach ($boats as $boat)
                                         <tr>
                                             <th scope="row">{{ $boat->id }}</th>
+                                            <td>{{ $boat->from }}</td>
                                             <td>{{ $boat->coordinate }}</td>
                                             <td>{{ count(json_decode($boat->players, true)) }}</td>
                                             <td>{{ $boat->guild_id }}</td>
