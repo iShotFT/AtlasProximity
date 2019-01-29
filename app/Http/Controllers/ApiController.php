@@ -46,6 +46,7 @@ class ApiController extends Controller
                     $new_scanned_players      = array_column($new_scanned_players, 'Name');
 
                     $new_players_after_scan = array_diff($new_scanned_players, $previous_scanned_players);
+                    //                    dd($new_players_after_scan);
 
                     if (is_array($new_players_after_scan) && count($new_players_after_scan) >= 2) {
                         // 3 or more new players joined in the past minute!!!
@@ -54,7 +55,7 @@ class ApiController extends Controller
                         // Build an array with all r
                         $locations = [];
                         foreach ($new_players_after_scan as $username) {
-                            if ($username !== '123' && $username !== '') {
+                            if ($username !== '123' && !empty($username)) {
                                 $player_previous_locations = PlayerPing::where('player', '=', $username)->orderByDesc('updated_at')->limit(2)->get([
                                     'player',
                                     'coordinates',
@@ -73,8 +74,6 @@ class ApiController extends Controller
                                         $locations[$player_most_recent_previous_location->coordinates] = [$username];
                                     }
                                 }
-                            } else {
-                                // This is a username we're not tracking
                             }
                         }
 
@@ -83,7 +82,7 @@ class ApiController extends Controller
                                 // Remove the current alert hit from the next warning
                                 unset($locations[$location]);
 
-                                // Only trigger an BOAT alert when the count of players is 2 or more
+                                // Only trigger a BOAT alert when the count of players is 2 or more
                                 // Trigger 'Boat entered server XXX from XXX'
                                 foreach ($proximity_tracks->where('coordinate', $coordinate_to_scan->coordinate) as $proximity_track) {
                                     event(new TrackedServerBoat($proximity_track, $players, $location));

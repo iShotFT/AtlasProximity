@@ -905,19 +905,35 @@ this.Echo = new Echo({
 this.Echo.channel(`public`)
     .listen('.tracked.player.moved', (e) => {
         console.log('WebSocket: [TRACKING] Sent message to ' + e.guildid + ' about player ' + e.player);
-        client.channels.get(e.channelid).send(':spy::skin-tone-4: Tracked player `' + e.player + '` has moved from `' + e.from + '` to `' + e.to + '` heading `' + e.direction + '`');
+        if (client.channels.get(e.channelid)) {
+            client.channels.get(e.channelid).send(':spy::skin-tone-4: Tracked player `' + e.player + '` has moved from `' + e.from + '` to `' + e.to + '` heading `' + e.direction + '`');
+        } else {
+            console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+        }
     })
     .listen('.tracked.player.lost', (e) => {
         console.log('WebSocket: [TRACKING] Sent tracking lost message to ' + e.guildid + ' about player ' + e.player);
-        client.channels.get(e.channelid).send(':sleeping: We suspect that tracked player `' + e.player + '` has gone offline. Last known location: `' + e.last + '`');
+        if (client.channels.get(e.channelid)) {
+            client.channels.get(e.channelid).send(':sleeping: We suspect that tracked player `' + e.player + '` has gone offline. Last known location: `' + e.last + '`');
+        } else {
+            console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+        }
     })
     .listen('.tracked.player.refound', (e) => {
         console.log('WebSocket: [TRACKING] Sent tracking refound message to ' + e.guildid + ' about player ' + e.player);
-        client.channels.get(e.channelid).send(':spy::skin-tone-4: Tracked player `' + e.player + '` came back online in location: `' + e.last + '`');
+        if (client.channels.get(e.channelid)) {
+            client.channels.get(e.channelid).send(':spy::skin-tone-4: Tracked player `' + e.player + '` came back online in location: `' + e.last + '`');
+        } else {
+            console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+        }
     })
     .listen('.track.expired', (e) => {
         console.log('WebSocket: [TRACKING] Sent track expired message to ' + e.guildid + ' about player ' + e.player);
-        client.channels.get(e.channelid).send(':timer: Tracking for player `' + e.player + '` has expired. Last known location: `' + e.last + '`');
+        if (client.channels.get(e.channelid)) {
+            client.channels.get(e.channelid).send(':timer: Tracking for player `' + e.player + '` has expired. Last known location: `' + e.last + '`');
+        } else {
+            console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+        }
     })
     .listen('.bot.updated', (e) => {
         console.log('WebSocket: [UPDATE] We noticed an update happened and sent a message to the webhook');
@@ -929,5 +945,9 @@ this.Echo.channel(`public`)
     })
     .listen('.tracked.server.boat', (e) => {
         console.log('WebSocket: [TRACKING] Sent boat warning message to ' + e.guildid + ' about coordinate ' + e.to);
-        client.channels.get(e.channelid).send(':anchor: A suspected boat entered coordinate `' + e.to + '`. They came from the `' + e.direction + '` (`' + e.from + '`). Player(s) on the boat:\n```\n' + e.players.join('\n') + '```');
+        if (client.channels.get(e.channelid)) {
+            client.channels.get(e.channelid).send(':anchor: A suspected boat entered coordinate `' + e.to + '`. They came from the `' + e.direction + '` (`' + e.from + '`). Player(s) on the boat:\n```\n' + e.players.join('\n') + '```');
+        } else {
+            console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+        }
     });

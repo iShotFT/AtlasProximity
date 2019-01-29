@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             ApiController::proximity();
-        })->everyMinute();
+        })->cron('*/2 * * * *');
 
         $schedule->command('telescope:prune')->daily();
     }
