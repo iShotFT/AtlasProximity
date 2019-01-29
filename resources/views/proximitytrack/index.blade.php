@@ -39,7 +39,7 @@
                                     @foreach ($proximitytracks as $proximitytrack)
                                         <tr>
                                             <th scope="row">{{ $proximitytrack->id }}</th>
-                                            <td>{{ $proximitytrack->guild_id }}</td>
+                                            <td>{{ $proximitytrack->guild_name }}</td>
                                             <td>{{ $proximitytrack->channel_id }}</td>
                                             <td>{{ $proximitytrack->coordinate }}</td>
                                             <td>{{ $proximitytrack->created_at->diffForHumans() }}</td>

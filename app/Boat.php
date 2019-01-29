@@ -2,16 +2,17 @@
 
 namespace App;
 
+use App\Traits\HasGuild;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Boat
  *
- * @property int $id
- * @property string $coordinate
- * @property string $guild_id
- * @property string $channel_id
- * @property string $players
+ * @property int                             $id
+ * @property string                          $coordinate
+ * @property string                          $guild_id
+ * @property string                          $channel_id
+ * @property string                          $players
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Boat newModelQuery()
@@ -28,6 +29,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Boat extends Model
 {
+    use HasGuild;
     //
+    protected $with = ['guild'];
     protected $guarded = [];
 }

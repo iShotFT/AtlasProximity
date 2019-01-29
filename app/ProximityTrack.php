@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Traits\HasGuild;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -34,7 +35,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class ProximityTrack extends Model
 {
-    use SoftDeletes;
+    protected $with = ['guild'];
+
+    use SoftDeletes, HasGuild;
     //
     protected $dates = ['deleted_at'];
     protected $guarded = [];

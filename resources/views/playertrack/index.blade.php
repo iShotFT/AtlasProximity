@@ -43,7 +43,7 @@
                                     @foreach ($playertracks as $playertrack)
                                         <tr>
                                             <th scope="row">{{ $playertrack->id }}</th>
-                                            <td>{{ $playertrack->guild_id }}</td>
+                                            <td>{{ $playertrack->guild_name }}</td>
                                             <td>{{ $playertrack->channel_id }}</td>
                                             <td>{{ $playertrack->player }}</td>
                                             <td>{{ $playertrack->last_coordinate }}</td>

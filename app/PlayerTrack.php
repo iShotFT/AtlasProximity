@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Traits\HasGuild;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -30,19 +31,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PlayerTrack whereUntil($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PlayerTrack whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string|null $last_direction
+ * @property string|null                     $last_direction
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\PlayerTrack onlyTrashed()
  * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PlayerTrack whereLastDirection($value)
  * @method static \Illuminate\Database\Query\Builder|\App\PlayerTrack withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\PlayerTrack withoutTrashed()
- * @property int $last_status
+ * @property int                             $last_status
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PlayerTrack whereLastStatus($value)
  */
 class PlayerTrack extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasGuild;
+    protected $with = ['guild'];
     //
     protected $guarded = [];
     protected $dates = [

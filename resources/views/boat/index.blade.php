@@ -44,7 +44,7 @@
                                             <td>{{ $boat->from }}</td>
                                             <td>{{ $boat->coordinate }}</td>
                                             <td>{{ $boat->count }}</td>
-                                            <td>{{ $boat->guild_id }}</td>
+                                            <td>{{ $boat->guild_name }}</td>
                                             <td>{{ $boat->channel_id }}</td>
                                             <td>{{ $boat->created_at->diffForHumans() }}</td>
                                         </tr>
