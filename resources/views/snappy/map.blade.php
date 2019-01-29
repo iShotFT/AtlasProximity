@@ -48,5 +48,9 @@
                 </tr>
             @endfor
         </table>
+        <div>
+            <span style="float: left;">{{ \Carbon\Carbon::now() }} UTC</span>
+            <span style="float: right;">Atlas CCTV Discord Bot</span>
+        </div>
     </body>
 </html>
