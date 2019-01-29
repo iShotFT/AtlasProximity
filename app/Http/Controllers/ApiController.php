@@ -32,11 +32,15 @@ class ApiController extends Controller
      */
     public static function proximity()
     {
-        foreach (ProximityTrack::get() as $proximity_track) {
+        $coordinates_to_scan = ProximityTrack::select('coordinate')->distinct()->get();
+        $proximity_tracks    = ProximityTrack::get();
+
+        foreach ($coordinates_to_scan as $coordinate_to_scan) {
+            // $coordinates_to_scan->coordinate
             // Get list of players from the previous scan
-            if ($old_players = Ping::where('coordinates', $proximity_track->coordinate)->orderByDesc('created_at')->first()) {
+            if ($old_players = Ping::where('coordinates', $coordinate_to_scan->coordinate)->orderByDesc('created_at')->first()) {
                 $previous_scanned_players = json_decode($old_players->info, true);
-                if ($new_scanned_players = SourceQueryController::getPlayersOnCoordinate($proximity_track->coordinate, 'eu', 'pvp', true)['players']) {
+                if ($new_scanned_players = SourceQueryController::getPlayersOnCoordinate($coordinate_to_scan->coordinate, 'eu', 'pvp', true)['players']) {
                     // We only want to compare usernames
                     $previous_scanned_players = array_column($previous_scanned_players, 'Name');
                     $new_scanned_players      = array_column($new_scanned_players, 'Name');
@@ -81,7 +85,9 @@ class ApiController extends Controller
 
                                 // Only trigger an BOAT alert when the count of players is 2 or more
                                 // Trigger 'Boat entered server XXX from XXX'
-                                event(new TrackedServerBoat($proximity_track, $players, $location));
+                                foreach ($proximity_tracks->where('coordinate', $coordinate_to_scan->coordinate) as $proximity_track) {
+                                    event(new TrackedServerBoat($proximity_track, $players, $location));
+                                }
                             }
                         }
                     }
