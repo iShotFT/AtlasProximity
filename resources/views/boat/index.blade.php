@@ -43,7 +43,7 @@
                                             <th scope="row">{{ $boat->id }}</th>
                                             <td>{{ $boat->from }}</td>
                                             <td>{{ $boat->coordinate }}</td>
-                                            <td>{{ count(json_decode($boat->players, true)) }}</td>
+                                            <td>{{ $boat->count }}</td>
                                             <td>{{ $boat->guild_id }}</td>
                                             <td>{{ $boat->channel_id }}</td>
                                             <td>{{ $boat->created_at->diffForHumans() }}</td>

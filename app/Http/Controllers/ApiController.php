@@ -94,6 +94,7 @@ class ApiController extends Controller
                                         'coordinate' => $coordinate_to_scan->coordinate,
                                         'from'       => $location,
                                         'players'    => json_encode($players, true),
+                                        'count'      => count($players),
                                     ]);
                                 }
                             }
