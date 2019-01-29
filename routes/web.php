@@ -50,6 +50,10 @@ Route::group(['middleware' => ['permission:a.proximitytrack']], function () {
     Route::resource('proximitytrack', 'ProximityTrackController');
 });
 
+Route::group(['middleware' => ['permission:a.boat']], function () {
+    Route::resource('boat', 'BoatController');
+});
+
 Route::group(['middleware' => ['permission:a.guild']], function () {
     Route::resource('guild', 'GuildController');
 });

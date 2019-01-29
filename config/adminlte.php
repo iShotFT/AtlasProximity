@@ -140,6 +140,11 @@ return [
             'icon' => 'exclamation-triangle',
         ],
         [
+            'text' => 'Boats',
+            'url'  => 'boat',
+            'icon' => 'ship',
+        ],
+        [
             'text' => 'Clicks',
             'url'  => 'linkclick',
             'icon' => 'link',
