@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.7.21 on 2019-01-20 15:54:27.
+ * Generated for Laravel 5.7.21 on 2019-01-30 17:29:19.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -3079,6 +3079,19 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
+         * Get a lock instance.
+         *
+         * @param string $name
+         * @param int $seconds
+         * @return \Illuminate\Contracts\Cache\Lock 
+         * @static 
+         */ 
+        public static function lock($name, $seconds = 0)
+        {
+            return \Illuminate\Cache\RedisStore::lock($name, $seconds);
+        }
+        
+        /**
          * Remove all items from the cache.
          *
          * @return bool 
@@ -3086,29 +3099,41 @@ namespace Illuminate\Support\Facades {
          */ 
         public static function flush()
         {
-            return \Illuminate\Cache\FileStore::flush();
+            return \Illuminate\Cache\RedisStore::flush();
         }
         
         /**
-         * Get the Filesystem instance.
+         * Get the Redis connection instance.
          *
-         * @return \Illuminate\Filesystem\Filesystem 
+         * @return \Predis\ClientInterface 
          * @static 
          */ 
-        public static function getFilesystem()
+        public static function connection()
         {
-            return \Illuminate\Cache\FileStore::getFilesystem();
+            return \Illuminate\Cache\RedisStore::connection();
         }
         
         /**
-         * Get the working directory of the cache.
+         * Set the connection name to be used.
          *
-         * @return string 
+         * @param string $connection
+         * @return void 
          * @static 
          */ 
-        public static function getDirectory()
+        public static function setConnection($connection)
         {
-            return \Illuminate\Cache\FileStore::getDirectory();
+            \Illuminate\Cache\RedisStore::setConnection($connection);
+        }
+        
+        /**
+         * Get the Redis database instance.
+         *
+         * @return \Illuminate\Contracts\Redis\Factory 
+         * @static 
+         */ 
+        public static function getRedis()
+        {
+            return \Illuminate\Cache\RedisStore::getRedis();
         }
         
         /**
@@ -3119,7 +3144,19 @@ namespace Illuminate\Support\Facades {
          */ 
         public static function getPrefix()
         {
-            return \Illuminate\Cache\FileStore::getPrefix();
+            return \Illuminate\Cache\RedisStore::getPrefix();
+        }
+        
+        /**
+         * Set the cache key prefix.
+         *
+         * @param string $prefix
+         * @return void 
+         * @static 
+         */ 
+        public static function setPrefix($prefix)
+        {
+            \Illuminate\Cache\RedisStore::setPrefix($prefix);
         }
          
     }
@@ -7255,6 +7292,69 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
+         * Migrate the delayed jobs that are ready to the regular queue.
+         *
+         * @param string $from
+         * @param string $to
+         * @return array 
+         * @static 
+         */ 
+        public static function migrateExpiredJobs($from, $to)
+        {
+            return \Illuminate\Queue\RedisQueue::migrateExpiredJobs($from, $to);
+        }
+        
+        /**
+         * Delete a reserved job from the queue.
+         *
+         * @param string $queue
+         * @param \Illuminate\Queue\Jobs\RedisJob $job
+         * @return void 
+         * @static 
+         */ 
+        public static function deleteReserved($queue, $job)
+        {
+            \Illuminate\Queue\RedisQueue::deleteReserved($queue, $job);
+        }
+        
+        /**
+         * Delete a reserved job from the reserved queue and release it.
+         *
+         * @param string $queue
+         * @param \Illuminate\Queue\Jobs\RedisJob $job
+         * @param int $delay
+         * @return void 
+         * @static 
+         */ 
+        public static function deleteAndRelease($queue, $job, $delay)
+        {
+            \Illuminate\Queue\RedisQueue::deleteAndRelease($queue, $job, $delay);
+        }
+        
+        /**
+         * Get the queue or return the default.
+         *
+         * @param string|null $queue
+         * @return string 
+         * @static 
+         */ 
+        public static function getQueue($queue)
+        {
+            return \Illuminate\Queue\RedisQueue::getQueue($queue);
+        }
+        
+        /**
+         * Get the underlying Redis instance.
+         *
+         * @return \Illuminate\Contracts\Redis\Factory 
+         * @static 
+         */ 
+        public static function getRedis()
+        {
+            return \Illuminate\Queue\RedisQueue::getRedis();
+        }
+        
+        /**
          * Get the expiration timestamp for an object-based queue handler.
          *
          * @param mixed $job
@@ -7264,7 +7364,7 @@ namespace Illuminate\Support\Facades {
         public static function getJobExpiration($job)
         {
             //Method inherited from \Illuminate\Queue\Queue            
-            return \Illuminate\Queue\SyncQueue::getJobExpiration($job);
+            return \Illuminate\Queue\RedisQueue::getJobExpiration($job);
         }
         
         /**
@@ -7277,7 +7377,7 @@ namespace Illuminate\Support\Facades {
         public static function createPayloadUsing($callback)
         {
             //Method inherited from \Illuminate\Queue\Queue            
-            \Illuminate\Queue\SyncQueue::createPayloadUsing($callback);
+            \Illuminate\Queue\RedisQueue::createPayloadUsing($callback);
         }
         
         /**
@@ -7290,7 +7390,7 @@ namespace Illuminate\Support\Facades {
         public static function setContainer($container)
         {
             //Method inherited from \Illuminate\Queue\Queue            
-            \Illuminate\Queue\SyncQueue::setContainer($container);
+            \Illuminate\Queue\RedisQueue::setContainer($container);
         }
          
     }
@@ -7515,6 +7615,74 @@ namespace Illuminate\Support\Facades {
         public static function hasMacro($name)
         {
             return \Illuminate\Routing\Redirector::hasMacro($name);
+        }
+         
+    }
+
+    /**
+     * 
+     *
+     * @see \Illuminate\Redis\RedisManager
+     * @see \Illuminate\Contracts\Redis\Factory
+     */ 
+    class Redis {
+        
+        /**
+         * Get a Redis connection by name.
+         *
+         * @param string|null $name
+         * @return \Illuminate\Redis\Connections\Connection 
+         * @static 
+         */ 
+        public static function connection($name = null)
+        {
+            return \Illuminate\Redis\RedisManager::connection($name);
+        }
+        
+        /**
+         * Resolve the given connection by name.
+         *
+         * @param string|null $name
+         * @return \Illuminate\Redis\Connections\Connection 
+         * @throws \InvalidArgumentException
+         * @static 
+         */ 
+        public static function resolve($name = null)
+        {
+            return \Illuminate\Redis\RedisManager::resolve($name);
+        }
+        
+        /**
+         * Return all of the created connections.
+         *
+         * @return array 
+         * @static 
+         */ 
+        public static function connections()
+        {
+            return \Illuminate\Redis\RedisManager::connections();
+        }
+        
+        /**
+         * Enable the firing of Redis command events.
+         *
+         * @return void 
+         * @static 
+         */ 
+        public static function enableEvents()
+        {
+            \Illuminate\Redis\RedisManager::enableEvents();
+        }
+        
+        /**
+         * Disable the firing of Redis command events.
+         *
+         * @return void 
+         * @static 
+         */ 
+        public static function disableEvents()
+        {
+            \Illuminate\Redis\RedisManager::disableEvents();
         }
          
     }
@@ -13390,6 +13558,431 @@ namespace Illuminate\Support\Facades {
  
 }
 
+namespace Barryvdh\Snappy\Facades { 
+
+    /**
+     * 
+     *
+     */ 
+    class SnappyPdf {
+        
+        /**
+         * Get the Snappy instance.
+         *
+         * @return \Knp\Snappy\Pdf 
+         * @static 
+         */ 
+        public static function snappy()
+        {
+            return \Barryvdh\Snappy\PdfWrapper::snappy();
+        }
+        
+        /**
+         * Set temporary folder
+         *
+         * @param string $path
+         * @static 
+         */ 
+        public static function setTemporaryFolder($path)
+        {
+            return \Barryvdh\Snappy\PdfWrapper::setTemporaryFolder($path);
+        }
+        
+        /**
+         * Set the paper size (default A4)
+         *
+         * @param string $paper
+         * @param string $orientation
+         * @return $this 
+         * @static 
+         */ 
+        public static function setPaper($paper, $orientation = null)
+        {
+            return \Barryvdh\Snappy\PdfWrapper::setPaper($paper, $orientation);
+        }
+        
+        /**
+         * Set the orientation (default portrait)
+         *
+         * @param string $orientation
+         * @return $this 
+         * @static 
+         */ 
+        public static function setOrientation($orientation)
+        {
+            return \Barryvdh\Snappy\PdfWrapper::setOrientation($orientation);
+        }
+        
+        /**
+         * Show or hide warnings
+         *
+         * @param bool $warnings
+         * @return $this 
+         * @deprecated 
+         * @static 
+         */ 
+        public static function setWarnings($warnings)
+        {
+            return \Barryvdh\Snappy\PdfWrapper::setWarnings($warnings);
+        }
+        
+        /**
+         * 
+         *
+         * @param string $name
+         * @param mixed $value
+         * @return $this 
+         * @static 
+         */ 
+        public static function setOption($name, $value)
+        {
+            return \Barryvdh\Snappy\PdfWrapper::setOption($name, $value);
+        }
+        
+        /**
+         * 
+         *
+         * @param array $options
+         * @return $this 
+         * @static 
+         */ 
+        public static function setOptions($options)
+        {
+            return \Barryvdh\Snappy\PdfWrapper::setOptions($options);
+        }
+        
+        /**
+         * Load a HTML string
+         *
+         * @param Array|string|\Barryvdh\Snappy\Renderable $html
+         * @return $this 
+         * @static 
+         */ 
+        public static function loadHTML($html)
+        {
+            return \Barryvdh\Snappy\PdfWrapper::loadHTML($html);
+        }
+        
+        /**
+         * Load a HTML file
+         *
+         * @param string $file
+         * @return $this 
+         * @static 
+         */ 
+        public static function loadFile($file)
+        {
+            return \Barryvdh\Snappy\PdfWrapper::loadFile($file);
+        }
+        
+        /**
+         * Load a View and convert to HTML
+         *
+         * @param string $view
+         * @param array $data
+         * @param array $mergeData
+         * @return $this 
+         * @static 
+         */ 
+        public static function loadView($view, $data = array(), $mergeData = array())
+        {
+            return \Barryvdh\Snappy\PdfWrapper::loadView($view, $data, $mergeData);
+        }
+        
+        /**
+         * Output the PDF as a string.
+         *
+         * @return string The rendered PDF as string
+         * @throws \InvalidArgumentException
+         * @static 
+         */ 
+        public static function output()
+        {
+            return \Barryvdh\Snappy\PdfWrapper::output();
+        }
+        
+        /**
+         * Save the PDF to a file
+         *
+         * @param $filename
+         * @return $this 
+         * @static 
+         */ 
+        public static function save($filename, $overwrite = false)
+        {
+            return \Barryvdh\Snappy\PdfWrapper::save($filename, $overwrite);
+        }
+        
+        /**
+         * Make the PDF downloadable by the user
+         *
+         * @param string $filename
+         * @return \Illuminate\Http\Response 
+         * @static 
+         */ 
+        public static function download($filename = 'document.pdf')
+        {
+            return \Barryvdh\Snappy\PdfWrapper::download($filename);
+        }
+        
+        /**
+         * Return a response with the PDF to show in the browser
+         *
+         * @param string $filename
+         * @return \Illuminate\Http\Response 
+         * @static 
+         */ 
+        public static function inline($filename = 'document.pdf')
+        {
+            return \Barryvdh\Snappy\PdfWrapper::inline($filename);
+        }
+        
+        /**
+         * Return a response with the PDF to show in the browser
+         *
+         * @param string $filename
+         * @return \Symfony\Component\HttpFoundation\StreamedResponse 
+         * @deprecated use inline() instead
+         * @static 
+         */ 
+        public static function stream($filename = 'document.pdf')
+        {
+            return \Barryvdh\Snappy\PdfWrapper::stream($filename);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function assertViewIs($value)
+        {
+            return \Barryvdh\Snappy\PdfFaker::assertViewIs($value);
+        }
+        
+        /**
+         * Assert that the response view has a given piece of bound data.
+         *
+         * @param string|array $key
+         * @param mixed $value
+         * @return $this 
+         * @static 
+         */ 
+        public static function assertViewHas($key, $value = null)
+        {
+            return \Barryvdh\Snappy\PdfFaker::assertViewHas($key, $value);
+        }
+        
+        /**
+         * Assert that the response view has a given list of bound data.
+         *
+         * @param array $bindings
+         * @return $this 
+         * @static 
+         */ 
+        public static function assertViewHasAll($bindings)
+        {
+            return \Barryvdh\Snappy\PdfFaker::assertViewHasAll($bindings);
+        }
+        
+        /**
+         * Assert that the response view is missing a piece of bound data.
+         *
+         * @param string $key
+         * @return $this 
+         * @static 
+         */ 
+        public static function assertViewMissing($key)
+        {
+            return \Barryvdh\Snappy\PdfFaker::assertViewMissing($key);
+        }
+        
+        /**
+         * Assert that the given string is contained within the response.
+         *
+         * @param string $value
+         * @return $this 
+         * @static 
+         */ 
+        public static function assertSee($value)
+        {
+            return \Barryvdh\Snappy\PdfFaker::assertSee($value);
+        }
+        
+        /**
+         * Assert that the given string is contained within the response text.
+         *
+         * @param string $value
+         * @return $this 
+         * @static 
+         */ 
+        public static function assertSeeText($value)
+        {
+            return \Barryvdh\Snappy\PdfFaker::assertSeeText($value);
+        }
+        
+        /**
+         * Assert that the given string is not contained within the response.
+         *
+         * @param string $value
+         * @return $this 
+         * @static 
+         */ 
+        public static function assertDontSee($value)
+        {
+            return \Barryvdh\Snappy\PdfFaker::assertDontSee($value);
+        }
+        
+        /**
+         * Assert that the given string is not contained within the response text.
+         *
+         * @param string $value
+         * @return $this 
+         * @static 
+         */ 
+        public static function assertDontSeeText($value)
+        {
+            return \Barryvdh\Snappy\PdfFaker::assertDontSeeText($value);
+        }
+         
+    }
+
+    /**
+     * 
+     *
+     */ 
+    class SnappyImage {
+        
+        /**
+         * Get the Snappy instance.
+         *
+         * @return \Knp\Snappy\Image 
+         * @static 
+         */ 
+        public static function snappy()
+        {
+            return \Barryvdh\Snappy\ImageWrapper::snappy();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setOption($name, $value)
+        {
+            return \Barryvdh\Snappy\ImageWrapper::setOption($name, $value);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setOptions($options)
+        {
+            return \Barryvdh\Snappy\ImageWrapper::setOptions($options);
+        }
+        
+        /**
+         * Load a HTML string
+         *
+         * @param string $string
+         * @return static 
+         * @static 
+         */ 
+        public static function loadHTML($string)
+        {
+            return \Barryvdh\Snappy\ImageWrapper::loadHTML($string);
+        }
+        
+        /**
+         * Load a HTML file
+         *
+         * @param string $file
+         * @return static 
+         * @static 
+         */ 
+        public static function loadFile($file)
+        {
+            return \Barryvdh\Snappy\ImageWrapper::loadFile($file);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function loadView($view, $data = array(), $mergeData = array())
+        {
+            return \Barryvdh\Snappy\ImageWrapper::loadView($view, $data, $mergeData);
+        }
+        
+        /**
+         * Output the PDF as a string.
+         *
+         * @return string The rendered PDF as string
+         * @throws \InvalidArgumentException
+         * @static 
+         */ 
+        public static function output()
+        {
+            return \Barryvdh\Snappy\ImageWrapper::output();
+        }
+        
+        /**
+         * Save the image to a file
+         *
+         * @param $filename
+         * @return static 
+         * @static 
+         */ 
+        public static function save($filename, $overwrite = false)
+        {
+            return \Barryvdh\Snappy\ImageWrapper::save($filename, $overwrite);
+        }
+        
+        /**
+         * Make the image downloadable by the user
+         *
+         * @param string $filename
+         * @return \Symfony\Component\HttpFoundation\Response 
+         * @static 
+         */ 
+        public static function download($filename = 'image.jpg')
+        {
+            return \Barryvdh\Snappy\ImageWrapper::download($filename);
+        }
+        
+        /**
+         * Return a response with the image to show in the browser
+         *
+         * @param string $filename
+         * @return \Illuminate\Http\Response 
+         * @static 
+         */ 
+        public static function inline($filename = 'image.jpg')
+        {
+            return \Barryvdh\Snappy\ImageWrapper::inline($filename);
+        }
+        
+        /**
+         * Return a response with the image to show in the browser
+         *
+         * @deprecated Use inline() instead
+         * @param string $filename
+         * @return \Symfony\Component\HttpFoundation\Response 
+         * @static 
+         */ 
+        public static function stream($filename = 'image.jpg')
+        {
+            return \Barryvdh\Snappy\ImageWrapper::stream($filename);
+        }
+         
+    }
+ 
+}
+
 namespace Barryvdh\Debugbar { 
 
     /**
@@ -13937,6 +14530,282 @@ namespace Barryvdh\Debugbar {
             //Method inherited from \DebugBar\DebugBar            
             return \Barryvdh\Debugbar\LaravelDebugbar::offsetUnset($key);
         }
+         
+    }
+ 
+}
+
+namespace Khill\Lavacharts\Laravel { 
+
+    /**
+     * Lavacharts Facade
+     * 
+     * Enables member methods via static accessor for Lavacharts in Laravel.
+     *
+     * @package Khill\Lavacharts\Laravel
+     * @since 2.5.0
+     * @author Kevin Hill <kevinkhill@gmail.com>
+     * @copyright (c) 2017, KHill Designs
+     * @link http://github.com/kevinkhill/lavacharts GitHub Repository Page
+     * @link http://lavacharts.com                   Official Docs Site
+     * @license http://opensource.org/licenses/MIT MIT
+     */ 
+    class LavachartsFacade {
+        
+        /**
+         * Get the ScriptManager instance.
+         *
+         * @since 3.1.9
+         * @return \Khill\Lavacharts\ScriptManager 
+         * @static 
+         */ 
+        public static function getScriptManager()
+        {
+            return \Khill\Lavacharts\Lavacharts::getScriptManager();
+        }
+        
+        /**
+         * Create a new DataTable using the DataFactory
+         * 
+         * If the additional DataTablePlus package is available, then one will
+         * be created, otherwise a standard DataTable is returned.
+         *
+         * @since 3.0.3
+         * @uses \Khill\Lavacharts\DataTables\DataFactory
+         * @param mixed $args
+         * @return \Khill\Lavacharts\DataTables\DataTable 
+         * @static 
+         */ 
+        public static function DataTable($args = null)
+        {
+            return \Khill\Lavacharts\Lavacharts::DataTable($args);
+        }
+        
+        /**
+         * Create a new Dashboard
+         *
+         * @since 3.0.0
+         * @param string $label
+         * @param \Khill\Lavacharts\DataTables\DataTable $dataTable
+         * @return \Khill\Lavacharts\Dashboards\Dashboard 
+         * @static 
+         */ 
+        public static function Dashboard($label, $dataTable)
+        {
+            return \Khill\Lavacharts\Lavacharts::Dashboard($label, $dataTable);
+        }
+        
+        /**
+         * Create a new ControlWrapper from a Filter
+         *
+         * @since 3.0.0
+         * @uses \Khill\Lavacharts\Values\ElementId
+         * @param \Khill\Lavacharts\Dashboards\Filters\Filter $filter Filter to wrap
+         * @param string $elementId HTML element ID to output the control.
+         * @return \Khill\Lavacharts\Dashboards\Wrappers\ControlWrapper 
+         * @static 
+         */ 
+        public static function ControlWrapper($filter, $elementId)
+        {
+            return \Khill\Lavacharts\Lavacharts::ControlWrapper($filter, $elementId);
+        }
+        
+        /**
+         * Create a new ChartWrapper from a Chart
+         *
+         * @since 3.0.0
+         * @uses \Khill\Lavacharts\Values\ElementId
+         * @param \Khill\Lavacharts\Charts\Chart $chart Chart to wrap
+         * @param string $elementId HTML element ID to output the control.
+         * @return \Khill\Lavacharts\Dashboards\Wrappers\ChartWrapper 
+         * @static 
+         */ 
+        public static function ChartWrapper($chart, $elementId)
+        {
+            return \Khill\Lavacharts\Lavacharts::ChartWrapper($chart, $elementId);
+        }
+        
+        /**
+         * Locales are used to customize text for a country or language.
+         * 
+         * This will affect the formatting of values such as currencies, dates, and numbers.
+         * 
+         * By default, Lavacharts is loaded with the "en" locale. You can override this default
+         * by explicitly specifying a locale when creating the DataTable.
+         *
+         * @since 3.1.0
+         * @param string $locale
+         * @return $this 
+         * @throws \Khill\Lavacharts\Exceptions\InvalidStringValue
+         * @static 
+         */ 
+        public static function setLocale($locale = 'en')
+        {
+            return \Khill\Lavacharts\Lavacharts::setLocale($locale);
+        }
+        
+        /**
+         * Returns the current locale used in the DataTable
+         *
+         * @since 3.1.0
+         * @return string 
+         * @static 
+         */ 
+        public static function getLocale()
+        {
+            return \Khill\Lavacharts\Lavacharts::getLocale();
+        }
+        
+        /**
+         * Outputs the lava.js module for manual placement.
+         * 
+         * Will be depreciating jsapi in the future
+         *
+         * @since 3.0.3
+         * @return string Google Chart API and lava.js script blocks
+         * @static 
+         */ 
+        public static function lavajs()
+        {
+            return \Khill\Lavacharts\Lavacharts::lavajs();
+        }
+        
+        /**
+         * Outputs the link to the Google JSAPI
+         *
+         * @since 2.3.0
+         * @deprecated 3.0.3
+         * @return string Google Chart API and lava.js script blocks
+         * @static 
+         */ 
+        public static function jsapi()
+        {
+            return \Khill\Lavacharts\Lavacharts::jsapi();
+        }
+        
+        /**
+         * Checks to see if the given chart or dashboard exists in the volcano storage.
+         *
+         * @since 2.4.2
+         * @uses \Khill\Lavacharts\Values\Label
+         * @param string $type Type of object to isNonEmpty.
+         * @param string $label Label of the object to isNonEmpty.
+         * @return boolean 
+         * @static 
+         */ 
+        public static function exists($type, $label)
+        {
+            return \Khill\Lavacharts\Lavacharts::exists($type, $label);
+        }
+        
+        /**
+         * Fetches an existing Chart or Dashboard from the volcano storage.
+         *
+         * @since 3.0.0
+         * @uses \Khill\Lavacharts\Values\Label
+         * @param string $type Type of Chart or Dashboard.
+         * @param string $label Label of the Chart or Dashboard.
+         * @return \Khill\Lavacharts\Support\Contracts\RenderableInterface 
+         * @throws \Khill\Lavacharts\Exceptions\InvalidLavaObject
+         * @static 
+         */ 
+        public static function fetch($type, $label)
+        {
+            return \Khill\Lavacharts\Lavacharts::fetch($type, $label);
+        }
+        
+        /**
+         * Stores a existing Chart or Dashboard into the volcano storage.
+         *
+         * @since 3.0.0
+         * @param \Khill\Lavacharts\Support\Contracts\RenderableInterface $renderable A Chart or Dashboard.
+         * @return \Khill\Lavacharts\Support\Contracts\RenderableInterface 
+         * @static 
+         */ 
+        public static function store($renderable)
+        {
+            return \Khill\Lavacharts\Lavacharts::store($renderable);
+        }
+        
+        /**
+         * Renders Charts or Dashboards into the page
+         * 
+         * Given a type, label, and HTML element id, this will output
+         * all of the necessary javascript to generate the chart or dashboard.
+         * 
+         * As of version 3.1, the elementId parameter is optional, but only
+         * if the elementId was set explicitly to the Renderable.
+         *
+         * @since 2.0.0
+         * @uses \Khill\Lavacharts\Values\Label
+         * @uses \Khill\Lavacharts\Values\ElementId
+         * @uses \Khill\Lavacharts\Support\Buffer
+         * @param string $type Type of object to render.
+         * @param string $label Label of the object to render.
+         * @param mixed $elementId HTML element id to render into.
+         * @param mixed $div Set true for div creation, or pass an array with height & width
+         * @return string 
+         * @static 
+         */ 
+        public static function render($type, $label, $elementId = null, $div = false)
+        {
+            return \Khill\Lavacharts\Lavacharts::render($type, $label, $elementId, $div);
+        }
+        
+        /**
+         * Renders all charts and dashboards that have been defined
+         *
+         * @since 3.1.0
+         * @return string 
+         * @static 
+         */ 
+        public static function renderAll()
+        {
+            return \Khill\Lavacharts\Lavacharts::renderAll();
+        }
+        
+        /**
+         * Retrieves the Options object from the class.
+         *
+         * @return \Khill\Lavacharts\Options 
+         * @static 
+         */ 
+        public static function getOptions()
+        {
+            return \Khill\Lavacharts\Lavacharts::getOptions();
+        }
+        
+        /**
+         * Sets the Options object for the class.
+         *
+         * @param array|\Khill\Lavacharts\Options $options
+         * @static 
+         */ 
+        public static function setOptions($options)
+        {
+            return \Khill\Lavacharts\Lavacharts::setOptions($options);
+        }
+         
+    }
+ 
+}
+
+namespace Webpatser\Uuid { 
+
+    /**
+     * Class Uuid
+     *
+     * @package Webpatser\Uuid
+     * @property string $bytes
+     * @property string $hex
+     * @property string $node
+     * @property string $string
+     * @property string $time
+     * @property string $urn
+     * @property string $variant
+     * @property string $version
+     */ 
+    class Uuid {
          
     }
  
@@ -16354,6 +17223,8 @@ namespace  {
 
     class Redirect extends \Illuminate\Support\Facades\Redirect {}
 
+    class Redis extends \Illuminate\Support\Facades\Redis {}
+
     class Request extends \Illuminate\Support\Facades\Request {}
 
     class Response extends \Illuminate\Support\Facades\Response {}
@@ -16372,7 +17243,15 @@ namespace  {
 
     class View extends \Illuminate\Support\Facades\View {}
 
+    class PDF extends \Barryvdh\Snappy\Facades\SnappyPdf {}
+
+    class SnappyImage extends \Barryvdh\Snappy\Facades\SnappyImage {}
+
     class Debugbar extends \Barryvdh\Debugbar\Facade {}
+
+    class Lava extends \Khill\Lavacharts\Laravel\LavachartsFacade {}
+
+    class Uuid extends \Webpatser\Uuid\Uuid {}
  
 }
 

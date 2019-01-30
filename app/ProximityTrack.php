@@ -32,6 +32,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\ProximityTrack withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\ProximityTrack withoutTrashed()
  * @mixin \Eloquent
+ * @property-read mixed $guild_name
+ * @property-read \App\Guild $guild
  */
 class ProximityTrack extends Model
 {

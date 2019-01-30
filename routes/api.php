@@ -18,6 +18,7 @@ Route::get('version', 'ApiController@version');
 Route::get('population', 'ApiController@population');
 Route::get('players', 'ApiController@players');
 Route::get('find', 'ApiController@find');
+Route::get('stats', 'ApiController@stats');
 Route::get('findboat', 'ApiController@findBoat');
 Route::get('track/list', 'ApiController@trackList');
 Route::get('proximity/list', 'ApiController@proximityList');

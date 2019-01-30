@@ -212,6 +212,56 @@ class ApiController extends Controller
         }
     }
 
+    public function stats(Request $request)
+    {
+        $request->validate([
+            'server'   => 'required|string|max:3|min:2',
+            'period'   => 'required|string|in:day,week,month',
+            'region'   => 'required|string|size:2',
+            'gamemode' => 'required|string|size:3',
+        ]);
+
+        $statsTable  = \Lava::DataTable();
+        $currentHour = Carbon::now()->hour;
+
+        if ($request->get('period') === 'day') {
+            $statsTable->addDateColumn('Hour')->addNumberColumn('Players');
+
+            $hours   = Ping::selectRaw('avg(players) as players, HOUR(created_at) as hour')->where('coordinates', $request->get('server'))->where('gamemode', $request->get('gamemode'))->where('region', $request->get('region'))->whereDate('created_at', '>=', Carbon::now()->toDateString())->groupBy('hour')->pluck('players', 'hour')->toArray();
+            $past_24 = array_merge(array_slice($hours, $currentHour, count($hours) - $currentHour), array_slice($hours, 0, $currentHour));
+
+            foreach ($past_24 as $key => $value) {
+                $statsTable->addRow([
+                    Carbon::now()->subHours(24 - $key),
+                    $value,
+                ]);
+            }
+        }
+
+        if ($request->get('period') === 'week') {
+            $statsTable->addDateColumn('Day')->addNumberColumn('Players');
+        }
+
+        if ($request->get('period') === 'month') {
+            $statsTable->addDateColumn('Day')->addNumberColumn('Players');
+        }
+
+        $lineChart = \Lava::LineChart('Test', $statsTable, [
+            'png' => true,
+        ]);
+
+        $snappy_image = SnappyImage::loadView('chart', compact('lineChart'));
+        // Options
+        $snappy_image->setOption('enable-javascript', true);
+        $snappy_image->setOption('javascript-delay', 1000);
+        //        $snappy_image->setOption('no-stop-slow-scripts', true);
+        // Render & save
+        $filename = Carbon::now()->timestamp . '-' . $request->get('region') . '-' . $request->get('gamemode') . '.png';
+        $snappy_image->save(storage_path() . '/app/public/images/chart/' . $filename);
+
+        return url('/storage/images/map/' . $filename);
+    }
+
     public function map(Request $request)
     {
         $request->validate([

@@ -40,6 +40,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\PlayerTrack withoutTrashed()
  * @property int                             $last_status
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PlayerTrack whereLastStatus($value)
+ * @property-read mixed $guild_name
+ * @property-read \App\Guild $guild
  */
 class PlayerTrack extends Model
 {

@@ -26,6 +26,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Boat wherePlayers($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Boat whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string $from
+ * @property int $count
+ * @property-read mixed $guild_name
+ * @property-read \App\Guild $guild
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Boat whereCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Boat whereFrom($value)
  */
 class Boat extends Model
 {
