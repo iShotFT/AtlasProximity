@@ -14,3 +14,4 @@ yarn-error.log
 .idea
 laravel-echo-server.json
 laravel-echo-server.lock
+*.sql

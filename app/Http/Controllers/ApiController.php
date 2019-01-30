@@ -221,45 +221,82 @@ class ApiController extends Controller
             'gamemode' => 'required|string|size:3',
         ]);
 
-        $statsTable  = \Lava::DataTable();
-        $currentHour = Carbon::now()->hour;
+        $image = Cache::remember('stats_chart_for_' . $request->get('region') . $request->get('gamemode') . $request->get('period'), 10, function () use ($request) {
+            $statsTable  = \Lava::DataTable();
+            $currentHour = Carbon::now()->hour;
 
-        if ($request->get('period') === 'day') {
-            $statsTable->addDateColumn('Hour')->addNumberColumn('Players');
+            if ($request->get('period') === 'day') {
+                $statsTable->addDateColumn('Hour')->addNumberColumn('Players');
 
-            $hours   = Ping::selectRaw('avg(players) as players, HOUR(created_at) as hour')->where('coordinates', $request->get('server'))->where('gamemode', $request->get('gamemode'))->where('region', $request->get('region'))->whereDate('created_at', '>=', Carbon::now()->toDateString())->groupBy('hour')->pluck('players', 'hour')->toArray();
-            $past_24 = array_merge(array_slice($hours, $currentHour, count($hours) - $currentHour), array_slice($hours, 0, $currentHour));
+                $hours   = Ping::selectRaw('avg(players) as players, HOUR(created_at) as hour')->where('coordinates', $request->get('server'))->where('gamemode', $request->get('gamemode'))->where('region', $request->get('region'))->whereDate('created_at', '>=', Carbon::now()->subHours(24))->groupBy('hour')->pluck('players', 'hour')->toArray();
+                $past_24 = array_merge(array_slice($hours, $currentHour, count($hours) - $currentHour), array_slice($hours, 0, $currentHour));
 
-            foreach ($past_24 as $key => $value) {
-                $statsTable->addRow([
-                    Carbon::now()->subHours(24 - $key),
-                    $value,
-                ]);
+                foreach ($past_24 as $key => $value) {
+                    //                dd($key, $value);
+                    $statsTable->addRow([
+                        Carbon::now()->subHours(24 - $key),
+                        $value,
+                    ]);
+                }
             }
-        }
 
-        if ($request->get('period') === 'week') {
-            $statsTable->addDateColumn('Day')->addNumberColumn('Players');
-        }
+            if ($request->get('period') === 'week') {
+                $statsTable->addDateColumn('Day')->addNumberColumn('Players');
+            }
 
-        if ($request->get('period') === 'month') {
-            $statsTable->addDateColumn('Day')->addNumberColumn('Players');
-        }
+            if ($request->get('period') === 'month') {
+                $statsTable->addDateColumn('Day')->addNumberColumn('Players');
+            }
 
-        $lineChart = \Lava::LineChart('Test', $statsTable, [
-            'png' => true,
-        ]);
+            $lineChart = \Lava::LineChart('LineChart', $statsTable, [
+                'png'             => true,
+                'curveType'       => 'function',
+                'backgroundColor' => '#36393f',
+                'chartArea'       => [
+                    'width'  => '950',
+                    'height' => '700',
+                    'left'   => '50',
+                ],
+                'legend'          => 'none',
+                'series'          => [
+                    ['color' => 'white'],
+                ],
+                'width'           => 1000,
+                'height'          => 750,
+                'vAxis'           => [
+                    'textStyle'     => [
+                        'color' => 'white',
+                    ],
+                    'showTextEvery' => 5,
+                ],
+                'hAxis'           => [
+                    'gridlines'     => [
+                        'count' => 6,
+                    ],
+                    'baselineColor' => 'white',
+                    'showTextEvery' => 1,
+                    'textStyle'     => [
+                        'color' => 'white',
+                    ],
+                ],
+                'lineWidth'       => 10,
+            ]);
 
-        $snappy_image = SnappyImage::loadView('chart', compact('lineChart'));
-        // Options
-        $snappy_image->setOption('enable-javascript', true);
-        $snappy_image->setOption('javascript-delay', 1000);
-        //        $snappy_image->setOption('no-stop-slow-scripts', true);
-        // Render & save
-        $filename = Carbon::now()->timestamp . '-' . $request->get('region') . '-' . $request->get('gamemode') . '.png';
-        $snappy_image->save(storage_path() . '/app/public/images/chart/' . $filename);
+            $lineChart->DateFormat([
+                'pattern' => 'string',
+            ]);
 
-        return url('/storage/images/map/' . $filename);
+            $snappy_image = SnappyImage::loadView('chart', compact('lineChart'));
+            // Options
+            $snappy_image->setOption('enable-javascript', true);
+            $snappy_image->setOption('javascript-delay', 1000);
+            $filename = Carbon::now()->timestamp . '-' . $request->get('region') . '-' . $request->get('gamemode') . '.png';
+            $snappy_image->save(storage_path() . '/app/public/images/chart/' . $filename);
+
+            return url('/storage/images/chart/' . $filename);
+        });
+
+        return response()->json(['image' => $image]);
     }
 
     public function map(Request $request)

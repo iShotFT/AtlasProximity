@@ -7,7 +7,7 @@
         <title>Document</title>
     </head>
     <body>
-        <div id="pop_div" style="width: 1000px; height: 500px"></div>
-        @linechart('Test', 'pop_div')
+        <div id="pop_div"></div>
+        @linechart('LineChart', 'pop_div')
     </body>
 </html>
