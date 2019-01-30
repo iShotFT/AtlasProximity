@@ -609,6 +609,8 @@ client.on('message', msg => {
                 var array = [];
                 var message = '';
 
+                console.log(response);
+
                 if (response.data.length) {
                     array.push(['USERNAME', 'COORDINATE', 'LAST SEEN']);
                     for (var player in response.data) {
