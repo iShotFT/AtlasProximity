@@ -623,8 +623,6 @@ client.on('message', msg => {
                     console.log('Sent a message to ' + msg.guild.name + ':' + message);
                     msg.edit(message);
                 }
-            }).catch(function (response) {
-                msg.edit('```' + response.response.data.message + '```');
             });
         });
 
