@@ -324,10 +324,10 @@ class ApiController extends Controller
         // Get boat players (only find boats from your own guild, no spying)
         if ($boat = Boat::where('id', $request->get('boatid'))->where('guild_id', $request->get('guildid'))->first()) {
             $players = json_decode($boat->players, true);
-            $return  = collect();
+            $return  = array();
             if (is_array($players) && count($players) >= 2) {
                 foreach ($players as $player) {
-                    $return->push(PlayerPing::where('player', '=', $player)->orderByDesc('updated_at')->limit(1)->get([
+                    array_push($return, PlayerPing::where('player', '=', $player)->orderByDesc('updated_at')->limit(1)->get([
                         'player',
                         'coordinates',
                         'updated_at',
