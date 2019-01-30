@@ -29,6 +29,7 @@ class CreatePingsTable extends Migration
             $table->index('ip');
             $table->index('port');
             $table->index('coordinates');
+            $table->index('created_at');
         });
     }
 

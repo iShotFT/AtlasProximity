@@ -23,6 +23,7 @@ class CreatePlayerPingsTable extends Migration
             $table->string('coordinates', 3);
             $table->timestamps();
 
+            $table->index('player');
             $table->index('region');
             $table->index('gamemode');
             $table->index('coordinates');
