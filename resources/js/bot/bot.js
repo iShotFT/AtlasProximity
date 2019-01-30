@@ -609,8 +609,6 @@ client.on('message', msg => {
                 var array = [];
                 var message = '';
 
-                console.log(response);
-
                 if (response.data.length) {
                     array.push(['USERNAME', 'COORDINATE', 'LAST SEEN']);
                     for (var player in response.data) {
@@ -618,7 +616,7 @@ client.on('message', msg => {
                             continue;
                         }
 
-                        array.push([response.data[player].player, response.data[player].coordinates, moment(response.data[player].updated_at, 'YYYY-MM-DD HH:mm:ss').fromNow()]);
+                        array.push([response.data[player][0].player, response.data[player][0].coordinates, moment(response.data[player][0].updated_at, 'YYYY-MM-DD HH:mm:ss').fromNow()]);
                     }
 
                     message = '\nWe found the following information about the players in boat #' + boatid + ' (only their last known location)\n```' + table(array) + '```';
