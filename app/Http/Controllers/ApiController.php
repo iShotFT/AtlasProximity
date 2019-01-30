@@ -221,7 +221,7 @@ class ApiController extends Controller
             'gamemode' => 'required|string|size:3',
         ]);
 
-        $image = Cache::remember('stats_chart_for_' . $request->get('region') . $request->get('gamemode') . $request->get('period'), 10, function () use ($request) {
+        $image = Cache::remember('stats_chart_for_' . $request->get('server') . $request->get('region') . $request->get('gamemode') . $request->get('period'), 10, function () use ($request) {
             $statsTable  = \Lava::DataTable();
             $currentHour = Carbon::now()->hour;
 
@@ -251,7 +251,7 @@ class ApiController extends Controller
             $lineChart = \Lava::LineChart('LineChart', $statsTable, [
                 'png'             => true,
                 'curveType'       => 'function',
-                'backgroundColor' => '#36393f',
+                'backgroundColor' => '#36393E',
                 'chartArea'       => [
                     'width'  => '950',
                     'height' => '700',

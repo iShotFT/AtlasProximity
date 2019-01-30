@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Document</title>
     </head>
-    <body>
+    <body style="background-color: #36393E; padding: 0; margin: 0;">
         <div id="pop_div"></div>
         @linechart('LineChart', 'pop_div')
     </body>
