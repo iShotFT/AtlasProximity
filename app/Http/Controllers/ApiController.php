@@ -324,17 +324,17 @@ class ApiController extends Controller
         // Get boat players (only find boats from your own guild, no spying)
         if ($boat = Boat::where('id', $request->get('boatid'))->where('guild_id', $request->get('guildid'))->first()) {
             $players = json_decode($boat->players, true);
-            $return  = array();
+            $return  = collect();
             if (is_array($players) && count($players) >= 2) {
                 foreach ($players as $player) {
-                    array_push($return, PlayerPing::where('player', '=', $player)->orderByDesc('updated_at')->limit(1)->get([
+                    $return->push(PlayerPing::where('player', '=', $player)->orderByDesc('updated_at')->limit(1)->get([
                         'player',
                         'coordinates',
                         'updated_at',
                     ]));
                 }
 
-                return response()->json($return);
+                return response()->json($return->toArray());
             } else {
                 return response()->json(['message' => 'Boat with ID ' . $request->get('boatid') . ' not found in the list of boats tracked by your Discord.'], 404);
             }
