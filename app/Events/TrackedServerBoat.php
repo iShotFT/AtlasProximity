@@ -2,12 +2,12 @@
 
 namespace App\Events;
 
+use App\Boat;
 use App\Classes\Coordinate;
 use App\ProximityTrack;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class TrackedServerBoat implements ShouldBroadcast
 {
@@ -19,8 +19,9 @@ class TrackedServerBoat implements ShouldBroadcast
     protected $direction;
     protected $guildid;
     protected $channelid;
+    protected $boatid;
 
-    public function __construct(ProximityTrack $proximityTrack, $players, $from)
+    public function __construct(ProximityTrack $proximityTrack, $players, $from, Boat $boat)
     {
         $this->from    = $from;
         $this->to      = $proximityTrack->coordinate;
@@ -30,6 +31,7 @@ class TrackedServerBoat implements ShouldBroadcast
         list ($x2, $y2) = Coordinate::textToXY($from);
         $this->direction = Coordinate::cardinalDirectionBetween($x1, $y1, $x2, $y2);
 
+        $this->boatid    = $boat->id;
         $this->guildid   = $proximityTrack->guild_id;
         $this->channelid = $proximityTrack->channel_id;
     }
@@ -41,6 +43,7 @@ class TrackedServerBoat implements ShouldBroadcast
             'to'        => $this->to,
             'players'   => $this->players,
             'direction' => $this->direction,
+            'boatid'    => $this->boatid,
             'guildid'   => $this->guildid,
             'channelid' => $this->channelid,
         ];

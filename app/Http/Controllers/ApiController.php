@@ -86,9 +86,7 @@ class ApiController extends Controller
                                 // Only trigger a BOAT alert when the count of players is 2 or more
                                 // Trigger 'Boat entered server XXX from XXX'
                                 foreach ($proximity_tracks->where('coordinate', $coordinate_to_scan->coordinate) as $proximity_track) {
-                                    event(new TrackedServerBoat($proximity_track, $players, $location));
-
-                                    Boat::create([
+                                    $boat = Boat::create([
                                         'guild_id'   => $proximity_track->guild_id,
                                         'channel_id' => $proximity_track->channel_id,
                                         'coordinate' => $coordinate_to_scan->coordinate,
@@ -96,6 +94,8 @@ class ApiController extends Controller
                                         'players'    => json_encode($players, true),
                                         'count'      => count($players),
                                     ]);
+
+                                    event(new TrackedServerBoat($proximity_track, $players, $location, $boat));
                                 }
                             }
                         }
@@ -312,6 +312,33 @@ class ApiController extends Controller
         ]);
 
         return response()->json(($found ? $found->toArray() : []));
+    }
+
+    public function findBoat(Request $request)
+    {
+        $request->validate([
+            'boatid'  => 'required|integer|min:1',
+            'guildid' => 'required',
+        ]);
+
+        // Get boat players (only find boats from your own guild, no spying)
+        if ($boat = Boat::where('id', $request->get('boatid'))->where('guild_id', $request->get('guildid'))->first()) {
+            $players = json_decode($boat->players, true);
+            $return  = collect();
+            if (is_array($players) && count($players) >= 2) {
+                foreach ($players as $player) {
+                    $return->push(PlayerPing::where('player', '=', $player)->orderByDesc('updated_at')->limit(1)->get([
+                        'player',
+                        'coordinates',
+                        'updated_at',
+                    ]));
+                }
+
+                return response()->json($return);
+            } else {
+                return response()->json(['message' => 'Boat with ID ' . $request->get('boatid') . ' not found in the list of boats tracked by your Discord.'], 404);
+            }
+        }
     }
 
     public function guildAdd(Request $request)

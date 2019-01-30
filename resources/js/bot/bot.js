@@ -584,6 +584,53 @@ client.on('message', msg => {
         return false;
     }
 
+    if (command === 'findboat' || command === 'searchboat' || command === 'whereisboat') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            // If no arguments, send back the usage of the command
+            if (args.length === 0) {
+                // No parameters given
+                var message = '';
+                message = message + config.prefix + 'findboat <BOATID:1>';
+                msg.edit('```' + message + '```');
+                return false;
+            }
+
+            let [boatid] = args;
+
+            // Poll the API for the information requested
+            axios.get(config.url + '/api/findboat', {
+                params: {
+                    key: key,
+                    boatid: boatid,
+                    guildid: msg.guild.id,
+                },
+            }).then(function (response) {
+                // var message = '';
+                var array = [];
+                var message = '';
+
+                if (response.data.length) {
+                    array.push(['USERNAME', 'COORDINATE', 'LAST SEEN']);
+                    for (var player in response.data) {
+                        if (!response.data.hasOwnProperty(player)) {
+                            continue;
+                        }
+
+                        array.push([response.data[player].player, response.data[player].coordinates, moment(response.data[player].updated_at, 'YYYY-MM-DD HH:mm:ss').fromNow()]);
+                    }
+
+                    message = '\nWe found the following information about the players in boat #' + boatid + ' (only their last known location)\n```' + table(array) + '```';
+                    console.log('Sent a message to ' + msg.guild.name + ':' + message);
+                    msg.edit(message);
+                }
+            }).catch(function (response) {
+                msg.edit('```' + response.response.data.message + '```');
+            });
+        });
+
+        return false;
+    }
+
     if (command === 'find' || command === 'search' || command === 'whereis') {
         msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             // If no arguments, send back the usage of the command
@@ -946,7 +993,7 @@ this.Echo.channel(`public`)
     .listen('.tracked.server.boat', (e) => {
         console.log('WebSocket: [TRACKING] Sent boat warning message to ' + e.guildid + ' about coordinate ' + e.to);
         if (client.channels.get(e.channelid)) {
-            client.channels.get(e.channelid).send(':anchor: A suspected boat entered coordinate `' + e.to + '`. They came from the `' + e.direction + '` (`' + e.from + '`). Player(s) on the boat:\n```\n' + e.players.join('\n') + '```');
+            client.channels.get(e.channelid).send(':anchor: A suspected boat entered coordinate `' + e.to + '`. They came from the `' + e.direction + '` (`' + e.from + '`). Player(s) on the boat:\n```\n' + e.players.join('\n') + '```\nUse `!findboat ' + e.boatid + '` to show the current location of the players on this boat.');
         } else {
             console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
         }
