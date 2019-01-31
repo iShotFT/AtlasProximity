@@ -71,7 +71,7 @@ class ApiController extends Controller
                         $returnsettings['parameter'] = $request->get('parameter');
                         $returnsettings['type']      = $type;
                         $returnsettings['options']   = join('|', $possible ?? []);
-                        $returnsettings['current']   = $guild->$parameter;
+                        $returnsettings['current']   = $guild->$parameter ?? '- not set -';
 
                     }
                 }
@@ -88,7 +88,7 @@ class ApiController extends Controller
         foreach ($this->settings['required'] as $parameter => $possible) {
             $returnsettings['required'][$parameter] = [
                 'options' => join('|', $possible ?? []),
-                'current' => $guild->$parameter,
+                'current' => $guild->$parameter ?? '- not set -',
             ];
         }
         $returnsettings['returntype'] = 'all';

@@ -334,6 +334,7 @@ client.on('message', msg => {
                     msg.edit('```' + table(array) + '```\nExample command: `!setting region na`');
                 }).catch(function (response) {
                     // Something went wrong with the command
+                    console.log(response);
                     msg.edit(response.response.data.message);
                 });
             } else {
