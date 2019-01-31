@@ -14,8 +14,8 @@ class AddRegionAndGamemodeColumnToBoatsTable extends Migration
     public function up()
     {
         Schema::table('boats', function (Blueprint $table) {
-            $table->string('gamemode', 3)->default('pvp')->after('name');
-            $table->string('region', 2)->default('eu')->after('name');
+            $table->string('gamemode', 3)->default('pvp')->after('coordinate');
+            $table->string('region', 2)->default('eu')->after('coordinate');
         });
     }
 
