@@ -465,8 +465,6 @@ client.on('message', msg => {
                     key: key,
                     guildid: msg.guild.id,
                     server: server,
-                    region: region,
-                    gamemode: gamemode,
                 },
             }).then(function (response) {
                 // var message = '';
