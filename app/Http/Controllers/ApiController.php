@@ -3,12 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Boat;
-use App\Classes\Coordinate;
-use App\Events\TrackedPlayerLost;
-use App\Events\TrackedPlayerMoved;
-use App\Events\TrackedPlayerRefound;
-use App\Events\TrackedServerBoat;
-use App\Events\TrackExpired;
 use App\Faq;
 use App\Guild;
 use App\Ping;
@@ -25,193 +19,10 @@ use Illuminate\Support\Facades\DB;
 class ApiController extends Controller
 {
     /**
-     * Check the registered proximity alerts and handle them
+     * @param \Illuminate\Http\Request $request
      *
-     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
-     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
-     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     * @return \Illuminate\Http\JsonResponse
      */
-    public static function proximity()
-    {
-        $coordinates_to_scan = ProximityTrack::select('coordinate')->distinct()->get();
-        $proximity_tracks    = ProximityTrack::get();
-
-        foreach ($coordinates_to_scan as $coordinate_to_scan) {
-            // $coordinates_to_scan->coordinate
-            // Get list of players from the previous scan
-            if ($old_players = Ping::where('coordinates', $coordinate_to_scan->coordinate)->orderByDesc('created_at')->first()) {
-                $previous_scanned_players = json_decode($old_players->info, true);
-                if ($new_scanned_players = SourceQueryController::getPlayersOnCoordinate($coordinate_to_scan->coordinate, 'eu', 'pvp', true)['players']) {
-                    // We only want to compare usernames
-                    $previous_scanned_players = array_column($previous_scanned_players, 'Name');
-                    $new_scanned_players      = array_column($new_scanned_players, 'Name');
-
-                    $new_players_after_scan = array_diff($new_scanned_players, $previous_scanned_players);
-                    //                    dd($new_players_after_scan);
-
-                    if (is_array($new_players_after_scan) && count($new_players_after_scan) >= 2) {
-                        // 3 or more new players joined in the past minute!!!
-                        // Combine each username with the previous server they were spotted on
-
-                        // Build an array with all r
-                        $locations = [];
-                        foreach ($new_players_after_scan as $username) {
-                            if ($username !== '123' && !empty($username)) {
-                                $player_previous_locations = PlayerPing::where('player', '=', $username)->orderByDesc('updated_at')->limit(2)->get([
-                                    'player',
-                                    'coordinates',
-                                    'updated_at',
-                                ]);
-
-                                // We need at least two previous locations for this player (the current one and the previous one) before we take action.
-                                if ($player_previous_locations->count() >= 2) {
-                                    $player_most_recent_previous_location = $player_previous_locations->offsetGet(1);
-
-                                    if (array_key_exists($player_most_recent_previous_location->coordinates, $locations)) {
-                                        // Array exists for this location, push into it *lennyface*
-                                        array_push($locations[$player_most_recent_previous_location->coordinates], $username);
-                                    } else {
-                                        // No array for this location exists, make one
-                                        $locations[$player_most_recent_previous_location->coordinates] = [$username];
-                                    }
-                                }
-                            }
-                        }
-
-                        foreach ($locations as $location => $players) {
-                            if (is_array($players) && count($players) >= 2) {
-                                // Remove the current alert hit from the next warning
-                                unset($locations[$location]);
-
-                                // Only trigger a BOAT alert when the count of players is 2 or more
-                                // Trigger 'Boat entered server XXX from XXX'
-                                foreach ($proximity_tracks->where('coordinate', $coordinate_to_scan->coordinate) as $proximity_track) {
-                                    $boat = Boat::create([
-                                        'guild_id'   => $proximity_track->guild_id,
-                                        'channel_id' => $proximity_track->channel_id,
-                                        'coordinate' => $coordinate_to_scan->coordinate,
-                                        'from'       => $location,
-                                        'players'    => json_encode($players, true),
-                                        'count'      => count($players),
-                                    ]);
-
-                                    event(new TrackedServerBoat($proximity_track, $players, $location, $boat));
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    // New scan failed (returned false)
-                };
-            } else {
-                // Never had a scan for this server stored in DB?
-            }
-
-
-        }
-    }
-
-    /**
-     * Check and handle the registered player trackings
-     *
-     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
-     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
-     * @throws \xPaw\SourceQuery\Exception\TimeoutException
-     */
-    public static function track()
-    {
-        foreach (PlayerTrack::get() as $player_track) {
-            if ($player_track->until <= Carbon::now()) {
-                // remove track
-                $player_track->delete();
-                event(new TrackExpired($player_track));
-            } else {
-                // Valid track
-                if ($player_ping = PlayerPing::where('player', $player_track->player)->orderByDesc('updated_at')->first()) {
-                    // Scan the server the player was last seen on
-                    $remained_stationairy = false;
-                    foreach (SourceQueryController::getPlayersOnCoordinate($player_track->last_coordinate)['players'] as $player) {
-                        // Is the tracked player still on the server we last saw him on?
-                        if ($player_track->player === $player['Name']) {
-                            $remained_stationairy = true;
-                        }
-                    }
-
-                    if ($remained_stationairy) {
-                        // We found the player on the same server as last time we spotted him
-                        // No need for alert, we will update the playerping so we know we checked him out
-                        // Trigger online warning
-                        if ($player_track->last_status === 0 && $player_ping->updated_at >= Carbon::now()->subMinutes(10)) {
-                            // User came back online!
-                            event(new TrackedPlayerRefound($player_track));
-                        }
-
-                        $player_track->update([
-                            'updated_at'  => Carbon::now(),
-                            'last_status' => 1,
-                        ]);
-                    } else {
-                        // The player is no longer on the same server where we last spotted him... He might have gone offline or he might have moved
-                        // Scan the servers around the last_coordinate for his name
-                        $original_coordinate = $player_track->last_coordinate;
-                        $found_in            = false;
-                        foreach (SourceQueryController::getPlayersOnCoordinateWithSurrounding($player_track->last_coordinate) as $coordinate => $server_info) {
-                            foreach ($server_info['players'] as $player) {
-                                if ($player_track->player === $player['Name']) {
-                                    $found_in = $coordinate;
-                                }
-                            }
-                        }
-
-                        if ($found_in) {
-                            // Player with the same name was found in a neighbouring server
-                            $current_coordinate = $found_in;
-
-                        } else {
-                            // Player was not found in the original server, nor in any of the 8 servers around it
-                            // Player might have gone offline or teleported / died
-                            $current_coordinate = $player_ping->coordinates;
-                        }
-
-                        list ($x1, $y1) = Coordinate::textToXY($original_coordinate);
-                        list ($x2, $y2) = Coordinate::textToXY($current_coordinate);
-                        $last_direction = Coordinate::cardinalDirectionBetween($x1, $y1, $x2, $y2);
-
-                        $update_info = [
-                            'last_coordinate' => $current_coordinate,
-                            'last_direction'  => $last_direction,
-                        ];
-
-                        if ($player_track->last_status === 0 && $player_ping->updated_at >= Carbon::now()->subMinutes(10)) {
-                            // User came back online!
-                            $update_info['last_status'] = 1;
-                            event(new TrackedPlayerRefound($player_track));
-                        }
-
-                        $player_track->update($update_info);
-
-                        // Player moved since last track
-                        // Trigger event to warn the tracking server about this movement
-                        if ($player_track->last_coordinate !== $original_coordinate) {
-                            event(new TrackedPlayerMoved($player_track, $original_coordinate));
-                        } else {
-                            // If the player ping is older than 15 minutes we can suspect the player went offline.
-                            if ($player_ping->updated_at <= Carbon::now()->subMinutes(10) && $player_track->last_status === 1) {
-                                // We suspect player went offline
-                                event(new TrackedPlayerLost($player_track, $player_ping->updated_at));
-                                $player_track->update([
-                                    'last_status' => 0,
-                                ]);
-                            }
-                        }
-                    }
-                } else {
-                    // No player in playerping found with this name???
-                }
-            }
-        }
-    }
-
     public function stats(Request $request)
     {
         $request->validate([
@@ -299,6 +110,11 @@ class ApiController extends Controller
         return response()->json(['image' => $image]);
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function map(Request $request)
     {
         $request->validate([
@@ -340,6 +156,11 @@ class ApiController extends Controller
         return response()->json(['image' => $image]);
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function faq(Request $request)
     {
         $faqs = Faq::orderByDesc('created_at')->get([
@@ -351,6 +172,11 @@ class ApiController extends Controller
         return response()->json($faqs->toArray());
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function version(Request $request)
     {
         $latest_update = Update::orderByDesc('created_at')->first();
@@ -362,6 +188,14 @@ class ApiController extends Controller
         ]);
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
+     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
+     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     */
     public function players(Request $request)
     {
         $request->validate([
@@ -373,6 +207,14 @@ class ApiController extends Controller
         return response()->json(SourceQueryController::getPlayersOnCoordinate($request->get('server'), $request->get('region'), $request->get('gamemode')));
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
+     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
+     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     */
     public function population(Request $request)
     {
         $request->validate([
@@ -384,6 +226,11 @@ class ApiController extends Controller
         return response()->json(SourceQueryController::getPlayersOnCoordinateWithSurrounding($request->get('server'), $request->get('region'), $request->get('gamemode')));
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function find(Request $request)
     {
         $request->validate([
@@ -401,6 +248,11 @@ class ApiController extends Controller
         return response()->json(($found ? $found->toArray() : []));
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function findBoat(Request $request)
     {
         $request->validate([
@@ -428,6 +280,9 @@ class ApiController extends Controller
         }
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     */
     public function guildAdd(Request $request)
     {
         $request->validate([
@@ -444,6 +299,13 @@ class ApiController extends Controller
         ]);
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
+     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
+     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     */
     public function proximityAdd(Request $request)
     {
         $request->validate([
@@ -464,6 +326,11 @@ class ApiController extends Controller
         ]);
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function trackAdd(Request $request)
     {
         $request->validate([
@@ -492,21 +359,29 @@ class ApiController extends Controller
         }
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws \Exception
+     */
     public function trackRemoveAll(Request $request)
     {
         $request->validate([
-            //            'username' => 'required|string|min:2',
             'guildid'   => 'required',
             'channelid' => 'required',
         ]);
 
         PlayerTrack::where([
-            //            'player'   => $request->get('username'),
             'guild_id'   => $request->get('guildid'),
             'channel_id' => $request->get('channelid'),
         ])->delete();
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws \Exception
+     */
     public function proximityRemoveAll(Request $request)
     {
         $request->validate([
@@ -520,6 +395,11 @@ class ApiController extends Controller
         ])->delete();
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws \Exception
+     */
     public function proximityRemove(Request $request)
     {
         $request->validate([
@@ -535,21 +415,29 @@ class ApiController extends Controller
         ])->delete();
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws \Exception
+     */
     public function trackRemove(Request $request)
     {
         $request->validate([
             'username' => 'required|string|min:2',
             'guildid'  => 'required',
-            //            'channelid' => 'required',
         ]);
 
         PlayerTrack::where([
             'player'   => $request->get('username'),
             'guild_id' => $request->get('guildid'),
-            //            'channel_id' => $request->get('channelid'),
         ])->delete();
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws \Exception
+     */
     public function guildRemove(Request $request)
     {
         $request->validate([
@@ -562,6 +450,11 @@ class ApiController extends Controller
         };
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function proximityList(Request $request)
     {
         $request->validate([
@@ -576,6 +469,11 @@ class ApiController extends Controller
         return response()->json(($found ? $found->toArray() : []));
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function trackList(Request $request)
     {
         $request->validate([
@@ -592,6 +490,11 @@ class ApiController extends Controller
         return response()->json(($found ? $found->toArray() : []));
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function help(Request $request)
     {
         $commmands = [

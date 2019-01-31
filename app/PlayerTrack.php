@@ -42,6 +42,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PlayerTrack whereLastStatus($value)
  * @property-read mixed $guild_name
  * @property-read \App\Guild $guild
+ * @property string $region
+ * @property string $gamemode
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PlayerTrack whereGamemode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PlayerTrack whereRegion($value)
  */
 class PlayerTrack extends Model
 {

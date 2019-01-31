@@ -2,8 +2,6 @@
 
 namespace App\Console;
 
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\SourceQueryController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -26,17 +24,29 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            SourceQueryController::getAllPlayersAllServers('eu', 'pvp');
-        })->everyFiveMinutes();
+        // Scan EU PVP (takes ~1 min)
+        $schedule->command('atlascctv:scanregion eu pvp')->everyFiveMinutes()->environments([
+            'staging',
+            'production',
+        ])->runInBackground();
 
-        $schedule->call(function () {
-            ApiController::track();
-        })->everyMinute();
+        // Scan NA PVP (takes ~2 min)
+        $schedule->command('atlascctv:scanregion na pvp')->everyFiveMinutes()->environments([
+            'staging',
+            'production',
+        ])->runInBackground();
 
-        $schedule->call(function () {
-            ApiController::proximity();
-        })->cron('*/2 * * * *');
+        // Track players that are marked as to-be-tracked
+        $schedule->command('atlascctv:trackplayers')->everyMinute()->environments([
+            'staging',
+            'production',
+        ])->withoutOverlapping();
+
+        // Track servers that have an active proximity alert
+        $schedule->command('atlascctv:trackboats')->everyMinute()->environments([
+            'staging',
+            'production',
+        ])->withoutOverlapping();
 
         $schedule->command('telescope:prune')->daily();
     }

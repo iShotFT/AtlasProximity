@@ -29,6 +29,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Guild withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Guild withoutTrashed()
  * @mixin \Eloquent
+ * @property string $region
+ * @property string $gamemode
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Guild whereGamemode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Guild whereRegion($value)
  */
 class Guild extends Model
 {

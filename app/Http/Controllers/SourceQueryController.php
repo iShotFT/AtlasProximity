@@ -234,7 +234,6 @@ class SourceQueryController extends Controller
         dd($players);
 
         //        Cache::forget('getPlayersOnCoordinateB4eupvp');
-        dd(SourceQueryController::getAllPlayersAllServers());
         $proximity = ProximityTrack::updateOrCreate([
             //            $table->string('guild_id');
             //        $table->string('channel_id');
@@ -250,12 +249,13 @@ class SourceQueryController extends Controller
         //        dd('end', Carbon::now()->timestamp - $start);
     }
 
-    public static function getAllPlayersAllServers($region = 'eu', $gamemode = 'pvp')
-    {
-        foreach (self::getAllServers($region, $gamemode) as $x => $servers) {
-            foreach ($servers as $y => $server) {
-                self::getPlayersOnCoordinate($x . $y, $region, $gamemode);
-            }
-        };
-    }
+    // Moved to command
+    //    public static function getAllPlayersAllServers($region = 'eu', $gamemode = 'pvp')
+    //    {
+    //        foreach (self::getAllServers($region, $gamemode) as $x => $servers) {
+    //            foreach ($servers as $y => $server) {
+    //                self::getPlayersOnCoordinate($x . $y, $region, $gamemode);
+    //            }
+    //        };
+    //    }
 }

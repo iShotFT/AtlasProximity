@@ -34,6 +34,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @mixin \Eloquent
  * @property-read mixed $guild_name
  * @property-read \App\Guild $guild
+ * @property string $region
+ * @property string $gamemode
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProximityTrack whereGamemode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProximityTrack whereRegion($value)
  */
 class ProximityTrack extends Model
 {
