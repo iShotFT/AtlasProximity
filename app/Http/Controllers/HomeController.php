@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\LinkClick;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -24,5 +25,16 @@ class HomeController extends Controller
     public function index()
     {
         return view('home');
+    }
+
+    public function get(Request $request)
+    {
+        LinkClick::create([
+            'ip'        => $request->getClientIp(),
+            'useragent' => $request->userAgent(),
+            'source'    => $request->get('src'),
+        ]);
+
+        return redirect()->to('https://discordapp.com/api/oauth2/authorize?client_id=' . config('atlas.bot.clientid') . '&scope=bot&permissions=' . config('atlas.bot.permission.integer'));
     }
 }
