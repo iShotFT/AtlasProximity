@@ -12,6 +12,7 @@
 */
 
 Route::get('settings', 'ApiController@settings')->name('api.settings');
+Route::post('guild/add', 'ApiController@guildAdd')->name('api.guild.add');
 
 Route::get('help', 'ApiController@help');
 Route::get('faq', 'ApiController@faq');
@@ -25,7 +26,6 @@ Route::get('findboat', 'ApiController@findBoat');
 Route::get('track/list', 'ApiController@trackList');
 Route::get('proximity/list', 'ApiController@proximityList');
 
-Route::post('guild/add', 'ApiController@guildAdd');
 Route::post('track/add', 'ApiController@trackAdd');
 Route::post('proximity/add', 'ApiController@proximityAdd');
 

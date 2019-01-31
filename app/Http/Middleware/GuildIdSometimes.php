@@ -36,6 +36,11 @@ class GuildIdSometimes
 
                 return $next($request);
             } else {
+                if (config('app.url') . $request->getPathInfo() === route('api.guild.add')) {
+                    // This route is allowed without existing discord server in db
+                    return $next($request);
+                }
+
                 // Guild with this ID doesn't exist in our database
                 return response()->json(['message' => 'This Discord server is not registered in our database. Contact the developer for more information'], 400);
             }
