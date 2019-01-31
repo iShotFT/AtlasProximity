@@ -105,7 +105,7 @@ class UpdateController extends Controller
      */
     public function destroy(Request $request)
     {
-        dd('hi');
+//        dd('hi');
         $update = Update::findOrFail($request->get('id'));
         $update->delete();
 
