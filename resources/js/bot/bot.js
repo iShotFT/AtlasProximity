@@ -291,6 +291,59 @@ client.on('message', msg => {
         return false;
     }
 
+    if (command === 'setting' || command === 'settings' || command === 'config' || command === 'configs') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            let [parameter, value] = args;
+
+            if (message.member.hasPermission('ADMINISTRATOR')) {
+                // Poll the API for the information requested
+                axios.get(config.url + '/api/settings', {
+                    params: {
+                        key: key,
+                        guildid: msg.guild.id,
+                        parameter: parameter,
+                        value: value,
+                    },
+                }).then(function (response) {
+                    var array = [];
+                    if (response.data.returntype === 'all') {
+                        array.push(['PARAMETER', 'CURRENT', 'POSSIBLE', 'TYPE']);
+                        for (var type in response.data) {
+                            if (type === 'returntype') {
+                                continue;
+                            }
+
+                            if (!response.data.hasOwnProperty(type)) {
+                                continue;
+                            }
+
+                            for (var parameter in response.data[type]) {
+                                if (!response.data[type].hasOwnProperty(parameter)) {
+                                    continue;
+                                }
+
+                                console.log([parameter, response.data[type][parameter].current, response.data[type][parameter].options, type]);
+                                array.push([parameter, response.data[type][parameter].current, response.data[type][parameter].options, type]);
+                            }
+                        }
+                    } else {
+                        array.push(['PARAMETER', 'CURRENT', 'POSSIBLE', 'TYPE']);
+                        array.push([response.data.parameter, response.data.current, response.data.options, response.data.type]);
+                    }
+
+                    msg.edit('```' + table(array) + '```\nExample command: `!setting region na`');
+                }).catch(function (response) {
+                    // Something went wrong with the command
+                    msg.edit(response.response.data.message);
+                });
+            } else {
+                msg.edit('You need `ADMINISTRATOR` permissions on this Discord server to be able to change this bot\'s settings!');
+            }
+        });
+
+        return false;
+    }
+
     if (command === 'stats' || command === 'chart') {
         msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             // If no arguments, send back the usage of the command

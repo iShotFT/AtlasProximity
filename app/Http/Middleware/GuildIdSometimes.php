@@ -21,8 +21,13 @@ class GuildIdSometimes
             if ($guild = Guild::where('guild_id', $request->get('guildid'))->first()) {
                 // Check if the settings for this guild are correctly set
                 if (is_null($guild->region) || is_null($guild->gamemode)) {
+                    if (config('app.url') . $request->getPathInfo() === route('api.settings')) {
+                        // This route is allowed without guildid
+                        return $next($request);
+                    }
+
                     // Server is missing one or more settings
-                    return response()->json(['message' => 'This Discord server is missing required configurations. Use !settings for more info (needs server administrative permissions)'], 400);
+                    return response()->json(['message' => 'This Discord server is missing required configurations. Use `!settings` for more info (needs server administrative permissions)'], 400);
                 }
 
                 // Add information to the request so we can catch it later on

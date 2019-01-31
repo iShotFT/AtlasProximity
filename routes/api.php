@@ -11,6 +11,8 @@
 |
 */
 
+Route::get('settings', 'ApiController@settings')->name('api.settings');
+
 Route::get('help', 'ApiController@help');
 Route::get('faq', 'ApiController@faq');
 Route::get('map', 'ApiController@map');

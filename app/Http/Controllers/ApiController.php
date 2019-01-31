@@ -18,6 +18,84 @@ use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
+    protected $settings = [
+        'required' => [
+            'region'   => [
+                'eu',
+                'na',
+            ],
+            'gamemode' => [
+                'pvp',
+                'pve',
+            ],
+        ],
+        'optional' => [
+
+        ],
+    ];
+
+    public function settings(Request $request)
+    {
+        $request->validate([
+            'guildid'   => 'required|exists:guilds,guild_id',
+            'parameter' => 'sometimes|string',
+            'value'     => 'sometimes|string',
+        ]);
+
+        // Get guild
+        $guild          = Guild::where('guild_id', $request->get('guildid'))->first();
+        $returnsettings = [];
+
+        if ($request->has('parameter')) {
+            // Find the setting and return
+            foreach ($this->settings as $type => $items) {
+                foreach ($items as $parameter => $possible) {
+                    if ($parameter === $request->get('parameter')) {
+                        $returnsettings['returntype'] = 'get';
+
+                        if ($request->has('value')) {
+                            if (is_array($possible) && !in_array($request->get('value'), $possible)) {
+                                // The value they're trying to insert is not one of the possible values
+                                return response()->json(['message' => 'The value `' . $request->get('value') . '` is not a valid value for the `' . $request->get('parameter') . '` setting. Use one of the valid values: `' . implode('`, `', $possible) . '`'], 400);
+                            }
+
+                            // Set the setting and return
+                            $guild->update([
+                                $parameter => $request->get('value'),
+                            ]);
+
+                            $returnsettings['returntype'] = 'set';
+                            // Todo: reset all trackings related to this guild
+                        }
+
+                        $returnsettings['parameter'] = $request->get('parameter');
+                        $returnsettings['type']      = $type;
+                        $returnsettings['options']   = join('|', $possible ?? []);
+                        $returnsettings['current']   = $guild->$parameter;
+
+                    }
+                }
+            }
+
+            if (!empty($returnsettings)) {
+                return response()->json($returnsettings);
+            } else {
+                return response()->json(['message' => 'Something went wrong, make sure to use `!settings` to see the possible parameters and values.'], 400);
+            }
+        }
+
+        // List all settings and their values
+        foreach ($this->settings['required'] as $parameter => $possible) {
+            $returnsettings['required'][$parameter] = [
+                'options' => join('|', $possible ?? []),
+                'current' => $guild->$parameter,
+            ];
+        }
+        $returnsettings['returntype'] = 'all';
+
+        return response()->json($returnsettings);
+    }
+
     /**
      * @param \Illuminate\Http\Request $request
      *
