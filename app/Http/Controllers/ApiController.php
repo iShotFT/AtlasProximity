@@ -26,7 +26,7 @@ class ApiController extends Controller
             ],
             'gamemode' => [
                 'pvp',
-                'pve',
+                //                'pve',
             ],
         ],
         'optional' => [
