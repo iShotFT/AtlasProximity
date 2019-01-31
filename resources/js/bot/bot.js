@@ -142,7 +142,7 @@ client.on('message', msg => {
             axios.get(config.url + '/api/help', {
                 params: {
                     key: key,
-                    guildid: msg.guild.id,
+                    guildid: message.guild.id,
                 },
             }).then(function (response) {
                 // var message = '';
@@ -224,7 +224,7 @@ client.on('message', msg => {
             axios.get(config.url + '/api/faq', {
                 params: {
                     key: key,
-                    guildid: msg.guild.id,
+                    guildid: message.guild.id,
                 },
             }).then(function (response) {
                 // var message = '';
