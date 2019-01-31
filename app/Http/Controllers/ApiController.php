@@ -235,11 +235,11 @@ class ApiController extends Controller
     {
         $request->validate([
             'username' => 'required|string|min:2',
-            //            'region'   => 'required|string|size:2',
-            //            'gamemode' => 'required|string|size:3',
+            'region'   => 'required|string|size:2',
+            'gamemode' => 'required|string|size:3',
         ]);
 
-        $found = PlayerPing::where('player', '=', $request->get('username'))->orderByDesc('updated_at')->limit(5)->get([
+        $found = PlayerPing::where('player', $request->get('username'))->where('region', $request->get('region'))->where('gamemode', $request->get('gamemode'))->orderByDesc('updated_at')->limit(5)->get([
             'player',
             'coordinates',
             'updated_at',
@@ -256,12 +256,14 @@ class ApiController extends Controller
     public function findBoat(Request $request)
     {
         $request->validate([
-            'boatid'  => 'required|integer|min:1',
-            'guildid' => 'required',
+            'boatid'   => 'required|integer|min:1',
+            'guildid'  => 'required',
+            'region'   => 'required|string|size:2',
+            'gamemode' => 'required|string|size:3',
         ]);
 
         // Get boat players (only find boats from your own guild, no spying)
-        if ($boat = Boat::where('id', $request->get('boatid'))->where('guild_id', $request->get('guildid'))->first()) {
+        if ($boat = Boat::where('id', $request->get('boatid'))->where('guild_id', $request->get('guildid'))->where('region', $request->get('region'))->where('gamemode', $request->get('gamemode'))->first()) {
             $players = json_decode($boat->players, true);
             $return  = collect();
             if (is_array($players) && count($players) >= 2) {
@@ -282,21 +284,36 @@ class ApiController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function guildAdd(Request $request)
     {
         $request->validate([
-            'name' => 'required|string',
-            'id'   => 'required',
+            'name'    => 'required|string',
+            'guildid' => 'required',
         ]);
 
-        Guild::updateOrCreate([
-            'guild_id' => $request->get('id'),
+        $guild = Guild::updateOrCreate([
+            'guild_id' => $request->get('guildid'),
         ], [
             'name'       => $request->get('name'),
             'updated_at' => Carbon::now(),
             'deleted_at' => null,
         ]);
+
+        // Check if guild has a region & gamemode set
+        if (is_null($guild->region) || is_null($guild->gamemode)) {
+            return response()->json([
+                'missingsettings' => true,
+                'message'         => 'Server ' . $guild->name . ' added / updated but is missing required information!',
+            ]);
+        } else {
+            return response()->json([
+                'missingsettings' => false,
+                'message'         => 'Server ' . $guild->name . ' added / updated correctly.',
+            ]);
+        }
     }
 
     /**
@@ -312,15 +329,19 @@ class ApiController extends Controller
             'coordinate' => 'required|string|min:2|max:3',
             'guildid'    => 'required',
             'channelid'  => 'required',
+            'region'     => 'required|string|size:2',
+            'gamemode'   => 'required|string|size:3',
         ]);
 
         // Refresh the data
-        SourceQueryController::getPlayersOnCoordinateWithSurrounding($request->get('coordinate'));
+        SourceQueryController::getPlayersOnCoordinateWithSurrounding($request->get('coordinate'), $request->get('region'), $request->get('gamemode'));
 
         ProximityTrack::updateOrCreate([
             'coordinate' => $request->get('coordinate'),
             'guild_id'   => $request->get('guildid'),
             'channel_id' => $request->get('channelid'),
+            'region'     => $request->get('region'),
+            'gamemode'   => $request->get('gamemode'),
         ], [
             'updated_at' => Carbon::now(),
         ]);
@@ -338,6 +359,8 @@ class ApiController extends Controller
             'minutes'   => 'required',
             'guildid'   => 'required',
             'channelid' => 'required',
+            'region'    => 'required|string|size:2',
+            'gamemode'  => 'required|string|size:3',
         ]);
 
         // First make sure we can find the player in the tracking DB
@@ -346,6 +369,8 @@ class ApiController extends Controller
             $playertrack = PlayerTrack::updateOrCreate([
                 'guild_id' => $request->get('guildid'),
                 'player'   => $request->get('username'),
+                'region'   => $request->get('region'),
+                'gamemode' => $request->get('gamemode'),
             ], [
                 'channel_id' => $request->get('channelid'),
                 'until'      => Carbon::now()->addMinutes($request->get('minutes')),
@@ -441,7 +466,6 @@ class ApiController extends Controller
     public function guildRemove(Request $request)
     {
         $request->validate([
-            //            'name' => 'required|string',
             'id' => 'required',
         ]);
 
@@ -458,10 +482,12 @@ class ApiController extends Controller
     public function proximityList(Request $request)
     {
         $request->validate([
-            'guildid' => 'required|integer',
+            'guildid'  => 'required|integer',
+            'region'   => 'required|string|size:2',
+            'gamemode' => 'required|string|size:3',
         ]);
 
-        $found = ProximityTrack::where('guild_id', $request->get('guildid'))->get([
+        $found = ProximityTrack::where('guild_id', $request->get('guildid'))->where('region', $request->get('region'))->where('gamemode', $request->get('gamemode'))->get([
             'coordinate',
             'updated_at',
         ]);
@@ -477,10 +503,12 @@ class ApiController extends Controller
     public function trackList(Request $request)
     {
         $request->validate([
-            'guildid' => 'required|integer',
+            'guildid'  => 'required|integer',
+            'region'   => 'required|string|size:2',
+            'gamemode' => 'required|string|size:3',
         ]);
 
-        $found = PlayerTrack::where('guild_id', $request->get('guildid'))->where('until', '>=', Carbon::now())->orderByDesc('updated_at')->get([
+        $found = PlayerTrack::where('guild_id', $request->get('guildid'))->where('until', '>=', Carbon::now())->where('region', $request->get('region'))->where('gamemode', $request->get('gamemode'))->orderByDesc('updated_at')->get([
             'player',
             'last_coordinate',
             'updated_at',

@@ -41,6 +41,7 @@ class Kernel extends HttpKernel
             'throttle:60,1',
             'bindings',
             'api_key_required',
+            'guild_id_sometimes',
         ],
     ];
 
@@ -65,6 +66,7 @@ class Kernel extends HttpKernel
         'permission'         => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
         'api_key_required'   => \App\Http\Middleware\ApiKeyRequired::class,
+        'guild_id_sometimes' => \App\Http\Middleware\GuildIdSometimes::class,
     ];
 
     /**

@@ -84,13 +84,6 @@ const procMsgs = [
 
 client.on('ready', () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
-    // client.user.setPresence({
-    //     game: {
-    //         name: 'iShot#5449',
-    //         type: 'LISTENING',
-    //     },
-    //     status: 'idle',
-    // });
     client.user.setActivity(`!help`);
 
     client.guilds.forEach(function (guild) {
@@ -100,22 +93,11 @@ client.on('ready', () => {
         axios.post(config.url + '/api/guild/add', {
             key: key,
             name: guild.name,
-            id: guild.id,
+            guildid: guild.id,
         }).then(function (response) {
-            console.log('Added or updated guild ' + guild.name + ' in the database');
+            console.log(response.data.message);
         });
     });
-
-    // console.log(client.guilds);
-    // for (var guild in client.guilds) {
-    //     // if (!client.guilds.hasOwnProperty(guild)) {
-    //     //     continue;
-    //     // }
-    //
-    //     console.log(guild.name);
-    // }
-
-
 });
 
 client.on('message', msg => {
@@ -160,6 +142,7 @@ client.on('message', msg => {
             axios.get(config.url + '/api/help', {
                 params: {
                     key: key,
+                    guildid: msg.guild.id,
                 },
             }).then(function (response) {
                 // var message = '';
@@ -216,6 +199,7 @@ client.on('message', msg => {
             axios.get(config.url + '/api/version', {
                 params: {
                     key: key,
+                    guildid: msg.guild.id,
                 },
             }).then(function (response) {
                 // var message = '';
@@ -240,6 +224,7 @@ client.on('message', msg => {
             axios.get(config.url + '/api/faq', {
                 params: {
                     key: key,
+                    guildid: msg.guild.id,
                 },
             }).then(function (response) {
                 // var message = '';
@@ -312,33 +297,24 @@ client.on('message', msg => {
             if (args.length === 0) {
                 // No parameters given
                 var message = '';
-                message = message + config.prefix + 'stats [COORDINATES:B4] [REGION:eu] [GAMEMODE:pvp]';
+                message = message + config.prefix + 'stats [COORDINATES:B4]';
                 msg.edit('```' + message + '```');
                 return false;
             }
 
-            let [server, region, gamemode] = args;
+            let [server] = args;
 
             if (server === undefined) {
                 server = 'A1';
-            }
-
-            if (region === undefined) {
-                region = 'eu';
-            }
-
-            if (gamemode === undefined) {
-                gamemode = 'pvp';
             }
 
             // Poll the API for the information requested
             axios.get(config.url + '/api/stats', {
                 params: {
                     key: key,
+                    guildid: msg.guild.id,
                     server: server.toUpperCase(),
                     period: 'day',
-                    region: region,
-                    gamemode: gamemode,
                 },
             }).then(function (response) {
                 // var message = '';
@@ -362,31 +338,11 @@ client.on('message', msg => {
 
     if (command === 'map' || command === 'world') {
         msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
-            // If no arguments, send back the usage of the command
-            // if (args.length === 0) {
-            //     // No parameters given
-            //     var message = '';
-            //     message = message + config.prefix + 'map [REGION:eu] [GAMEMODE:pvp]';
-            //     msg.edit('```' + message + '```');
-            //     return false;
-            // }
-
-            let [region, gamemode] = args;
-
-            if (region === undefined) {
-                region = 'eu';
-            }
-
-            if (gamemode === undefined) {
-                gamemode = 'pvp';
-            }
-
             // Poll the API for the information requested
             axios.get(config.url + '/api/map', {
                 params: {
                     key: key,
-                    region: region,
-                    gamemode: gamemode,
+                    guildid: msg.guild.id,
                 },
             }).then(function (response) {
                 // var message = '';
@@ -394,7 +350,7 @@ client.on('message', msg => {
                 var multiple = false;
 
                 if (response.data.image !== undefined) {
-                    msg.edit(':map: This is the current map of the ' + region + ' ' + gamemode + ' server:');
+                    msg.edit(':map: This is the current map of the server:');
                     msg.channel.send('', {
                         file: response.data.image, // Or replace with FileOptions object
                     });
@@ -434,12 +390,12 @@ client.on('message', msg => {
             if (args.length === 0) {
                 // No parameters given
                 var message = '';
-                message = message + config.prefix + 'players <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]';
+                message = message + config.prefix + 'players <SERVER:A1>';
                 msg.edit('```' + message + '```');
                 return false;
             }
 
-            let [server, region, gamemode] = args;
+            let [server] = args;
 
             // Server (eg B4)
             if (server === undefined) {
@@ -448,19 +404,12 @@ client.on('message', msg => {
                 server = server.toUpperCase();
             }
 
-            if (region === undefined) {
-                region = 'eu';
-            }
-
-            if (gamemode === undefined) {
-                gamemode = 'pvp';
-            }
-
             // Poll the API for the information requested
             var ogserver = server;
             axios.get(config.url + '/api/players', {
                 params: {
                     key: key,
+                    guildid: msg.guild.id,
                     server: server,
                     region: region,
                     gamemode: gamemode,
@@ -510,12 +459,12 @@ client.on('message', msg => {
             if (args.length === 0) {
                 // No parameters given
                 var message = '';
-                message = message + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]';
+                message = message + config.prefix + 'pop <SERVER:A1>';
                 msg.edit('```' + message + '```');
                 return false;
             }
 
-            let [server, region, gamemode] = args;
+            let [server] = args;
 
             // Server (eg B4)
             if (server === undefined) {
@@ -524,22 +473,13 @@ client.on('message', msg => {
                 server = server.toUpperCase();
             }
 
-            if (region === undefined) {
-                region = 'eu';
-            }
-
-            if (gamemode === undefined) {
-                gamemode = 'pvp';
-            }
-
             // Poll the API for the information requested
             var ogserver = server;
             axios.get(config.url + '/api/population', {
                 params: {
                     key: key,
+                    guildid: msg.guild.id,
                     server: server,
-                    region: region,
-                    gamemode: gamemode,
                 },
             }).then(function (response) {
                 // var message = '';
@@ -569,12 +509,12 @@ client.on('message', msg => {
                 // No parameters given
 
                 var message = '';
-                message = message + config.prefix + 'pop <SERVER:A1> [REGION:eu] [GAMEMODE:pvp]';
+                message = message + config.prefix + 'pop <SERVER:A1>';
                 msg.edit('```' + message + '```');
                 return false;
             }
 
-            let [server, region, gamemode] = args;
+            let [server] = args;
 
             // Server (eg B4)
             if (server === undefined) {
@@ -583,22 +523,13 @@ client.on('message', msg => {
                 server = server.toUpperCase();
             }
 
-            if (region === undefined) {
-                region = 'eu';
-            }
-
-            if (gamemode === undefined) {
-                gamemode = 'pvp';
-            }
-
             var ogserver = server;
             // Poll the API for the information requested
             axios.get(config.url + '/api/population', {
                 params: {
                     key: key,
+                    guildid: msg.guild.id,
                     server: server,
-                    region: region,
-                    gamemode: gamemode,
                 },
             }).then(function (response) {
                 // var message = '';
@@ -655,8 +586,8 @@ client.on('message', msg => {
             axios.get(config.url + '/api/findboat', {
                 params: {
                     key: key,
-                    boatid: boatid,
                     guildid: msg.guild.id,
+                    boatid: boatid,
                 },
             }).then(function (response) {
                 // var message = '';
@@ -696,10 +627,12 @@ client.on('message', msg => {
 
             let [username] = [args.join(' ')];
 
+            console.log('/api/find?key=' + key + '&guildid=' + msg.guild.id + '&username=' + username);
             // Poll the API for the information requested
             axios.get(config.url + '/api/find', {
                 params: {
                     key: key,
+                    guildid: msg.guild.id,
                     username: username,
                 },
             }).then(function (response) {
@@ -726,6 +659,8 @@ client.on('message', msg => {
                     console.log('Sent a message to ' + msg.guild.name + ':' + message);
                     msg.edit(message);
                 }
+            }).catch(function (response) {
+                // console.log(response.response.data);
             });
         });
 
@@ -969,7 +904,7 @@ client.on('guildCreate', guild => {
     axios.post(config.url + '/api/guild/add', {
         key: key,
         name: guild.name,
-        id: guild.id,
+        guildid: guild.id,
     }).then(function (response) {
         console.log('Added or updated guild ' + guild.name + ' in the database');
     });
@@ -982,7 +917,7 @@ client.on('guildDelete', guild => {
 
     axios.post(config.url + '/api/guild/remove', {
         key: key,
-        id: guild.id,
+        guildid: guild.id,
     }).then(function (response) {
         console.log('Removed guild ' + guild.name + ' from the database');
     });
