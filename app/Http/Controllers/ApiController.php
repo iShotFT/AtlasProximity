@@ -604,6 +604,21 @@ class ApiController extends Controller
     public function help(Request $request)
     {
         $commmands = [
+            'settings'   => [
+                'explanation' => 'Use this command without any parameters to show the current bot config for your server. This needs ADMINISTRATOR permissions.',
+                'aliases'     => [
+                    'setting',
+                    'config',
+                    'configs',
+                ],
+                'arguments'   => [
+                    'PARAMETER:region',
+                    'VALUE:eu',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
             'help'       => [
                 'explanation' => 'Returns all the commands registered on this bot with explanation.',
                 'aliases'     => [
@@ -705,8 +720,33 @@ class ApiController extends Controller
                     '',
                 ],
             ],
+            'stats'      => [
+                'explanation' => 'Show a chart of the players on the coordinate of your choice over the past 24 hours.',
+                'aliases'     => [
+                    'chart',
+                ],
+                'arguments'   => [
+                    'COORDINATE:A1',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
+            'findboat'   => [
+                'explanation' => 'Find the current location of all players in the boat with this ID.',
+                'aliases'     => [
+                    'searchboat',
+                    'whereisboat',
+                ],
+                'arguments'   => [
+                    'BOATID:1',
+                ],
+                'example'     => [
+                    '',
+                ],
+            ],
             'find'       => [
-                'explanation' => 'Find a player (based on steam username). This currently only works for [EU PVP].',
+                'explanation' => 'Find a player (based on steam username).',
                 'aliases'     => [
                     'search',
                     'whereis',
