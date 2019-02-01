@@ -19,7 +19,11 @@ Contact the developer through any of the following methods:
 
 **Discord (private):** iShot#5449
 
+or
+
 **Discord (server):** [ATLAS CCTV](https://discord.gg/KMHkqtb)
+
+or
 
 **Using `!ask` (once the bot is installed) you can send me a private message**
 

@@ -8,3 +8,6 @@
     
 - ## For developers
     - [Technology](/docs/{{version}}/techinfo)
+    
+- ## Other
+    - [FAQ](/docs/{{version}}/faq)
