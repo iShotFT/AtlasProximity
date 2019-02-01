@@ -86,18 +86,25 @@ client.on('ready', () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
     client.user.setActivity(`!help`);
 
+    var data = [];
     client.guilds.forEach(function (guild) {
         // guild.name
         // guild.id
 
-        axios.post(config.url + '/api/guild/add', {
-            key: key,
+        data.push({
             name: guild.name,
             guildid: guild.id,
             users: guild.memberCount,
-        }).then(function (response) {
-            console.log(response.data.message);
         });
+    });
+
+    console.log(data);
+
+    axios.post(config.url + '/api/guilds/add', {
+        key: key,
+        data: data,
+    }).then(function (response) {
+        console.log(response.data.message);
     });
 });
 

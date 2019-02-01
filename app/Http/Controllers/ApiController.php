@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ApiController extends Controller
 {
@@ -360,6 +361,26 @@ class ApiController extends Controller
         }
     }
 
+    public function guildsAdd(Request $request)
+    {
+        $data = json_decode(json_encode($request->get('data'), true), true);
+
+        $count = 0;
+        foreach ($data as $server) {
+            // $server['name']
+            // $server['guildid'];
+            // $server['users'];
+            $request->request->add(['name' => $server['name']]);
+            $request->request->add(['guildid' => $server['guildid']]);
+            $request->request->add(['users' => $server['users']]);
+
+            $this->guildAdd($request);
+            $count++;
+        }
+
+        return response()->json(['message' => 'All ' . $count . ' servers added or updated in the database']);
+    }
+
     /**
      * @param \Illuminate\Http\Request $request
      *
@@ -374,8 +395,8 @@ class ApiController extends Controller
 
         $guild = Guild::updateOrCreate([
             'guild_id' => $request->get('guildid'),
-            'users'    => $request->get('users') ?? 0,
         ], [
+            'users'      => $request->get('users') ?? 0,
             'name'       => $request->get('name'),
             'updated_at' => Carbon::now(),
             'deleted_at' => null,

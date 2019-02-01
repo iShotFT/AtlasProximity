@@ -13,6 +13,7 @@
 
 Route::get('settings', 'ApiController@settings')->name('api.settings');
 Route::post('guild/add', 'ApiController@guildAdd')->name('api.guild.add');
+Route::post('guilds/add', 'ApiController@guildsAdd')->name('api.guilds.add');
 
 Route::get('help', 'ApiController@help');
 Route::get('faq', 'ApiController@faq');
