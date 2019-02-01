@@ -153,9 +153,15 @@ client.on('message', msg => {
                     msg.edit('```' + message + '```');
                 }
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -182,9 +188,15 @@ client.on('message', msg => {
                 }
 
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -230,9 +242,15 @@ client.on('message', msg => {
                     author.send('' + table(array) + '');
                 }
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -310,9 +328,15 @@ client.on('message', msg => {
 
                     msg.edit('```' + table(array) + '```\nExample command: `!setting region na`');
                 }).catch(function (error) {
-                    if (error.response.message) {
-                        msg.edit(error.response.data.message);
+                    if (error.response) {
+                        if (error.response.data) {
+                            if (error.response.data.message) {
+                                msg.edit(error.response.data.message);
+                            }
+                        }
                     }
+
+                    console.log('[ERROR]' + error.response);
                 });
             } else {
                 msg.edit('You need `ADMINISTRATOR` permissions on this Discord server to be able to change this bot\'s settings!');
@@ -362,9 +386,15 @@ client.on('message', msg => {
                 }
 
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -394,9 +424,15 @@ client.on('message', msg => {
                 }
 
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -485,9 +521,15 @@ client.on('message', msg => {
                 }
 
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -538,9 +580,15 @@ client.on('message', msg => {
                 console.log('Sent a message to ' + msg.guild.name);
                 msg.edit('\nThese are the amount of players on and around ' + ogserver + ':\n```' + table(array) + '```\n\nWant to see this data as a table? Try \'!grid ' + ogserver + '\'');
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -609,9 +657,15 @@ client.on('message', msg => {
                 console.log('Sent a message to ' + msg.guild.name + ':' + message);
                 msg.edit(message);
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -658,9 +712,15 @@ client.on('message', msg => {
                     msg.edit(message);
                 }
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -713,9 +773,15 @@ client.on('message', msg => {
                     msg.edit(message);
                 }
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -734,9 +800,15 @@ client.on('message', msg => {
                 }).then(function (response) {
                     msg.edit('```Removed all active proximity alerts from this channel```');
                 }).catch(function (error) {
-                    if (error.response.message) {
-                        msg.edit(error.response.data.message);
+                    if (error.response) {
+                        if (error.response.data) {
+                            if (error.response.data.message) {
+                                msg.edit(error.response.data.message);
+                            }
+                        }
                     }
+
+                    console.log('[ERROR]' + error.response);
                 });
             } else {
                 msg.edit('```You need message removal permissions in your Discord server to use this command```');
@@ -769,9 +841,15 @@ client.on('message', msg => {
             }).then(function (response) {
                 msg.edit('```' + 'No longer alerting on server ' + server + '```');
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -815,9 +893,15 @@ client.on('message', msg => {
 
                     msg.edit('These are the active proximity alerts:\n```' + message + '```');
                 }).catch(function (error) {
-                    if (error.response.message) {
-                        msg.edit(error.response.data.message);
+                    if (error.response) {
+                        if (error.response.data) {
+                            if (error.response.data.message) {
+                                msg.edit(error.response.data.message);
+                            }
+                        }
                     }
+
+                    console.log('[ERROR]' + error.response);
                 });
 
                 return false;
@@ -835,9 +919,15 @@ client.on('message', msg => {
             }).then(function (response) {
                 msg.edit('```' + 'Now alerting about ships entering server ' + server + '```');
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -857,9 +947,15 @@ client.on('message', msg => {
                 }).then(function (response) {
                     msg.edit('```Removed all active trackings from this channel```');
                 }).catch(function (error) {
-                    if (error.response.message) {
-                        msg.edit(error.response.data.message);
+                    if (error.response) {
+                        if (error.response.data) {
+                            if (error.response.data.message) {
+                                msg.edit(error.response.data.message);
+                            }
+                        }
                     }
+
+                    console.log('[ERROR]' + error.response);
                 });
             } else {
                 msg.edit('```You need message removal permissions in your Discord server to use this command```');
@@ -892,9 +988,15 @@ client.on('message', msg => {
             }).then(function (response) {
                 msg.edit('```' + 'No longer tracking ' + username + '```');
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
@@ -941,9 +1043,15 @@ client.on('message', msg => {
 
                     msg.edit('```' + message + '```');
                 }).catch(function (error) {
-                    if (error.response.message) {
-                        msg.edit(error.response.data.message);
+                    if (error.response) {
+                        if (error.response.data) {
+                            if (error.response.data.message) {
+                                msg.edit(error.response.data.message);
+                            }
+                        }
                     }
+
+                    console.log('[ERROR]' + error.response);
                 });
 
                 return false;
@@ -962,9 +1070,15 @@ client.on('message', msg => {
             }).then(function (response) {
                 msg.edit('```' + 'Now tracking ' + username + ' for the next ' + minutes + ' minute(s). We\'ll post a message each time we see the player move servers.' + '```');
             }).catch(function (error) {
-                if (error.response.message) {
-                    msg.edit(error.response.data.message);
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
                 }
+
+                console.log('[ERROR]' + error.response);
             });
         });
 
