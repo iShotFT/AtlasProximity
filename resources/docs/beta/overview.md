@@ -21,6 +21,8 @@ Contact the developer through any of the following methods:
 
 **Discord (server):** [ATLAS CCTV](https://discord.gg/KMHkqtb)
 
+**Using `!ask` (once the bot is installed) you can send me a private message**
+
 <a name="progress"></a>
 ## Development Progress
 
