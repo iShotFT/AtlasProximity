@@ -40,6 +40,10 @@ This bot was written and is running using the following technology:
     - Dashboard
         - AdminLTE
         - DataTables
+- Deploying
+    - Digitalocean (8 GB RAM / 4 CPU)
+    - GitHub
+    - Deployer
         
         
 <a name="timeframe"></a>
