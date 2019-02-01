@@ -27,7 +27,7 @@ class GuildIdSometimes
                     }
 
                     // Server is missing one or more settings
-                    return response()->json(['message' => 'This Discord server is missing required configurations. Use `!settings` for more info (needs server administrative permissions)'], 400);
+                    return response()->json(['message' => 'This Discord server is missing required configurations. Use `!settings` for more info (needs server administrative permissions). Also read the installation instruction that can be found here: https://atlasdiscordbot.com/docs/beta/installation'], 400);
                 }
 
                 // Add information to the request so we can catch it later on
@@ -42,7 +42,7 @@ class GuildIdSometimes
                 }
 
                 // Guild with this ID doesn't exist in our database
-                return response()->json(['message' => 'This Discord server is not registered in our database. Contact the developer for more information'], 400);
+                return response()->json(['message' => 'This Discord server is missing required configurations. Use `!settings` for more info (needs server administrative permissions). Also read the installation instruction that can be found here: https://atlasdiscordbot.com/docs/beta/installation'], 400);
             }
         } else {
             return response()->json(['message' => 'Your request is missing a Discord guild_id parameter'], 400);

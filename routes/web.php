@@ -11,6 +11,7 @@
 |
 */
 Auth::routes();
+Route::get('/', 'LandingController@index')->name('home');
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/test', 'SourceQueryController@test')->name('test');
 Route::get('/get', 'HomeController@get')->name('get');
