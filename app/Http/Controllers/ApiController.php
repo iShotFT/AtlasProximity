@@ -374,6 +374,7 @@ class ApiController extends Controller
 
         $guild = Guild::updateOrCreate([
             'guild_id' => $request->get('guildid'),
+            'users'    => $request->get('users') ?? 0,
         ], [
             'name'       => $request->get('name'),
             'updated_at' => Carbon::now(),

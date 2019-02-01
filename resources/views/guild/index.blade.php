@@ -29,6 +29,9 @@
                                         <th scope="col">#</th>
                                         <th scope="col">Name</th>
                                         <th scope="col">Guild ID</th>
+                                        <th scope="col">Region</th>
+                                        <th scope="col">Gamemode</th>
+                                        <th scope="col">Users</th>
                                         <th scope="col">Created</th>
                                         <th scope="col">Updated</th>
                                     </tr>
@@ -40,6 +43,9 @@
                                             <th scope="row">{{ $guild->id }}</th>
                                             <td>{{ $guild->name }}</td>
                                             <td>{{ $guild->guild_id }}</td>
+                                            <td>{{ $guild->region }}</td>
+                                            <td>{{ $guild->gamemode }}</td>
+                                            <td>{{ $guild->users }}</td>
                                             <td>{{ $guild->created_at->diffForHumans() }}</td>
                                             <td>{{ $guild->updated_at->diffForHumans() }}</td>
                                         </tr>

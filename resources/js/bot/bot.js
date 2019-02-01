@@ -94,6 +94,7 @@ client.on('ready', () => {
             key: key,
             name: guild.name,
             guildid: guild.id,
+            users: guild.memberCount,
         }).then(function (response) {
             console.log(response.data.message);
         });
