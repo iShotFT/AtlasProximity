@@ -127,7 +127,7 @@ Returns an image with the current map of the region you're playing in. Colors wi
 `!map`
 
 ##### Example output
-![image](https://i.imgur.com/7uNOt2W.png)
+![image](https://i.imgur.com/zskUUBD.png)
 
 <a name="cmdstats"></a>
 ## `!stats`
