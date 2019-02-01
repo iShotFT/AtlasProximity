@@ -4,6 +4,7 @@
 
 - [Introduction](#introduction)
 - [Contact](#contact)
+- [Development progress](#progress)
 - [Background](#background)
 
 <a name="introduction"></a>
@@ -19,6 +20,19 @@ Contact the developer through any of the following methods:
 **Discord (private):** iShot#5449
 
 **Discord (server):** [ATLAS CCTV](https://discord.gg/KMHkqtb)
+
+<a name="progress"></a>
+## Development Progress
+
+<larecipe-card>
+    Error Catching
+    <larecipe-progress type="warning" :value="25"></larecipe-progress>
+</larecipe-card>
+
+<larecipe-card>
+    Documentation
+    <larecipe-progress type="success" :value="79"></larecipe-progress>
+</larecipe-card>
 
 
 <a name="background"></a>

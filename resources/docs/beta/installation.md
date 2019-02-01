@@ -9,7 +9,7 @@
 <a name="installation"></a>
 ## Installation
 
-> {info} A typical Discord bot can read all messages in the channels it has been added to. This bot only registers messages that start with the command prefix (!). I have not interest in your Discord server private conversations. If you don't trust the bot you can always put it in a new channel where it can read and take away it's reading permissions from other channels.
+> {info} A typical Discord bot can read all messages in the channels it has been added to. This bot only registers messages that start with the command prefix `!`. I have no interest in your Discord server private conversations. If you don't trust the bot you can always put it in a new channel where it can read and take away it's reading permissions from other channels.
 
 Installing the bot (adding it to your server) is very simple. If you're an admin on a Discord server you can follow the link below to invite the bot to your server.
 

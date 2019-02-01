@@ -147,44 +147,10 @@ client.on('message', msg => {
             }).then(function (response) {
                 // var message = '';
                 if (response.data) {
-                    msg.delete();
-                    // array.push(['COMMAND', 'EXPLANATION', 'ALIASES']);
-                    var array = [];
-                    for (var command in response.data) {
-                        if (!response.data.hasOwnProperty(command)) {
-                            continue;
-                        }
-
-                        var strCommand = config.prefix + command;
-                        if (response.data[command]['arguments'].length) {
-                            strCommand = strCommand + ' ' + response.data[command]['arguments'].join(' ');
-                        }
-
-                        array.push([strCommand]);
-                        array.push([response.data[command].explanation]);
-                        if (response.data[command].aliases.length) {
-                            array.push(['Aliases: !' + response.data[command].aliases.join(' !')]);
-                        }
-                        array.push([]);
-
-                        if (array.length >= 16) {
-                            console.log(array.length);
-                            // Bind help information together
-                            author.send('```' + table(array) + '```');
-                            array = [];
-                        }
-                    }
-
-                    if (array.length >= 1) {
-                        // Send last part
-                        author.send('```' + table(array) + '```');
-                        array = [];
-                    }
-
-                    console.log('Sent a private messages to ' + author.username + ' with the help information');
+                    msg.edit(':dolphin: Here is the link to the documentation for this bot.\n' + response.data.url);
                 } else {
                     message = '\n> Something went wrong when pulling the help information';
-                    console.log('Sent a private message to ' + msg.author.username + ':' + message);
+                    // console.log('Sent a private message to ' + msg.author.username + ':' + message);
                     msg.edit('```' + message + '```');
                 }
             });
