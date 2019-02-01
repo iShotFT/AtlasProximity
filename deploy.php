@@ -120,6 +120,10 @@ task('reload:queue', function () {
     run('cd {{release_path}} && php artisan queue:restart');
 });
 
+task('reload:larecipe', function () {
+    run('cd {{release_path}} && php artisan larecipe:install');
+});
+
 set('bin/npm', function () {
     return run('which npm');
 });
@@ -142,6 +146,7 @@ after('deploy:update_code', 'npm:install');
 after('success', 'discord:notify:success');
 after('deploy:failed', 'discord:notify:failure');
 before('deploy', 'discord:notify');
+after('deploy', 'reload:larecipe');
 after('deploy', 'reload:php-fpm');
 after('deploy', 'reload:atlascctv');
 after('deploy', 'reload:queue');

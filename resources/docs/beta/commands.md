@@ -142,7 +142,7 @@ Get a statistical line graph overview of the players in given coordinate in the 
 `!stats A9`
 
 ##### Example output
-![image](https://i.imgur.com/zxyd0JM.png)
+![image](https://i.imgur.com/ba6NY6X.png)
 
 <a name="cmdplayers"></a>
 ## `!players`
@@ -157,3 +157,104 @@ Get a list of the current players on a certain coordinate
 
 ##### Example output
 ![image](https://i.imgur.com/zO6qm2f.png)
+
+<a name="cmdpop"></a>
+## `!pop`
+>
+<larecipe-badge type="success">Completed</larecipe-badge>
+
+##### Explanation
+Get a list of the number of players on the server on the chosen coordinate and all 8 coordinates around that coordinate, this includes a direction indicator.
+
+##### Example input
+`!pop A9`
+
+##### Example output
+![image](https://i.imgur.com/kQLbKZX.png)
+
+<a name="cmdgrid"></a>
+## `!grid`
+>
+<larecipe-badge type="success">Completed</larecipe-badge>
+
+##### Explanation
+Very similar to the `!pop` command but shows the data in a 3x3 grid.
+
+##### Example input
+`!pop A9`
+
+##### Example output
+![image](https://i.imgur.com/nNiAINS.png)
+
+<a name="cmdfind"></a>
+## `!find`
+>
+<larecipe-badge type="success">Completed</larecipe-badge>
+
+##### Explanation
+Find a player (steamname only) in your region and their 5 most recent locations.
+
+##### Example input
+`!find iShot`
+
+##### Example output
+![image](https://i.imgur.com/GF37uyj.png)
+
+<a name="cmdalert"></a>
+## `!alert`
+>
+<larecipe-badge type="success">Completed</larecipe-badge>
+
+##### Explanation
+Adding an alert to a coordinate. When a boat (more than 2 players from the same location at the same time) enters this coordinate the bot will post a message with information in the channel this command was used in.
+
+##### Example input
+`!alert C4`
+
+##### Example output
+![image](https://i.imgur.com/MpMlcBe.png)
+
+*When a ship enters the coordinate you're alerting on:*
+
+![image](https://i.imgur.com/nzYHQzf.png)
+
+<a name="cmdtrack"></a>
+## `!track`
+>
+<larecipe-badge type="success">Completed</larecipe-badge>
+
+##### Explanation
+Add a (steam) username to the tracking list. Every time we see that username change coordinates we'll post a message in the channel this command was used in.
+
+##### Example input
+`!track 120 THISKK`
+
+*The 120 in this example is the amount of **minutes** you want to track the user for*
+
+##### Example output
+![image](https://i.imgur.com/ZbZUCEA.png)
+
+*When a player moves servers / coordinates:*
+
+![image](https://i.imgur.com/t2ZcriX.png)
+
+<a name="cmdfindboat"></a>
+## `!findboat`
+>
+<larecipe-badge type="success">Completed</larecipe-badge>
+
+##### Explanation
+When the [`!alert`](#cmdalert) command posts a message it will also give you a boat ID. Using this boat ID you can find out the current locations of all players that were spotted on that boat. This is useful to see if the boat is still around or where it moved too.
+
+This command can only be used on the boatIDs that have been tracked by your server. If you use an ID that was not tracked by your own server it'll not be able to find the boat.
+
+Read the example of the [`!alert`](#cmdalert) command to see how to get the boat ID.
+
+##### Example input
+`!findboat 2907`
+
+##### Example output
+![image](https://i.imgur.com/hVjciXK.png)
+
+
+
