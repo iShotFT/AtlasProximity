@@ -14,6 +14,7 @@
 		"ext-mbstring": "*",
 		"barryvdh/laravel-ide-helper": "^2.5",
 		"barryvdh/laravel-snappy": "^0.4.3",
+		"binarytorch/larecipe": "^1.2",
 		"doctrine/dbal": "^2.9",
 		"fideloper/proxy": "^4.0",
 		"jeroennoten/laravel-adminlte": "^1.24",
@@ -24,7 +25,6 @@
 		"nopjmp/discord-webhooks": "^0.3.1",
 		"predis/predis": "^1.1",
 		"spatie/laravel-permission": "^2.29",
-		"team-reflex/discord-php": "^4.0",
 		"webpatser/laravel-uuid": "^3.0",
 		"xpaw/php-source-query-class": "^1.0"
 	},
