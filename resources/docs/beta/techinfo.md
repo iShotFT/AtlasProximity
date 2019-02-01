@@ -48,3 +48,5 @@ This bot was written and is running using the following technology:
 First commit happened `21 Januari 2019`.
 
 The project is currently still under active development
+
+This project contains a total of `1,003,242` lines of code (including packages)

@@ -137,8 +137,7 @@ client.on('message', msg => {
     // }
 
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
-        msg.delete();
-        msg.author.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
             axios.get(config.url + '/api/help', {
                 params: {
                     key: key,
