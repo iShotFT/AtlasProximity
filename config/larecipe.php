@@ -52,7 +52,7 @@ return [
 
     'settings' => [
         'auth'  => false,
-        'ga_id' => '',
+        'ga_id' => 'UA-133710766-1',
     ],
 
     /*

@@ -14,6 +14,8 @@
 
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+        {!! Analytics::render() !!}
     </head>
     <body>
         <div id="app">
