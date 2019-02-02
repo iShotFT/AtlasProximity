@@ -566,7 +566,7 @@ class ApiController extends Controller
     public function guildRemove(Request $request)
     {
         $request->validate([
-            'id' => 'required',
+            'guildid' => 'required|integer',
         ]);
 
         if ($guild = Guild::where('guild_id', $request->get('id'))->first()) {

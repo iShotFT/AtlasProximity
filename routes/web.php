@@ -31,6 +31,10 @@ Route::group(['middleware' => ['permission:a.faq']], function () {
     Route::get('faq/get/destroy', 'FaqController@destroy')->name('faq.get.destroy');
 });
 
+Route::group(['middleware' => ['permission:a.update']], function () {
+    Route::resource('command', 'CommandController');
+});
+
 Route::group(['middleware' => ['permission:a.ping']], function () {
     Route::resource('ping', 'PingController');
 });

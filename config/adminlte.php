@@ -120,6 +120,11 @@ return [
             'icon' => 'plus-square',
         ],
         [
+            'text' => 'Commands',
+            'url'  => 'command',
+            'icon' => 'gavel',
+        ],
+        [
             'text' => 'Pings',
             'url'  => 'ping',
             'icon' => 'bullseye',
