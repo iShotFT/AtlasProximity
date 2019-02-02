@@ -806,7 +806,7 @@ client.on('message', msg => {
                     guildid: msg.guild.id,
                     channelid: msg.channel.id,
                 }).then(function (response) {
-                    msg.edit('```Removed all active proximity alerts from this channel```');
+                    msg.edit('```Removed all active proximity alerts from this Discord server```');
                 }).catch(function (error) {
                     if (error.response) {
                         if (error.response.data) {
