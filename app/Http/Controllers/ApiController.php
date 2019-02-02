@@ -15,7 +15,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ApiController extends Controller
 {
@@ -515,8 +514,8 @@ class ApiController extends Controller
         ]);
 
         ProximityTrack::where([
-            'guild_id'   => $request->get('guildid'),
-            'channel_id' => $request->get('channelid'),
+            'guild_id' => $request->get('guildid'),
+            //            'channel_id' => $request->get('channelid'),
         ])->delete();
     }
 
