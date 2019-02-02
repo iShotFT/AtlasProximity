@@ -23,22 +23,26 @@
 
 Click on the command (eg. [`!settings`](#cmdsettings)) to go to the full explanation of the command.
 
-| Commands                    | Explanation                                                                                                                                                                                                                                                               | Arguments             | Commandaliases                           |
-|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------|------------------------------------------|
-| [`!config`](#cmdsettings)   | Get or set the settings of the bot in your Discord server. This is required to be used before the bot can work at all. You can set your region (eu or na) and gamemode (pvp or pve)                                                                                       | *multiple*            | `!setting`, `!configs`, `!config`        |
-| [`!help`](#cmdhelp)         | Return a link to the documentation page for the current bot version                                                                                                                                                                                                       | *none*                | `!cmdlist`, `!commands`, `!bot`, `!info` |
-| [`!version`](#cmdversion)   | Returns the current version of the Discord bot and the most recent changes (update log)                                                                                                                                                                                   | *none*                | `!v`                                     |
-| [`!ask`](#cmdask)           | Everything typed after this command will be sent to the bot developer, you can use this to ask question, give feedback, suggestions and more                                                                                                                              | *any*                 | `!feedback`, `!contact`, `!question`     |
-| [`!purge`](#cmdpurge)       | Remove the most recent 100 messages from the channel this command was used in                                                                                                                                                                                             | *none*                | `!clean`, `!clear`                       |
-| [`!map`](#cmdmap)           | Show a visual representation of the current players on the full map of the server. A color indication shows what servers are busy                                                                                                                                         | *none*                | `!world`                                 |
-| [`!stats`](#cmdstats)       | Show a visual representation of the amount of players on the coordinate of your choice over the past 24 hours.                                                                                                                                                            | &lt;COORDINATE&gt;    | `!chart`                                 |
-| [`!players`](#cmdplayers)   | Show a list of the current (steam) usernames and the playtime of the people on the coordinate of your choice.                                                                                                                                                             | &lt;COORDINATE&gt;    | `!player`                                |
-| [`!pop`](#cmdpop)           | Show a list of the players on the coordinate of your choice and the players of all 8 coordinates around that.                                                                                                                                                             | &lt;COORDINATE&gt;    | `!population`                            |
-| [`!grid`](#cmdgrid)         | Very similar to the [`!pop`](#cmdpop) command but represented in a 3x3 table                                                                                                                                                                                              | &lt;COORDINATE&gt;    | *none*                                   |
-| [`!find`](#cmdfind)         | Search for a specific (steam) username on the whole server. This returns a list (if the player was found) of the 5 most recent locations this player was spotted in.                                                                                                      | &lt;STEAMUSERNAME&gt; | `!search`, `!whereis`                    |
-| [`!alert`](#cmdalert)       | Adding an alert to a coordinate. When a boat (more than 2 players from the same location at the same time) enters this coordinate the bot will post a message with information in the channel this command was used in.                                                   | &lt;COORDINATE&gt;    | `!prox`, `!proximity`                    |
-| [`!track`](#cmdtrack)       | Add a (steam) username to the tracking list. Every time we see that username change coordinates we'll post a message in the channel this command was used in.                                                                                                             | &lt;STEAMUSERNAME&gt; | `!stalk`, `!follow`                      |
-| [`!findboat`](#cmdfindboat) | When the [`!alert`](#cmdalert) command posts a message it will also give you a boat ID. Using this boat ID you can find out the current locations of all players that were spotted on that boat. This is useful to see if the boat is still around or where it moved too. | &lt;BOATID&gt;        | `!searchboat`, `!whereisboat`              |
+| Commands                        | Explanation                                                                                                                                                                                                                                                               | Arguments                     | Commandaliases                           |
+|---------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|------------------------------------------|
+| [`!config`](#cmdsettings)       | Get or set the settings of the bot in your Discord server. This is required to be used before the bot can work at all. You can set your region (eu or na) and gamemode (pvp or pve)                                                                                       | *multiple*                    | `!setting`, `!configs`, `!config`        |
+| [`!help`](#cmdhelp)             | Return a link to the documentation page for the current bot version                                                                                                                                                                                                       | *none*                        | `!cmdlist`, `!commands`, `!bot`, `!info` |
+| [`!version`](#cmdversion)       | Returns the current version of the Discord bot and the most recent changes (update log)                                                                                                                                                                                   | *none*                        | `!v`                                     |
+| [`!ask`](#cmdask)               | Everything typed after this command will be sent to the bot developer, you can use this to ask question, give feedback, suggestions and more                                                                                                                              | *any*                         | `!feedback`, `!contact`, `!question`     |
+| [`!purge`](#cmdpurge)           | Remove the most recent 100 messages from the channel this command was used in                                                                                                                                                                                             | *none*                        | `!clean`, `!clear`                       |
+| [`!map`](#cmdmap)               | Show a visual representation of the current players on the full map of the server. A color indication shows what servers are busy                                                                                                                                         | *none*                        | `!world`                                 |
+| [`!stats`](#cmdstats)           | Show a visual representation of the amount of players on the coordinate of your choice over the past 24 hours.                                                                                                                                                            | &lt;COORDINATE&gt;            | `!chart`                                 |
+| [`!players`](#cmdplayers)       | Show a list of the current (steam) usernames and the playtime of the people on the coordinate of your choice.                                                                                                                                                             | &lt;COORDINATE&gt;            | `!player`                                |
+| [`!pop`](#cmdpop)               | Show a list of the players on the coordinate of your choice and the players of all 8 coordinates around that.                                                                                                                                                             | &lt;COORDINATE&gt;            | `!population`                            |
+| [`!grid`](#cmdgrid)             | Very similar to the [`!pop`](#cmdpop) command but represented in a 3x3 table                                                                                                                                                                                              | &lt;COORDINATE&gt;            | *none*                                   |
+| [`!find`](#cmdfind)             | Search for a specific (steam) username on the whole server. This returns a list (if the player was found) of the 5 most recent locations this player was spotted in.                                                                                                      | &lt;STEAMUSERNAME&gt;         | `!search`, `!whereis`                    |
+| [`!alert`](#cmdalert)           | Adding an alert to a coordinate. When a boat (more than 2 players from the same location at the same time) enters this coordinate the bot will post a message with information in the channel this command was used in.                                                   | &lt;COORDINATE&gt;            | `!prox`, `!proximity`                    |
+| [`!unalert`](#cmdunalert)       | Remove an active alert from a coordinate in your Discord server.                                                                                                                                                                                                          | &lt;COORDINATE&gt;            | `!unprox`, `!unproximity`                |
+| [`!unalertall`](#cmdunalertall) | Remove all active alerts from your Discord server.                                                                                                                                                                                                                        | *none*                        | `!unproxall`, `!unproximityall`          |
+| [`!track`](#cmdtrack)           | Add a (steam) username to the tracking list. Every time we see that username change coordinates we'll post a message in the channel this command was used in.                                                                                                             | &lt;STEAMUSERNAME&gt;         | `!stalk`, `!follow`                      |
+| [`!untrack`](#cmduntrack)       | Remove a player from the active tracking list of your Discord server.                                                                                                                                                                                                     | &amp;lt;STEAMUSERNAME&amp;gt; | `!unstalk`, `!unfollow`                  |
+| [`!untrackall`](#cmundtrackall) | Remove all players from the active tracking list of your Discord server.                                                                                                                                                                                                  | *none*                        | `!unstalkall`, `!unfollowall`            |
+| [`!findboat`](#cmdfindboat)     | When the [`!alert`](#cmdalert) command posts a message it will also give you a boat ID. Using this boat ID you can find out the current locations of all players that were spotted on that boat. This is useful to see if the boat is still around or where it moved too. | &lt;BOATID&gt;                | `!searchboat`, `!whereisboat`            |
 
 <a name="cmdsettings"></a>
 ## `!config`
@@ -218,6 +222,34 @@ Adding an alert to a coordinate. When a boat (more than 2 players from the same 
 
 ![image](https://i.imgur.com/nzYHQzf.png)
 
+<a name="cmdunalert"></a>
+## `!unalert`
+>
+<larecipe-badge type="success">Completed</larecipe-badge>
+
+##### Explanation
+Remove a coordinate from the alert list of your Discord server.
+
+##### Example input
+`!unalert C4`
+
+##### Example output
+![image](https://i.imgur.com/BsDbC6l.png)
+
+<a name="cmdunalertall"></a>
+## `!unalertall`
+>
+<larecipe-badge type="success">Completed</larecipe-badge>
+
+##### Explanation
+Remove all coordinates from the alert list of your Discord server.
+
+##### Example input
+`!unalertall`
+
+##### Example output
+![image](https://i.imgur.com/oyBeEdZ.png)
+
 <a name="cmdtrack"></a>
 ## `!track`
 >
@@ -237,6 +269,34 @@ Add a (steam) username to the tracking list. Every time we see that username cha
 *When a player moves servers / coordinates:*
 
 ![image](https://i.imgur.com/t2ZcriX.png)
+
+<a name="cmduntrack"></a>
+## `!untrack`
+>
+<larecipe-badge type="success">Completed</larecipe-badge>
+
+##### Explanation
+Remove a player from the list of players that are being tracked by your Discord server.
+
+##### Example input
+`!untrack iShot`
+
+##### Example output
+![image](https://i.imgur.com/250yfKU.png)
+
+<a name="cmduntrackall"></a>
+## `!untrackall`
+>
+<larecipe-badge type="success">Completed</larecipe-badge>
+
+##### Explanation
+Remove all players from the list of players that are being tracked by your Discord server.
+
+##### Example input
+`!untrackall`
+
+##### Example output
+![image](https://i.imgur.com/aMSADw7.png)
 
 <a name="cmdfindboat"></a>
 ## `!findboat`
