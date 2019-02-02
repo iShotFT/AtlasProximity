@@ -10,6 +10,6 @@ class LandingController extends Controller
 
     public function index(Request $request)
     {
-        return view('landing');
+        return view('underconstruction');
     }
 }
