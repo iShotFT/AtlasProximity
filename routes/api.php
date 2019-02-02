@@ -27,6 +27,7 @@ Route::get('findboat', 'ApiController@findBoat');
 Route::get('track/list', 'ApiController@trackList');
 Route::get('proximity/list', 'ApiController@proximityList');
 
+Route::post('command/add', 'ApiController@commandAdd');
 Route::post('track/add', 'ApiController@trackAdd');
 Route::post('proximity/add', 'ApiController@proximityAdd');
 

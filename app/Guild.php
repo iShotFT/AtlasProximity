@@ -33,6 +33,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $gamemode
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Guild whereGamemode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Guild whereRegion($value)
+ * @property int $users
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Guild whereUsers($value)
  */
 class Guild extends Model
 {

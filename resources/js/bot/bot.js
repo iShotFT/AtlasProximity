@@ -135,14 +135,20 @@ client.on('message', msg => {
         console.log('Message received from server ' + msg.guild.name + ' by user ' + msg.author.username + '#' + msg.author.discriminator + ':\n > ' + msg.content);
     }
 
-
-    // if (command === 'test') {
-    //     msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
-    //
-    //     });
-    //
-    //     return false;
-    // }
+    // Store all commands into DB
+    axios.post(config.url + '/api/command/add', {
+        key: key,
+        guildid: msg.guild.id,
+        channelid: msg.channel.id,
+        channelname: msg.channel.name,
+        user: msg.author.username + '#' + msg.author.discriminator,
+        command: command,
+        arguments: args.join(' '),
+    }).then(function (response) {
+        console.log('[COMMAND] ' + response.data.message);
+    }).catch(function (error) {
+        console.log('[ERROR]' + error.response);
+    });
 
     if (command === 'help' || command === 'cmdlist' || command === 'commands' || command === 'bot' || command === 'info') {
         msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {

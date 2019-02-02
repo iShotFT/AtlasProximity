@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Boat;
+use App\Command;
 use App\Faq;
 use App\Guild;
 use App\Ping;
@@ -625,5 +626,30 @@ class ApiController extends Controller
     public function help(Request $request)
     {
         return response()->json(['url' => url('/docs')]);
+    }
+
+    public function commandAdd(Request $request)
+    {
+        $request->validate([
+            'guildid'     => 'required|integer',
+            'channelid'   => 'required|integer',
+            'channelname' => 'required|string',
+            'region'      => 'required|string|size:2',
+            'gamemode'    => 'required|string|size:3',
+            'user'        => 'required|string',
+            'command'     => 'required|string',
+            //            'arguments' => 'sometimes|string',
+        ]);
+
+        Command::create([
+            'guild_id'     => $request->get('guildid'),
+            'channel_id'   => $request->get('channelid'),
+            'channel_name' => $request->get('channelname'),
+            'user'         => $request->get('user'),
+            'command'      => $request->get('command'),
+            'arguments'    => $request->get('arguments'),
+        ]);
+
+        return response()->json(['message' => 'Command !' . $request->get('command') . ' from user ' . $request->get('user') . ' registered']);
     }
 }

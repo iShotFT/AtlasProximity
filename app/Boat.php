@@ -32,6 +32,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Guild $guild
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Boat whereCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Boat whereFrom($value)
+ * @property string $region
+ * @property string $gamemode
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Boat whereGamemode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Boat whereRegion($value)
  */
 class Boat extends Model
 {
