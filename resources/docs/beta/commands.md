@@ -238,8 +238,9 @@ Remove a coordinate from the alert list of your Discord server.
 
 <a name="cmdunalertall"></a>
 ## `!unalertall`
->
 <larecipe-badge type="success">Completed</larecipe-badge>
+>
+> {primary} This command requires you to have `ADMINISTRATOR` or `MANAGE_MESSAGES` privileges on the server used.
 
 ##### Explanation
 Remove all coordinates from the alert list of your Discord server.
@@ -286,8 +287,9 @@ Remove a player from the list of players that are being tracked by your Discord 
 
 <a name="cmduntrackall"></a>
 ## `!untrackall`
->
 <larecipe-badge type="success">Completed</larecipe-badge>
+>
+> {primary} This command requires you to have `ADMINISTRATOR` or `MANAGE_MESSAGES` privileges on the server used.
 
 ##### Explanation
 Remove all players from the list of players that are being tracked by your Discord server.
