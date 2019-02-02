@@ -287,7 +287,7 @@ client.on('message', msg => {
             // Send a message to the bot owner
             console.log('User ' + author.username + '#' + author.discriminator + ' sent a message to the devs using !contact');
             msg.edit(':microphone2: We have sent your message to the bot owner!');
-            contactHook.send('Someone sent you a message using the !contact command\n``` > Message: ' + input + '\n > User: ' + author.username + '#' + author.discriminator + '\n > Origin server: ' + msg.guild.name + '\n > Origin channel: ' + msg.channel.name + '```');
+            contactHook.send('Someone sent you a message using the !contact command\n``` > Message: ' + input + '\n > User: ' + author.username + '#' + author.discriminator + '\n > User ID: ' + author.id + '\n > Origin server: ' + msg.guild.name + '\n > Origin channel: ' + msg.channel.name + '```');
             //
             //
             // console.log(config.ownerid);
