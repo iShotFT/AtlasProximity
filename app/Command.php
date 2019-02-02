@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Traits\HasGuild;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -30,6 +31,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Command extends Model
 {
+    protected $with = ['guild'];
+
+    use HasGuild;
     //
     protected $guarded = [];
 }
