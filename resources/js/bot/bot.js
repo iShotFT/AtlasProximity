@@ -1100,6 +1100,7 @@ client.on('guildCreate', guild => {
 
     axios.post(config.url + '/api/guild/add', {
         key: key,
+        users: guild.memberCount,
         name: guild.name,
         guildid: guild.id,
     }).then(function (response) {

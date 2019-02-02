@@ -42,6 +42,7 @@ class Kernel extends HttpKernel
             'bindings',
             'api_key_required',
             'guild_id_sometimes',
+            //            'store_request',
         ],
     ];
 
@@ -67,6 +68,7 @@ class Kernel extends HttpKernel
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
         'api_key_required'   => \App\Http\Middleware\ApiKeyRequired::class,
         'guild_id_sometimes' => \App\Http\Middleware\GuildIdSometimes::class,
+        'store_request'      => \App\Http\Middleware\StoreRequest::class,
     ];
 
     /**
