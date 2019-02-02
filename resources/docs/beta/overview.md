@@ -15,17 +15,7 @@ The Atlas Discord Bot *(ADB)* is an automated way to track players, alert when b
 <a name="contact"></a>
 ## Contact
 
-Contact the developer through any of the following methods:
-
-**Discord (private):** iShot#5449
-
-or
-
-**Discord (server):** [ATLAS CCTV](https://discord.gg/KMHkqtb)
-
-or
-
-**Using `!ask` (once the bot is installed) you can send me a private message**
+[![image](https://steamcdn-a.akamaihd.net/steamcommunity/public/images/clans/27090541/8dd5c907f2a0eecb73dc6a4776fc9a25878ebcdd.png)](https://discord.gg/KMHkqtb)
 
 <a name="progress"></a>
 ## Development Progress
