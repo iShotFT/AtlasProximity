@@ -21,6 +21,11 @@ class GuildIdSometimes
             if ($guild = Guild::where('guild_id', $request->get('guildid'))->first()) {
                 // Check if the settings for this guild are correctly set
                 if (is_null($guild->region) || is_null($guild->gamemode)) {
+                    if (config('app.url') . $request->getPathInfo() === route('api.help')) {
+                        // This route is allowed without guildid
+                        return $next($request);
+                    }
+
                     if (config('app.url') . $request->getPathInfo() === route('api.settings')) {
                         // This route is allowed without guildid
                         return $next($request);
