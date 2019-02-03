@@ -228,6 +228,7 @@ return [
         //        Third party
         'PDF'          => Barryvdh\Snappy\Facades\SnappyPdf::class,
         'SnappyImage'  => Barryvdh\Snappy\Facades\SnappyImage::class,
+        'SEO'          => Artesaos\SEOTools\Facades\SEOTools::class,
 
     ],
 

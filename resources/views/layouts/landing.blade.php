@@ -15,6 +15,8 @@
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
+        <!-- MINIFIED -->
+        {!! SEO::generate(true) !!}
         {!! Analytics::render() !!}
     </head>
     <body>
