@@ -287,7 +287,7 @@ client.on('message', msg => {
             // Send a message to the bot owner
             console.log('User ' + author.username + '#' + author.discriminator + ' sent a message to the devs using !contact');
             msg.edit(':microphone2: We have sent your message to the bot owner!');
-            contactHook.send('Someone sent you a message using the !contact command\n``` > Message: ' + input + '\n > User: ' + author.username + '#' + author.discriminator + '\n > User ID: ' + author.id + '\n > Origin server: ' + msg.guild.name + '\n > Origin channel: ' + msg.channel.name + '```');
+            contactHook.send('Someone sent you a message using the !contact command\n``` > Message: ' + input + '\n > User: ' + author.username + '#' + author.discriminator + '\n > User ID: ' + author.id + '\n > Origin server: ' + msg.guild.name + '\n > Origin channel: ' + msg.channel.name + '\n > Origin channel ID: ' + msg.channel.id + '```');
             //
             //
             // console.log(config.ownerid);
@@ -1142,50 +1142,93 @@ this.Echo = new Echo({
 
 this.Echo.channel(`public`)
     .listen('.tracked.player.moved', (e) => {
-        console.log('WebSocket: [TRACKING] Sent message to ' + e.guildid + ' about player ' + e.player);
+        console.log('[TRACKING] Sent message to ' + e.guildid + ' about player ' + e.player);
         if (client.channels.get(e.channelid)) {
             client.channels.get(e.channelid).send(':spy::skin-tone-4: Tracked player `' + e.player + '` has moved from `' + e.from + '` to `' + e.to + '` heading `' + e.direction + '`');
         } else {
-            console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+            console.log('[TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
         }
     })
     .listen('.tracked.player.lost', (e) => {
-        console.log('WebSocket: [TRACKING] Sent tracking lost message to ' + e.guildid + ' about player ' + e.player);
+        console.log('[TRACKING] Sent tracking lost message to ' + e.guildid + ' about player ' + e.player);
         if (client.channels.get(e.channelid)) {
             client.channels.get(e.channelid).send(':sleeping: We suspect that tracked player `' + e.player + '` has gone offline. Last known location: `' + e.last + '`');
         } else {
-            console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+            console.log('[TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
         }
     })
     .listen('.tracked.player.refound', (e) => {
-        console.log('WebSocket: [TRACKING] Sent tracking refound message to ' + e.guildid + ' about player ' + e.player);
+        console.log('[TRACKING] Sent tracking refound message to ' + e.guildid + ' about player ' + e.player);
         if (client.channels.get(e.channelid)) {
             client.channels.get(e.channelid).send(':spy::skin-tone-4: Tracked player `' + e.player + '` came back online in location: `' + e.last + '`');
         } else {
-            console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+            console.log('[TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
         }
     })
     .listen('.track.expired', (e) => {
-        console.log('WebSocket: [TRACKING] Sent track expired message to ' + e.guildid + ' about player ' + e.player);
+        console.log('[TRACKING] Sent track expired message to ' + e.guildid + ' about player ' + e.player);
         if (client.channels.get(e.channelid)) {
             client.channels.get(e.channelid).send(':timer: Tracking for player `' + e.player + '` has expired. Last known location: `' + e.last + '`');
         } else {
-            console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+            console.log('[TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
         }
     })
     .listen('.bot.updated', (e) => {
-        console.log('WebSocket: [UPDATE] We noticed an update happened and sent a message to the webhook');
+        console.log('[UPDATE] We noticed an update happened and sent a message to the webhook');
         updateHook.send(':satellite: The Atlas CCTV bot has just been updated!\n > Current version: `' + e.version + '`\n\n' + e.changes + '');
     })
     .listen('.faq.created', (e) => {
-        console.log('WebSocket: [FAQ] We noticed a new FAQ appeared!');
+        console.log('[FAQ] We noticed a new FAQ appeared!');
         updateHook.send(':question: A new frequently asked question was added to the !faq command!\n\n`' + e.question + '`\n' + e.answer + '');
     })
     .listen('.tracked.server.boat', (e) => {
-        console.log('WebSocket: [TRACKING] Sent boat warning message to ' + e.guildid + ' about coordinate ' + e.to);
+        console.log('[TRACKING] Sent boat warning message to ' + e.guildid + ' about coordinate ' + e.to);
         if (client.channels.get(e.channelid)) {
             client.channels.get(e.channelid).send(':anchor: A suspected boat entered coordinate `' + e.to + '`. They came from the `' + e.direction + '` (`' + e.from + '`). Player(s) on the boat:\n```\n' + e.players.join('\n') + '```\nUse `!findboat ' + e.boatid + '` to show the current location of the players on this boat.');
         } else {
-            console.log('WebSocket: [TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+            console.log('[TRACKING] Tried to send message to channelid ' + e.channelid + ' but it failed, couldn\'t find channel');
+        }
+    })
+    .listen('.announcement', (e) => {
+        console.log(e);
+        console.log(e.channels);
+
+        var returnInfo = [];
+        returnInfo.success = [];
+        returnInfo.fail = [];
+
+        if (e.channels.length) {
+            for (var channelid in e.channels) {
+                if (!e.channels.hasOwnProperty(channelid)) {
+                    continue;
+                }
+
+                if (client.channels.get(e.channels[channelid])) {
+                    if (e.mention !== undefined) {
+                        if (client.channels.get(e.channels[channelid]).members.get(e.mention)) {
+                            client.channels.get(e.channels[channelid]).send('<@' + e.mention + '>\n' + e.title + '\n\n' + e.message + '\n\n\nThanks for reading,\n\n**Atlas Discord Bot**');
+                        } else {
+                            console.log('[ANNOUNCEMENT] Tried to mention a user that doesn\'t exist on the channel');
+                        }
+                    } else {
+                        client.channels.get(e.channels[channelid]).send(e.title + '\n\n' + e.message + '\n\n\nThanks for reading,\n\n**Atlas Discord Bot**');
+                    }
+                    console.log('[ANNOUNCEMENT] Sent message to channelid ' + e.channels[channelid] + '');
+                    returnInfo.success.push(e.channels[channelid]);
+                } else {
+                    console.log('[ANNOUNCEMENT] Tried to send message to channelid ' + e.channels[channelid] + ' but it failed, couldn\'t find channel');
+                    returnInfo.fail.push(e.channels[channelid]);
+                }
+            }
+
+            // Post to callback the results of the announcement
+            axios.post(e.callback, {
+                key: key,
+                info: returnInfo,
+            }).then(function (response) {
+                console.log('[ANNOUNCEMENT] Posted results of the announcement to the callback URL.');
+            }).catch(function (error) {
+                console.log('[ERROR] Failed to post the results of the announcement to the callback URL.');
+            });
         }
     });

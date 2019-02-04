@@ -15,6 +15,7 @@ Route::get('settings', 'ApiController@settings')->name('api.settings');
 Route::get('help', 'ApiController@help')->name('api.help');
 Route::post('guild/add', 'ApiController@guildAdd')->name('api.guild.add');
 Route::post('guilds/add', 'ApiController@guildsAdd')->name('api.guilds.add');
+Route::post('announcement/callback', 'AnnouncementController@callback')->name('api.announcement.callback');
 
 Route::get('faq', 'ApiController@faq');
 Route::get('map', 'ApiController@map');
@@ -36,7 +37,6 @@ Route::post('track/remove', 'ApiController@trackRemove');
 Route::post('proximity/remove', 'ApiController@proximityRemove');
 Route::post('track/remove/all', 'ApiController@trackRemoveAll');
 Route::post('proximity/remove/all', 'ApiController@proximityRemoveAll');
-
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();
 //});

@@ -28,6 +28,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Command whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Command whereUser($value)
  * @mixin \Eloquent
+ * @property string|null $channel_name
+ * @property-read mixed $guild_name
+ * @property-read \App\Guild $guild
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Command whereChannelName($value)
  */
 class Command extends Model
 {

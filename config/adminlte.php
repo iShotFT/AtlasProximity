@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'title' => 'Atlas CCTV',
+    'title' => 'Atlas Discord Bot',
 
     'title_prefix' => '',
 
@@ -30,9 +30,9 @@ return [
     |
     */
 
-    'logo' => '<b>Atlas</b>CCTV',
+    'logo' => '<b>Atlas</b> Discord Bot',
 
-    'logo_mini' => '<b>A</b>C',
+    'logo_mini' => '<b>A</b>DB',
 
     /*
     |--------------------------------------------------------------------------
@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'skin' => 'black',
+    'skin' => 'blue',
 
     /*
     |--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ return [
     |
     */
 
-    'collapse_sidebar' => true,
+    'collapse_sidebar' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -108,7 +108,7 @@ return [
     */
 
     'menu' => [
-        'DATABASE',
+        'POSTING',
         [
             'text' => 'Faqs',
             'url'  => 'faq',
@@ -119,6 +119,12 @@ return [
             'url'  => 'update',
             'icon' => 'plus-square',
         ],
+        [
+            'text' => 'Announcements',
+            'url'  => 'announcement',
+            'icon' => 'bullhorn',
+        ],
+        'INFORMATION',
         [
             'text' => 'Commands',
             'url'  => 'command',
