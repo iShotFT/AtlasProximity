@@ -6,6 +6,7 @@ use App\Boat;
 use App\Command;
 use App\Faq;
 use App\Guild;
+use App\Monitor;
 use App\Ping;
 use App\PlayerPing;
 use App\PlayerTrack;
@@ -423,6 +424,41 @@ class ApiController extends Controller
      * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
      * @throws \xPaw\SourceQuery\Exception\TimeoutException
      */
+    public function monitorAdd(Request $request)
+    {
+        $request->validate([
+            'coordinate' => 'required|string|min:2|max:3',
+            'guildid'    => 'required',
+            'channelid'  => 'required',
+            'region'     => 'required|string|size:2',
+            'gamemode'   => 'required|string|size:3',
+        ]);
+
+        if (Monitor::where('guild_id', $request->get('guildid'))->count() >= 1) {
+            return response()->json(['message' => ':warning: Your Discord server is already monitoring a coordinate. Currently we only allow one monitor per Discord server. Remove your previous monitor(s) using `!unmonitorall` before you can make a new one.'], 400);
+        }
+
+        // Refresh the data
+        SourceQueryController::getPlayersOnCoordinate($request->get('coordinate'), $request->get('region'), $request->get('gamemode'));
+
+        Monitor::updateOrCreate([
+            'coordinate' => $request->get('coordinate'),
+            'guild_id'   => $request->get('guildid'),
+            'channel_id' => $request->get('channelid'),
+            'region'     => $request->get('region'),
+            'gamemode'   => $request->get('gamemode'),
+        ], [
+            'updated_at' => Carbon::now(),
+        ]);
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws \xPaw\SourceQuery\Exception\InvalidArgumentException
+     * @throws \xPaw\SourceQuery\Exception\InvalidPacketException
+     * @throws \xPaw\SourceQuery\Exception\TimeoutException
+     */
     public function proximityAdd(Request $request)
     {
         $request->validate([
@@ -502,6 +538,25 @@ class ApiController extends Controller
         ])->delete();
     }
 
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws \Exception
+     */
+    public function monitorRemoveAll(Request $request)
+    {
+        $request->validate([
+            'guildid'   => 'required',
+            'channelid' => 'required',
+        ]);
+
+        Monitor::where([
+            'guild_id' => $request->get('guildid'),
+            //            'channel_id' => $request->get('channelid'),
+        ])->delete();
+    }
+
     /**
      * @param \Illuminate\Http\Request $request
      *
@@ -525,18 +580,34 @@ class ApiController extends Controller
      *
      * @throws \Exception
      */
+    public function monitorRemove(Request $request)
+    {
+        $request->validate([
+            'coordinate' => 'required|string|min:2|max:3',
+            'guildid'    => 'required',
+        ]);
+
+        Monitor::where([
+            'coordinate' => $request->get('coordinate'),
+            'guild_id'   => $request->get('guildid'),
+        ])->delete();
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws \Exception
+     */
     public function proximityRemove(Request $request)
     {
         $request->validate([
             'coordinate' => 'required|string|min:2|max:3',
             'guildid'    => 'required',
-            'channelid'  => 'required',
         ]);
 
         ProximityTrack::where([
             'coordinate' => $request->get('coordinate'),
             'guild_id'   => $request->get('guildid'),
-            'channel_id' => $request->get('channelid'),
         ])->delete();
     }
 
@@ -572,6 +643,27 @@ class ApiController extends Controller
         if ($guild = Guild::where('guild_id', $request->get('id'))->first()) {
             $guild->delete();
         };
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function monitorList(Request $request)
+    {
+        $request->validate([
+            'guildid'  => 'required|integer',
+            'region'   => 'required|string|size:2',
+            'gamemode' => 'required|string|size:3',
+        ]);
+
+        $found = Monitor::where('guild_id', $request->get('guildid'))->where('region', $request->get('region'))->where('gamemode', $request->get('gamemode'))->get([
+            'coordinate',
+            'updated_at',
+        ]);
+
+        return response()->json(($found ? $found->toArray() : []));
     }
 
     /**

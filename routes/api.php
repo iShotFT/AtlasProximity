@@ -27,16 +27,20 @@ Route::get('stats', 'ApiController@stats');
 Route::get('findboat', 'ApiController@findBoat');
 Route::get('track/list', 'ApiController@trackList');
 Route::get('proximity/list', 'ApiController@proximityList');
+Route::get('monitor/list', 'ApiController@monitorList');
 
 Route::post('command/add', 'ApiController@commandAdd');
 Route::post('track/add', 'ApiController@trackAdd');
 Route::post('proximity/add', 'ApiController@proximityAdd');
+Route::post('monitor/add', 'ApiController@monitorAdd');
 
 Route::post('guild/remove', 'ApiController@guildRemove');
 Route::post('track/remove', 'ApiController@trackRemove');
 Route::post('proximity/remove', 'ApiController@proximityRemove');
+Route::post('monitor/remove', 'ApiController@monitorRemove');
 Route::post('track/remove/all', 'ApiController@trackRemoveAll');
 Route::post('proximity/remove/all', 'ApiController@proximityRemoveAll');
+Route::post('monitor/remove/all', 'ApiController@monitorRemoveAll');
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();
 //});

@@ -1098,6 +1098,149 @@ client.on('message', msg => {
 
         return false;
     }
+
+    if (command === 'unmonitorall') {
+
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            if (message.member.hasPermission('ADMINISTRATOR') || message.member.hasPermission('MANAGE_MESSAGES')) {
+                console.log(msg.guild.id, msg.channel.id, config.url + '/api/monitor/remove/all');
+                // Poll the API for the information requested
+                axios.post(config.url + '/api/monitor/remove/all', {
+                    key: key,
+                    guildid: msg.guild.id,
+                    channelid: msg.channel.id,
+                }).then(function (response) {
+                    msg.edit('```Removed all active coordinate monitors from this channel```');
+                }).catch(function (error) {
+                    if (error.response) {
+                        if (error.response.data) {
+                            if (error.response.data.message) {
+                                msg.edit(error.response.data.message);
+                            }
+                        }
+                    }
+
+                    console.log('[ERROR]' + error.response);
+                });
+            } else {
+                msg.edit('```You need message removal permissions in your Discord server to use this command```');
+            }
+        });
+
+        return false;
+    }
+
+    if (command === 'unmonitor') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            // If no arguments, send back the usage of the command
+            if (args.length === 0) {
+                // No parameters given
+                var message = '';
+                message = message + config.prefix + 'unmonitor <COORDINATE:B4>';
+                msg.edit('```' + message + '```');
+                return false;
+            }
+
+            let [coordinate] = args;
+
+            // Poll the API for the information requested
+            axios.post(config.url + '/api/monitor/remove', {
+                key: key,
+                coordinate: coordinate,
+                guildid: msg.guild.id,
+            }).then(function (response) {
+                msg.edit('```' + 'No longer monitoring ' + coordinate + '```');
+            }).catch(function (error) {
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
+                }
+
+                console.log('[ERROR]' + error.response);
+            });
+        });
+
+        return false;
+    }
+
+    if (command === 'monitor') {
+        msg.channel.send(procMsgs[Math.floor(Math.random() * procMsgs.length)] + ' (processing, please wait)').then((msg) => {
+            // If no arguments, send back the usage of the command
+            if (args.length === 0) {
+                // No parameters given
+                var message = '';
+                message = message + config.prefix + 'monitor <COORDINATE:B4>';
+
+                // Get current tracks for this guild...
+                axios.get(config.url + '/api/monitor/list', {
+                    params: {
+                        key: key,
+                        guildid: msg.guild.id,
+                    },
+                }).then(function (response) {
+                    message = message + '\n\n';
+
+                    if (response.data.length) {
+                        var array = [];
+                        array.push(['COORDINATE', 'ADDED']);
+                        for (var server in response.data) {
+                            if (!response.data.hasOwnProperty(server)) {
+                                continue;
+                            }
+
+                            array.push([response.data[server].coordinate, moment(response.data[server].updated_at, 'YYYY-MM-DD HH:mm:ss').fromNow()]);
+                        }
+
+                        message = message + table(array);
+                    } else {
+                        // No active tracks
+                        message = message + 'No active monitoring alerts found';
+                    }
+
+                    msg.edit('```' + message + '```');
+                }).catch(function (error) {
+                    if (error.response) {
+                        if (error.response.data) {
+                            if (error.response.data.message) {
+                                msg.edit(error.response.data.message);
+                            }
+                        }
+                    }
+
+                    console.log('[ERROR]' + error.response);
+                });
+
+                return false;
+            }
+
+            let [coordinate] = args;
+
+            // Poll the API for the information requested
+            axios.post(config.url + '/api/monitor/add', {
+                key: key,
+                coordinate: coordinate,
+                guildid: msg.guild.id,
+                channelid: msg.channel.id,
+            }).then(function (response) {
+                msg.edit('```' + 'Now monitoring ' + coordinate + ', we\'ll post a message every time anyone joins or leaves this coordinate! This can be considered spam on popular coordinates, use !unmonitor ' + coordinate + ' to remove this monitoring.```');
+            }).catch(function (error) {
+                if (error.response) {
+                    if (error.response.data) {
+                        if (error.response.data.message) {
+                            msg.edit(error.response.data.message);
+                        }
+                    }
+                }
+
+                console.log('[ERROR]' + error.response);
+            });
+        });
+
+        return false;
+    }
 });
 
 client.on('guildCreate', guild => {

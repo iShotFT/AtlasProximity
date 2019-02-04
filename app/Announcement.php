@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Announcement whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Announcement whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $mention
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Announcement whereMention($value)
  */
 class Announcement extends Model
 {

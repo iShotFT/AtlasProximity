@@ -48,6 +48,12 @@ class Kernel extends ConsoleKernel
             'production',
         ])->withoutOverlapping();
 
+        // Track monitoring alerts
+        $schedule->command('atlascctv:trackmonitors')->everyMinute()->environments([
+            'staging',
+            'production',
+        ])->withoutOverlapping();
+
         $schedule->command('telescope:prune')->daily();
     }
 
