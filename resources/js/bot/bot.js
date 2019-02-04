@@ -1193,9 +1193,8 @@ this.Echo.channel(`public`)
         console.log(e);
         console.log(e.channels);
 
-        var returnInfo = [];
-        returnInfo.success = [];
-        returnInfo.fail = [];
+        var success = [];
+        var fail = [];
 
         if (e.channels.length) {
             for (var channelid in e.channels) {
@@ -1207,24 +1206,27 @@ this.Echo.channel(`public`)
                     if (e.mention !== null) {
                         if (client.channels.get(e.channels[channelid]).members.get(e.mention)) {
                             client.channels.get(e.channels[channelid]).send('<@' + e.mention + '>\n' + e.title + '\n\n' + e.message + '\n\n\nThanks for reading,\n\n**Atlas Discord Bot**');
+                            success.push(e.channels[channelid]);
                         } else {
                             console.log('[ANNOUNCEMENT] Tried to mention a user that doesn\'t exist on the channel');
+                            fail.push(e.channels[channelid]);
                         }
                     } else {
                         client.channels.get(e.channels[channelid]).send(e.title + '\n\n' + e.message + '\n\n\nThanks for reading,\n\n**Atlas Discord Bot**');
+                        success.push(e.channels[channelid]);
                     }
                     console.log('[ANNOUNCEMENT] Sent message to channelid ' + e.channels[channelid] + '');
-                    returnInfo.success.push(e.channels[channelid]);
                 } else {
                     console.log('[ANNOUNCEMENT] Tried to send message to channelid ' + e.channels[channelid] + ' but it failed, couldn\'t find channel');
-                    returnInfo.fail.push(e.channels[channelid]);
+                    fail.push(e.channels[channelid]);
                 }
             }
 
             // Post to callback the results of the announcement
             axios.post(e.callback, {
                 key: key,
-                info: returnInfo,
+                success: success,
+                fail: fail,
             }).then(function (response) {
                 console.log('[ANNOUNCEMENT] Posted results of the announcement to the callback URL.');
             }).catch(function (error) {
