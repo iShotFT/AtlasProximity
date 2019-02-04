@@ -1204,7 +1204,7 @@ this.Echo.channel(`public`)
                 }
 
                 if (client.channels.get(e.channels[channelid])) {
-                    if (e.mention !== undefined) {
+                    if (e.mention !== null) {
                         if (client.channels.get(e.channels[channelid]).members.get(e.mention)) {
                             client.channels.get(e.channels[channelid]).send('<@' + e.mention + '>\n' + e.title + '\n\n' + e.message + '\n\n\nThanks for reading,\n\n**Atlas Discord Bot**');
                         } else {
