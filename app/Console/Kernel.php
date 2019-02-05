@@ -37,22 +37,22 @@ class Kernel extends ConsoleKernel
         ])->runInBackground();
 
         // Track players that are marked as to-be-tracked
-        $schedule->command('atlascctv:trackplayers')->everyMinute()->environments([
+        $schedule->command('atlascctv:trackplayers')->cron('*/2 * * * *')->environments([
             'staging',
             'production',
         ])->withoutOverlapping();
 
         // Track servers that have an active proximity alert
-        $schedule->command('atlascctv:trackboats')->everyMinute()->environments([
+        $schedule->command('atlascctv:trackboats')->cron('*/2 * * * *')->environments([
             'staging',
             'production',
         ])->withoutOverlapping();
 
-        // Track monitoring alerts
-        $schedule->command('atlascctv:trackmonitors')->everyMinute()->environments([
-            'staging',
-            'production',
-        ])->withoutOverlapping();
+        //        // Track monitoring alerts
+        //        $schedule->command('atlascctv:trackmonitors')->everyMinute()->environments([
+        //            'staging',
+        //            'production',
+        //        ])->withoutOverlapping();
 
         $schedule->command('telescope:prune')->daily();
     }
