@@ -12,7 +12,11 @@ class Kernel extends ConsoleKernel
      *
      * @var array
      */
-    protected $commands = [//
+    protected $commands = [
+        'App\Console\Commands\ScanRegion',
+        'App\Console\Commands\TrackPlayers',
+        'App\Console\Commands\TrackBoats',
+        'App\Console\Commands\TrackMonitors',
     ];
 
     /**
@@ -37,13 +41,13 @@ class Kernel extends ConsoleKernel
         ])->runInBackground();
 
         // Track players that are marked as to-be-tracked
-        $schedule->command('atlascctv:trackplayers')->cron('*/2 * * * *')->environments([
+        $schedule->command('atlascctv:trackplayers')->everyMinute()->environments([
             'staging',
             'production',
         ])->withoutOverlapping();
 
         // Track servers that have an active proximity alert
-        $schedule->command('atlascctv:trackboats')->cron('*/2 * * * *')->environments([
+        $schedule->command('atlascctv:trackboats')->everyMinute()->environments([
             'staging',
             'production',
         ])->withoutOverlapping();

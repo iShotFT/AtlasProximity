@@ -96,9 +96,11 @@ class TrackPlayers extends Command
 
                         $bar->setMessage('Scanning all coordinates around ' . $player_track->last_coordinate . ' ' . '(' . $player_track->region . ' ' . $player_track->gamemode . ') for  ' . $player_track->player);
                         foreach (SourceQueryController::getPlayersOnCoordinateWithSurrounding($player_track->last_coordinate, $player_track->region, $player_track->gamemode) as $coordinate => $server_info) {
-                            foreach ($server_info['players'] as $player) {
-                                if ($player_track->player === $player['Name']) {
-                                    $found_in = $coordinate;
+                            if (is_array($server_info['players']) || is_object($server_info['players'])) {
+                                foreach ($server_info['players'] as $player) {
+                                    if ($player_track->player === $player['Name']) {
+                                        $found_in = $coordinate;
+                                    }
                                 }
                             }
                         }
