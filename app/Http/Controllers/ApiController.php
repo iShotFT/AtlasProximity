@@ -359,6 +359,8 @@ class ApiController extends Controller
             } else {
                 return response()->json(['message' => 'Boat with ID ' . $request->get('boatid') . ' not found in the list of boats tracked by your Discord.'], 404);
             }
+        } else {
+            return response()->json(['message' => 'Boat with ID ' . $request->get('boatid') . ' not found in the list of boats tracked by your Discord.'], 404);
         }
     }
 
