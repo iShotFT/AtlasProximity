@@ -44,13 +44,13 @@ class Kernel extends ConsoleKernel
         $schedule->command('atlascctv:trackplayers')->everyMinute()->environments([
             'staging',
             'production',
-        ])->withoutOverlapping();
+        ]);
 
         // Track servers that have an active proximity alert
         $schedule->command('atlascctv:trackboats')->everyMinute()->environments([
             'staging',
             'production',
-        ])->withoutOverlapping();
+        ]);
 
         //        // Track monitoring alerts
         //        $schedule->command('atlascctv:trackmonitors')->everyMinute()->environments([
