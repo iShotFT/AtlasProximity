@@ -169,6 +169,11 @@ class Coordinate
         ];
     }
 
+    /**
+     * @param string $input
+     *
+     * @return array
+     */
     static function textToSplit($input = 'A1')
     {
         return [
@@ -260,5 +265,86 @@ class Coordinate
             'direction' => 'center',
             'unicode'   => '2022',
         ];
+    }
+
+    /**
+     * @param string $coordinate
+     * @param string $region
+     * @param string $gamemode
+     *
+     * @return mixed
+     */
+    public static function getServerIp($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
+    {
+        $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
+
+        if ($servers) {
+            // Only build the server list once every hour.
+            $return = self::getAllServers($region, $gamemode);
+
+            // Calculate what entry of the server matrix we need
+            list($coord_x, $coord_y) = Coordinate::textToSplit($coordinate); // ['B', '4']
+
+            return $return[$coord_x][$coord_y];
+        } else {
+            abort(401, 'Configuration for this region (' . $region . ') / gamemode (' . $gamemode . ') missing!');
+        }
+    }
+
+    /**
+     * @param string $region
+     * @param string $gamemode
+     *
+     * @return mixed
+     */
+    public static function getAllServers($region = 'eu', $gamemode = 'pvp')
+    {
+        $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
+
+        $return = Cache::remember('servers_list' . $region . $gamemode, 60, function () use ($servers) {
+            $max_x = explode('x', $servers['size'])[0];
+            $max_y = explode('x', $servers['size'])[1];
+
+            $servers_list = array();
+            foreach ($servers['ip'] as $ip) {
+                foreach ($servers['port'] as $port) {
+                    array_push($servers_list, [
+                        'ip'   => $ip,
+                        'port' => $port,
+                    ]);
+                }
+            }
+
+            $return    = array();
+            $iteration = 0;
+            for ($x = 1; $x <= $max_x; $x++) {
+                $character          = chr($x + 64);
+                $return[$character] = array();
+                for ($y = 1; $y <= $max_y; $y++) {
+                    $return[$character][$y] = $servers_list[$iteration];
+                    $iteration++;
+                }
+            }
+
+            return $return;
+        });
+
+        return $return;
+    }
+
+    public static function getCoordinateFromIpPort($ip, $port)
+    {
+        foreach (config('atlas.servers') as $region => $gamemodes) {
+            foreach ($gamemodes as $gamemode => $info) {
+                $servers = Coordinate::getAllServers($region, $gamemode);
+                foreach ($servers as $x => $row) {
+                    foreach ($row as $y => $server) {
+                        if ($server['ip'] === $ip && $server['port'] === (int)$port) {
+                            return $x . $y;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

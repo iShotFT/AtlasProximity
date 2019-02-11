@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Boat;
+use App\Classes\Coordinate;
 use App\Command;
 use App\Faq;
 use App\Guild;
@@ -219,7 +220,7 @@ class ApiController extends Controller
             $servers      = array_combine(array_column($query_result, 'coordinates'), $query_result);
             $max          = max(array_column($servers, 'players'));
 
-            $grid = SourceQueryController::getAllServers($request->get('region'), $request->get('gamemode'));
+            $grid = Coordinate::getAllServers($request->get('region'), $request->get('gamemode'));
 
             //        $snappy = App::make('snappy.image');
             // return view('snappy.map', compact('region', 'gamemode', 'servers', 'grid', 'max'))->render();

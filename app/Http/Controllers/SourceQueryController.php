@@ -73,7 +73,7 @@ class SourceQueryController extends Controller
             $return['data']['type']           = 'redis';
             $return['data']['age']['seconds'] = Carbon::now()->timestamp - $return['data']['age']['timestamp'];
         } else {
-            list ($ip, $port) = array_values(self::getServerIp($coordinate, $region, $gamemode));
+            list ($ip, $port) = array_values(Coordinate::getServerIp($coordinate, $region, $gamemode));
             // First check if server wasn't polled already in the past minute
             if (($ping = Ping::whereIp($ip)->wherePort((string)$port)->whereOnline(1)->whereNotNull('players')->where('created_at', '>=', Carbon::now()->subMinutes(config('atlas.settings.cache.lifetime', 1)))->first()) && $skip_cache === false) {
                 $players = json_decode($ping->info, true);
@@ -100,16 +100,7 @@ class SourceQueryController extends Controller
                     ];
 
                     // Store pulled information into the DB
-                    Ping::create([
-                        'ip'          => $ip,
-                        'port'        => $port,
-                        'region'      => $region,
-                        'gamemode'    => $gamemode,
-                        'coordinates' => $coordinate,
-                        'online'      => 1,
-                        'players'     => (is_array($players) ? sizeof($players) : null),
-                        'info'        => json_encode($players, true),
-                    ]);
+
 
                     // Store the players in the database
                     if (is_array($players) && count($players)) {
@@ -171,91 +162,4 @@ class SourceQueryController extends Controller
 
         return $return;
     }
-
-    public static function getServerIp($coordinate = 'A1', $region = 'eu', $gamemode = 'pvp')
-    {
-        $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
-
-        if ($servers) {
-            // Only build the server list once every hour.
-            $return = self::getAllServers($region, $gamemode);
-
-            // Calculate what entry of the server matrix we need
-            list($coord_x, $coord_y) = Coordinate::textToSplit($coordinate); // ['B', '4']
-
-            return $return[$coord_x][$coord_y];
-        } else {
-            abort(401, 'Configuration for this region (' . $region . ') / gamemode (' . $gamemode . ') missing!');
-        }
-    }
-
-    public static function getAllServers($region = 'eu', $gamemode = 'pvp')
-    {
-        $servers = config('atlas.servers.' . $region . '.' . $gamemode, null);
-
-        $return = Cache::remember('servers_list' . $region . $gamemode, 60, function () use ($servers) {
-            $max_x = explode('x', $servers['size'])[0];
-            $max_y = explode('x', $servers['size'])[1];
-
-            $servers_list = array();
-            foreach ($servers['ip'] as $ip) {
-                foreach ($servers['port'] as $port) {
-                    array_push($servers_list, [
-                        'ip'   => $ip,
-                        'port' => $port,
-                    ]);
-                }
-            }
-
-            $return    = array();
-            $iteration = 0;
-            for ($x = 1; $x <= $max_x; $x++) {
-                $character          = chr($x + 64);
-                $return[$character] = array();
-                for ($y = 1; $y <= $max_y; $y++) {
-                    $return[$character][$y] = $servers_list[$iteration];
-                    $iteration++;
-                }
-            }
-
-            return $return;
-        });
-
-        return $return;
-    }
-
-    public function test(Request $request)
-    {
-        //        dd(self::getAllPlayersAllServers('na', 'pvp'));
-        dd(self::getAllServers('eu', 'pve'));
-        $Query = new SourceQuery();
-        $Query->Connect('46.251.238.58', 57555, self::$server_timeout, self::$server_engine);
-        $players = $Query->GetRules();
-        dd($players);
-
-        //        Cache::forget('getPlayersOnCoordinateB4eupvp');
-        $proximity = ProximityTrack::updateOrCreate([
-            //            $table->string('guild_id');
-            //        $table->string('channel_id');
-            //        $table->string('coordinate');
-            'guild_id'   => '123456',
-            'channel_id' => '123456',
-            'coordinate' => 'B4',
-        ]);
-        dd(ApiController::proximity());
-
-        //        $start = Carbon::now()->timestamp;
-        //        self::getAllPlayersAllServers();
-        //        dd('end', Carbon::now()->timestamp - $start);
-    }
-
-    // Moved to command
-    //    public static function getAllPlayersAllServers($region = 'eu', $gamemode = 'pvp')
-    //    {
-    //        foreach (self::getAllServers($region, $gamemode) as $x => $servers) {
-    //            foreach ($servers as $y => $server) {
-    //                self::getPlayersOnCoordinate($x . $y, $region, $gamemode);
-    //            }
-    //        };
-    //    }
 }

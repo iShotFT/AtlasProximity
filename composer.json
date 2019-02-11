@@ -13,6 +13,7 @@
 		"ext-json": "*",
 		"ext-mbstring": "*",
 		"artesaos/seotools": "^0.12.1",
+		"austinb/gameq": "~3.0",
 		"barryvdh/laravel-ide-helper": "^2.5",
 		"barryvdh/laravel-snappy": "^0.4.3",
 		"binarytorch/larecipe": "^1.2",
